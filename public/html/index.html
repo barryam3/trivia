@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Trivia</title>
+    <meta name="keywords" content="Trivia">
+    <meta name="description" content="Trivia web app.">
+    <meta name="author" content="Barry McNamara">
+
+    <link rel="stylesheet" href="css/styles.css">
+
+    <link rel="stylesheet" type="text/css"
+    href="https://fonts.googleapis.com/css?family=Open+Sans">
+    <link rel="shortcut icon" href="">
+</head>
+
+<body>
+
+    <main>
+        <div class='board'>
+            <div class='categories'>
+                {{#categories}}
+                <div class='category'>
+                    <p class='ctitle'>{{category}}</p>
+                </div>
+                {{/categories}}
+            </div>
+            {{#rows}}
+            <div class='questionrow'>
+                {{#questions}}
+                <div class='question'>
+                    <p class='qvalue'>{{value}}</p>
+                </div>
+                {{/questions}}
+            </div>
+            {{/rows}}
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "trivia",
+  "version": "1.0.0",
+  "description": "Trivia web app.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bamazap/trivia.git"
+  },
+  "author": "Barry McNamara",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bamazap/trivia/issues"
+  },
+  "homepage": "https://github.com/bamazap/trivia#readme",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3",
+    "mustache-express": "^1.2.4"
+  }
+}
