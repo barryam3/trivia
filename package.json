@@ -1,24 +1,40 @@
 {
-  "name": "trivia",
+  "name": "Trivia",
   "version": "1.0.0",
-  "description": "Trivia web app.",
+  "description": "Trivia",
   "main": "app.js",
   "scripts": {
+    "build": "webpack",
+    "start": "node ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bamazap/trivia.git"
+    "url": "https://github.com/bamazap/trivia.git"
   },
   "author": "Barry McNamara",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/bamazap/trivia/issues"
-  },
-  "homepage": "https://github.com/bamazap/trivia#readme",
   "dependencies": {
-    "body-parser": "^1.17.2",
-    "express": "^4.15.3",
-    "mustache-express": "^1.2.4"
+    "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "mongoose": "^4.6.8",
+    "react": "^15.3.2",
+    "react-dom": "^15.3.2",
+    "react-router": "^2.8.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.17.0",
+    "babel-loader": "^6.2.5",
+    "babel-preset-es2015": "^6.16.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-react-hmre": "^1.1.1",
+    "css-loader": "^0.25.0",
+    "file-loader": "^0.9.0",
+    "json-loader": "^0.5.4",
+    "webpack": "^1.13.2",
+    "webpack-dev-middleware": "^1.8.4",
+    "webpack-hot-middleware": "^2.13.1"
   }
 }

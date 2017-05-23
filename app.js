@@ -1,21 +1,41 @@
-/* express framework */
 var express = require('express');
-var app = express();
-
-/* url & request parsing */
 var path = require('path');
 var bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static(__dirname+'/public'));
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+var webpackDevHelper = require('./hotReload.js');
 
-/* rendering engine */
-var mustache = require('mustache-express');
-app.engine('html', mustache());
-app.set('view engine', 'html');
-app.set('views', __dirname + '/public/html');
+// Require routes
 
-/* main app handlers */
-require('./trivia.js')(app);
+// Require models if needed
 
-/** start the server */
-app.listen(process.env.PORT || 3000);
+var mongoose = require('mongoose');
+//mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/trivia');
+//var db = mongoose.connection;
+//db.on('error', console.error.bind(console, 'connection error:'));
+
+var app = express();
+
+// Set up webpack-hot-middleware for development, express-static for production
+if (process.env.NODE_ENV !== 'production'){
+  console.log("DEVELOPMENT: Turning on WebPack middleware...");
+  app = webpackDevHelper.useWebpackMiddleware(app);
+  app.use('/css', express.static(path.join(__dirname, 'public/css')));
+} else {
+  console.log("PRODUCTION: Serving static files from /public...");
+  app.use(express.static(path.join(__dirname, 'public')));
+}
+
+// Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(session({ secret : 'T12345', resave : true, saveUninitialized : true }));
+
+
+// Set up routes
+app.get('*', function(req, res) {
+    res.sendFile(path.join(__dirname, 'public/index.html'))
+});
+
+module.exports = app;
