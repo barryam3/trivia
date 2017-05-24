@@ -1,5 +1,5 @@
-// import services here
+import GamesServices from './gamesServices.js';
 
 export default {
-    // export services here
+    games: GamesServices
 }

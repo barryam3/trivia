@@ -6,13 +6,15 @@ var session = require('express-session');
 var webpackDevHelper = require('./hotReload.js');
 
 // Require routes
+var games = require('./routes/games');
 
 // Require models if needed
 
 var mongoose = require('mongoose');
-//mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/trivia');
-//var db = mongoose.connection;
-//db.on('error', console.error.bind(console, 'connection error:'));
+mongoose.Promise = global.Promise;
+mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/trivia');
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
 
 var app = express();
 
@@ -36,6 +38,7 @@ app.use(session({ secret : 'T12345', resave : true, saveUninitialized : true }))
 
 
 // Set up routes
+app.use('/games', games);
 app.get('*', function(req, res) {
         res.sendFile(path.join(__dirname, 'public/index.html'))
 });

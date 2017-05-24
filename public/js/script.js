@@ -1,5 +1,6 @@
 var resize = function() {
 	$('.ctitle').textfill();
+	$('.qvalue').textfill();
 	$('.qtext').textfill();
 
 }
