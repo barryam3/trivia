@@ -1,7 +1,8 @@
 import { Component } from 'react';
 import React from 'react';
+import { withRouter } from 'react-router';
 
-export default class Question extends Component {
+class Question extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -22,3 +23,5 @@ export default class Question extends Component {
         )
     }
 }
+
+export default withRouter(Question);

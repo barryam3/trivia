@@ -1,8 +1,9 @@
 import App from './App.jsx';
-import Board from './Pages/Board.jsx';
-import Question from './Pages/Question.jsx';
 import NotFound from './Pages/NotFound.jsx';
 import Init from './Pages/Init.jsx';
+import Game from './Game.jsx';
+import Board from './Pages/Board.jsx';
+import Question from './Pages/Question.jsx';
 import services from '../services';
 import React from 'react';
 import {Router, Route, IndexRoute, browserHistory, Redirect} from 'react-router';
@@ -20,13 +21,14 @@ function redirectTo(to) {
 }
 
 export default (
-    <Router history={browserHistory} >
-        <Route path='/init' component={Init} />
+    <Router history={browserHistory}>
         <Route path='/' component={App}>
-        	<IndexRoute component={Board}
-        		onEnter={redirectTo('/board')} />
-        	<Route path='board' component={Board} />
-            <Route path='question' component={Question} />
+            <IndexRoute component={Init} onEnter={redirectTo('/init')} />
+            <Route path='init' component={Init} />
+            <Route path='game/:gameUID' component={Game}>
+                <Route path='board/:boardID' component={Board} />
+                <Route path='question/:questionID' component={Question} />
+            </Route>
         </Route>
         <Route path='*' component={NotFound} />
     </Router>

@@ -3,8 +3,6 @@ import { Component } from 'react';
 import React from 'react';
 import { withRouter } from 'react-router';
 
-import Scores from './Elements/Scores.jsx'
-
 class App extends Component {
     constructor(props){
         super(props);
@@ -19,7 +17,6 @@ class App extends Component {
                     {React.cloneElement(this.props.children, {
                         services : Services,
                     })}
-                <Scores />
                 </div>
             </div>
         );

@@ -1,7 +1,8 @@
 import { Component } from 'react';
 import React from 'react';
+import { withRouter } from 'react-router';
 
-export default class Board extends Component {
+class Board extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -67,3 +68,5 @@ export default class Board extends Component {
         )
     }
 }
+
+export default withRouter(Board);
