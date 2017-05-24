@@ -26,7 +26,7 @@ class Init extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        Services.games.addGroup(this.state.uid, this.state.contestants, this.state.singlecsv,
+        Services.games.addGame(this.state.uid, this.state.contestants, this.state.singlecsv,
             this.state.doublecsv, this.state.finaltxt);
     }
 

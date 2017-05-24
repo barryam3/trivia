@@ -31,9 +31,7 @@ exports.parseGameCSV = function(csvdata) {
 		out.push(category);
 	});
 	out.forEach(function(category) {
-		console.log(category.title);
 		category.questions.forEach(function(question) {
-			console.log(question);
 		});
 	});
 	return out

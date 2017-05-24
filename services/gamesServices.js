@@ -5,7 +5,7 @@ var request = require('request-promise-native');
 
 export default {
 
-    addGroup: (uid, contestants, singlecsv, doublecsv, finaltxt) => {
+    addGame: (uid, contestants, singlecsv, doublecsv, finaltxt) => {
         return request({
             uri: base_url,
             method: 'POST',
@@ -18,5 +18,13 @@ export default {
                 finaltxt: finaltxt
             }
         });
-    }
+    },
+
+    getGame: (uid) => {
+        return request({
+            uri: base_url + '/' + uid,
+            method: 'GET',
+            json: true
+        });
+    },
 }

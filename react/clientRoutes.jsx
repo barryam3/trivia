@@ -26,8 +26,11 @@ export default (
             <IndexRoute component={Init} onEnter={redirectTo('/init')} />
             <Route path='init' component={Init} />
             <Route path='game/:gameUID' component={Game}>
-                <Route path='board/:boardID' component={Board} />
+                <Route path='board' component={Board} />
                 <Route path='question/:questionID' component={Question} />
+                <IndexRoute component={Board} render={() => (
+                    <Redirect to="board"/>
+                )}/>
             </Route>
         </Route>
         <Route path='*' component={NotFound} />

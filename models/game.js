@@ -6,6 +6,10 @@ var gameSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    round: {
+        type: String,
+        required: true
+    },
     contestants: {
     	type: [{
     		name: String,
@@ -65,13 +69,17 @@ gameSchema.statics.addGame = function(uid, contestants, singlecsv, doublecsv, fi
     }
     var obj = {
         uid: uid,
+        round: 'single',
         contestants: parseGameFiles.parseContestantsCSV(contestants),
         single: parseGameFiles.parseGameCSV(singlecsv),
         double: parseGameFiles.parseGameCSV(doublecsv),
         final: parseGameFiles.parseFinalTXT(finaltxt)
     }
-    console.log(obj);
     this.create(obj, callback);
+};
+
+gameSchema.statics.getGame = function(uid, callback) {
+    this.findOne({uid: uid}, callback);
 };
 
 module.exports = mongoose.model('Game', gameSchema);
