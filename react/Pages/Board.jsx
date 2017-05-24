@@ -5,7 +5,14 @@ export default class Board extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            categories : ["c1", "c2", "c3", "c4", "c5", "c6"],
+            categories : [
+                "The Adventures of Zedidiah",
+                "Lions and Tigers and SARS, Oh My!",
+                "Island Countries",
+                "Unusual Sports",
+                "The Rise of Donald Trump",
+                "Songs from the Ten Provinces"
+            ],
             rows : [
                 ["1", "1", "", "1", "1", "1"],
                 ["2", "2", "2", "", "2", ""],
@@ -13,40 +20,49 @@ export default class Board extends Component {
                 ["4", "", "", "", "4", "4"],
                 ["5", "", "5", "", "5", ""],
                 ["6", "", "", "6", "", ""]
-            ]
+            ],
+            width : 6
         }
     }
 
     render() {
         return (
             <main>
-                <div className='board'>
-                    <div className='categories'>
+                <table className='board'>
+                    <tbody>
+                    <tr className='categories'>
                         {
                         this.state.categories.map((category, key) => (
-                            <div key={key} className='category'>
-                                <p className='ctitle'>{category}</p>
-                            </div>
+                            <td key={key} className='category'>
+                                <div className='ctitle'><span>{category}</span></div>
+                            </td>
                             )
                         )
                         }
-                    </div>
+                    </tr>
                     {
-                    this.state.rows.map((row, key) => (
-                        <div key={key} className='questionrow'>
+                    this.state.rows.map((row, rowkey) => (
+                        <tr key={rowkey} className='questionrow'>
                             {
-                            row.map((value, key) => (
-                                <div key={key} className='question'>
-                                    <p className='qvalue'>{value}</p>
-                                </div>
+                            row.map((value, qkey) => (
+                                <td key={qkey} className='question'>
+                                    <span className='qvalue'>
+                                        <a href={
+                                            '/question?q='+(rowkey*this.state.width+qkey)
+                                        }>
+                                            {value}
+                                        </a>
+                                    </span>
+                                </td>
                                 )
                             )
                             }
-                        </div>
+                        </tr>
                         )
                     )
                     }
-                </div>
+                    </tbody>
+                </table>
              </main>
         )
     }

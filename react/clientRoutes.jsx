@@ -1,6 +1,8 @@
 import App from './App.jsx';
 import Board from './Pages/Board.jsx';
+import Question from './Pages/Question.jsx';
 import NotFound from './Pages/NotFound.jsx';
+import Init from './Pages/Init.jsx';
 import services from '../services';
 import React from 'react';
 import {Router, Route, IndexRoute, browserHistory, Redirect} from 'react-router';
@@ -19,10 +21,12 @@ function redirectTo(to) {
 
 export default (
     <Router history={browserHistory} >
+        <Route path='/init' component={Init} />
         <Route path='/' component={App}>
         	<IndexRoute component={Board}
         		onEnter={redirectTo('/board')} />
         	<Route path='board' component={Board} />
+            <Route path='question' component={Question} />
         </Route>
         <Route path='*' component={NotFound} />
     </Router>
