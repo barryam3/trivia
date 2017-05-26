@@ -91,7 +91,7 @@ gameSchema.statics.askQuestion = function(uid, qid, callback) {
             });
             return;
         }
-        var q_per_c = game.round == 'single' ? game.single.length : game.double.length;
+        var q_per_c = game.round == 'single' ? game.single[0].questions.length : game.double[0].questions.length;
         var c = Math.floor(qid/q_per_c).toString(); // category
         var v  = (qid % q_per_c).toString(); // value - 1
         var updateObj = {};

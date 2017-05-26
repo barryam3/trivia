@@ -1,12 +1,11 @@
 var resize = function() {
-	$('.ctitle').textfill();
+	$('.ctitle.boardcell').textfill();
 	$('.qvalue').textfill();
-	$('.qtext').textfill();
-
+	console.log('hello');
 }
 
 $(document).ready(function() {
-	resize()
+	resize();
 });
 
 $(window).resize(resize);

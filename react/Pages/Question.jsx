@@ -47,7 +47,7 @@ class Question extends Component {
         return (
             (this.props.board.length > 0) ? (
             <main>
-            	<div className='qheader'>{category} -- {v}</div>
+            	<div className='qheader'>{category} -- {v+1}</div>
             	<div className='qtext'>
                     { (this.state.showing=='question') && <div>{question}</div> }
                     { (this.state.showing=='answer') && <div>{answer}</div> }

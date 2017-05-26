@@ -59,14 +59,16 @@ main {
 
 /* cell in category board */
 .boardcell{
-    border: 3px solid black;
+    border: 2px solid black;
     border-collapse: collapse;
     background-color: blue;
 }
 
 /* text displaying category title in board */
 .ctitle {
-    max-height: 150px; /* category row auto-resizes, this limits height */
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 140px;
 }
 
 /* text in category board */
@@ -79,16 +81,19 @@ main {
 /* text displaying question value in board */
 .qvalue {
     color: yellow;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 78px;
 }
 
 .qheader {
     font-weight: bold;
     font-size: 8vmin;
-    margin-bottom: 20px;
+    margin-bottom: 50px;
 }
 
 .qtext {
-    font-size: 4vmin;
+    font-size: 6vmin;
 }
 
 #nextbutton {

@@ -10,42 +10,50 @@ class Board extends Component {
     }
 
     render() {
+        if (this.props.board.length > 0) {
+            var q_per_c = this.props.board[0].questions.length;
+        }
 
         return (
+            (this.props.board.length > 0) ? (
             <main>
                 <table className='board'>
                     <tbody>
                         <tr>
                         {
                         this.props.board.map((category, ckey) => (
+                            <td key={ckey} className='boardcell ctitle'>
+                                <span>
+                                    {category.title}
+                                </span>
+                            </td>
+                        ))
+                        }
+                        </tr>
+                        <tr>
+                        {
+                        this.props.board.map((category, ckey) => (
                             <td key={ckey}>
-                                <table>
+                                <table className='equalTable'>
                                     <tbody>
-                                        <tr>
-                                            <td className='boardcell'>
-                                                <span className='cvalue'>
-                                                    {category.title}
+                                    {
+                                    category.questions.map((question, qkey) => (
+                                        <tr key={qkey}>
+                                            <td className='boardcell qvalue'>
+                                                <span>
+                                                {
+                                                    !question.asked && (
+                                                        <a href={
+                                                            'question?q='+(ckey*q_per_c+qkey)
+                                                        }>
+                                                            {qkey+1}
+                                                        </a>
+                                                    )
+                                                }
                                                 </span>
                                             </td>
                                         </tr>
-                                        {
-                                        category.questions.map((question, qkey) => (
-                                            <tr key={qkey}>
-                                                <td className='boardcell'>
-                                                    <span className='qvalue'>
-                                                    {
-                                                        !question.asked && (
-                                                            <a href={
-                                                                'question?q='+(ckey+qkey*this.props.board.length)
-                                                            }>
-                                                                {qkey+1}
-                                                            </a>
-                                                        )
-                                                    }
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        ))}
+                                    ))}
                                     </tbody>
                                 </table>
                             </td>
@@ -54,6 +62,7 @@ class Board extends Component {
                     </tbody>
                 </table>
             </main>
+        ) : (<main></main>)
         );
     }
 }
