@@ -45,4 +45,25 @@ router.get('/:uid', function(req, res) {
     });
 });
 
+// Ask Question
+// PUT /games/:uid/questions
+// body: qid
+router.put('/:uid/questions', function(req, res) {
+    var uid = req.params.uid;
+    var qid = req.body.qid;
+
+    Game.askQuestion(uid, qid, function(err, game) {
+        if (err) {
+            if (err.msg) {
+                utils.sendErrorResponse(res, 404, err.msg);
+            } else {
+                utils.sendErrorResponse(res, 500,
+                    'An unknown error has occurred.');
+            }
+        } else {
+            utils.sendSuccessResponse(res, game);
+        }
+    });
+});
+
 module.exports = router;

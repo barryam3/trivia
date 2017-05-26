@@ -27,4 +27,16 @@ export default {
             json: true
         });
     },
+
+    askQuestion: (uid, qid) => {
+        return request({
+            uri: base_url + '/' + uid + '/questions',
+            method: 'PUT',
+            json: true,
+            body: {
+                qid: qid
+            }
+        });
+    },
+
 }

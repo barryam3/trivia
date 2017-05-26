@@ -82,4 +82,22 @@ gameSchema.statics.getGame = function(uid, callback) {
     this.findOne({uid: uid}, callback);
 };
 
+gameSchema.statics.askQuestion = function(uid, qid, callback) {
+    var that = this;
+    that.findOne({uid: uid}, function(err, game) {
+        if (err) {
+            callback({
+                msg: 'Game does not exist'
+            });
+            return;
+        }
+        var q_per_c = game.round == 'single' ? game.single.length : game.double.length;
+        var c = Math.floor(qid/q_per_c).toString(); // category
+        var v  = (qid % q_per_c).toString(); // value - 1
+        var updateObj = {};
+        updateObj[game.round+"."+c+".questions."+v+".asked"] = true;
+        that.update({uid : uid}, {$set : updateObj}, callback);
+    });
+};
+
 module.exports = mongoose.model('Game', gameSchema);

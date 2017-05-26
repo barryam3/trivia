@@ -13,6 +13,10 @@ class Question extends Component {
     }
 
     goToNext() {
+        // mark the question as asked once we reveal it
+        if (this.state.showing == 'none') {
+            this.props.services.games.askQuestion(this.props.params.gameUID, this.props.location.query.q);
+        }
         // update display state
         if (this.state.showing != 'answer') {
             this.setState((prevState) => {
