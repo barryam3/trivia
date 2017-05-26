@@ -25,6 +25,10 @@ table {
     table-layout: fixed;
 }
 
+li, button {
+    cursor: pointer;
+}
+
 /* make game take up middle 90% of screen */
 #game {
     width: 90%;
@@ -32,11 +36,18 @@ table {
     margin-right: 5%;
 }
 
-/* category board table */
-.board {
+/* game content (board or question) */
+main {
+    /* use most of the screen */
     height: 600px;
     /* leave space between board and scores below */
     margin-bottom: 20px;
+    /* allow children to be positioned relative to its borders */
+    position: relative;
+}
+
+/* category board table */
+.board {
     background-color: black;
 }
 
@@ -68,6 +79,25 @@ table {
 /* text displaying question value in board */
 .qvalue {
     color: yellow;
+}
+
+.qheader {
+    font-weight: bold;
+    font-size: 8vmin;
+    margin-bottom: 20px;
+}
+
+.qtext {
+    font-size: 4vmin;
+}
+
+#nextbutton {
+    position: absolute;
+    bottom: 25px;
+    left: 25%;
+    width: 50%;
+    height: 75px;
+    background:#999;
 }
 
 /* form used for game init */

@@ -2,6 +2,8 @@ import Services from '../services';
 import { Component } from 'react';
 import React from 'react';
 import { withRouter } from 'react-router';
+import { PropTypes } from 'prop-types';
+
 
 class App extends Component {
     constructor(props){
@@ -24,7 +26,7 @@ class App extends Component {
 };
 
 App.propTypes = {
-    children : React.PropTypes.any.isRequired
+    children : PropTypes.any.isRequired
 };
 
 export default withRouter(App);

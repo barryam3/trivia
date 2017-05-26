@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import React from 'react';
 import { withRouter } from 'react-router';
+import { PropTypes } from 'prop-types';
 
 import Scores from './Elements/Scores.jsx'
 
@@ -70,7 +71,7 @@ class Game extends Component {
 };
 
 Game.propTypes = {
-    children : React.PropTypes.any.isRequired
+    children : PropTypes.any.isRequired
 };
 
 export default withRouter(Game);

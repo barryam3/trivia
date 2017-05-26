@@ -27,7 +27,7 @@ export default (
             <Route path='init' component={Init} />
             <Route path='game/:gameUID' component={Game}>
                 <Route path='board' component={Board} />
-                <Route path='question/:questionID' component={Question} />
+                <Route path='question' component={Question} />
                 <IndexRoute component={Board} render={() => (
                     <Redirect to="board"/>
                 )}/>

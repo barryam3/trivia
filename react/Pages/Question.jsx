@@ -6,20 +6,51 @@ class Question extends Component {
     constructor(props) {
         super(props);
         this.state = {
-        	question : "Why did the chicken cross the road?",
-        	answer : "To get to the other side."
+            showing: 'none'
+        }
+        this.goToNext = this.goToNext.bind(this);
 
+    }
+
+    goToNext() {
+        // update display state
+        if (this.state.showing != 'answer') {
+            this.setState((prevState) => {
+                if (this.state.showing == 'none') {
+                    prevState.showing = 'question';
+                } else if (this.state.showing == 'question') {
+                    prevState.showing = 'answer';
+                }
+                return prevState;
+            });
+        } else {
+            window.location = 'board'; // go back to board on final click
         }
     }
 
     render() {
+        if (this.props.board.length > 0) {
+            var qid = this.props.location.query.q;
+            var q_per_c = this.props.board[0].questions.length;
+            var c = Math.floor(qid/q_per_c); // category
+            var v  = qid % q_per_c; // value - 1
+            var category = this.props.board[c].title;
+            var question = this.props.board[c].questions[v].question;
+            var answer = this.props.board[c].questions[v].answer;
+            var dd = this.props.board[c].questions[v].dailydouble;
+        }
+
         return (
+            (this.props.board.length > 0) ? (
             <main>
-            	<h1 style={{color: 'white'}}>Question {this.props.location.query.q}</h1>
+            	<div className='qheader'>{category} -- {v}</div>
             	<div className='qtext'>
-                	<span>{this.state.question}</span>
+                    { (this.state.showing=='question') && <div>{question}</div> }
+                    { (this.state.showing=='answer') && <div>{answer}</div> }
                 </div>
+                <button id='nextbutton' onClick={this.goToNext}>Next</button>
             </main>
+            ) : (<main></main>)
         )
     }
 }
