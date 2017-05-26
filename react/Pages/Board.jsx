@@ -21,7 +21,7 @@ class Board extends Component {
                             <table>
                                 <tbody>
                                     <tr>
-                                        <td>
+                                        <td className='boardcell'>
                                             <span className='cvalue'>
                                                 {category.title}
                                             </span>
@@ -30,7 +30,7 @@ class Board extends Component {
                                     {
                                     category.questions.map((question, qkey) => (
                                         <tr key={qkey}>
-                                            <td>
+                                            <td className='boardcell'>
                                                 <span className='qvalue'>
                                                     <a href={
                                                         '/question?q='+(ckey+qkey*this.props.board.length)

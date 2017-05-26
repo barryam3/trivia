@@ -34,7 +34,7 @@ class Init extends Component {
         return (
             <div id='reactRoot'>
                 <div id='page-content'>
-                	<form className='init' onSubmit={this.handleSubmit}>
+                	<form id='init' onSubmit={this.handleSubmit}>
                         <table>
                             <tbody>
                                 <tr>

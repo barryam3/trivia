@@ -1,77 +1,77 @@
 body {
     background-color: black;
-    font-family: 'Open Sans', sans-serif; /* Google font */
+    font-family: 'Open Sans', sans-serif;
     color: white;
     text-align: center;
 }
 
-main {
-    height: 600px;
-    width: 90%;
-    margin-left: 5%;
-    margin-right: 5%;
-    margin-bottom: 20px;
-}
-
+/* links are not different color or underlined by default */
 a {
     color: inherit;
     text-decoration: inherit;
 }
 
+/* make all of table cell with link clickable */
 td a {
     display:block;
     width:100%;
 }
 
 table {
+    /* we use nested tables to make table by column */
     width: 100%;
-    background-color: blue;
-    padding: 5px;
+    height: 100%;
+    /* don't rely on cell contents for sizing */
     table-layout: fixed;
 }
 
-.board {
-    width: 100%;
-    height: 100%;
-}
-
-.scores {
-    height: 100px;
+/* make game take up middle 90% of screen */
+#game {
     width: 90%;
     margin-left: 5%;
     margin-right: 5%;
-    text-align: center;
 }
 
-.categories, .questionrow, .question, .category{ /* tr td */
+/* category board table */
+.board {
+    height: 600px;
+    /* leave space between board and scores below */
+    margin-bottom: 20px;
+    background-color: black;
+}
+
+/* score display table */
+.scores {
+    height: 100px;
+    background-color: blue;
+}
+
+/* cell in category board */
+.boardcell{
     border: 3px solid black;
     border-collapse: collapse;
+    background-color: blue;
 }
 
+/* text displaying category title in board */
 .ctitle {
     max-height: 150px; /* category row auto-resizes, this limits height */
 }
 
-.question, .category { /* td */
-    background-color: green;
-    width: 15%;
-    margin-left: 1.4285714285714284%;
-    text-align: center;
-    border-spacing: 5px;
-    padding: 5px;
-}
-
+/* text in category board */
 .qvalue, .ctitle { /* span in td */
     font-weight: bold;
     vertical-align: middle;
     font-size: 4vmin;
 }
 
+/* text displaying question value in board */
 .qvalue {
     color: yellow;
 }
 
-.init {
+/* form used for game init */
+#init {
     width: 50%;
     margin-left: 25%;
     margin-right: 25%;

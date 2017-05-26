@@ -15,14 +15,18 @@
   "author": "Barry McNamara",
   "license": "MIT",
   "dependencies": {
+    "ajv": "^5.1.4",
     "body-parser": "^1.15.2",
     "cookie-parser": "^1.4.3",
+    "debug": "^2.6.8",
     "express": "^4.14.0",
     "express-session": "^1.14.2",
     "mongoose": "^4.6.8",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
-    "react-router": "^2.8.1"
+    "react-router": "^2.8.1",
+    "request": "^2.81.0",
+    "request-promise-native": "^1.0.4"
   },
   "devDependencies": {
     "babel-core": "^6.17.0",
