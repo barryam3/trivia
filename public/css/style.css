@@ -118,6 +118,11 @@ main {
     font-size: 4vmin;
 }
 
+.finalheader {
+    padding-top: 15%;
+    font-size: 8vmin;
+}
+
 #nextbutton {
     position: absolute;
     bottom: 25px;

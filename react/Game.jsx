@@ -25,7 +25,8 @@ class Game extends Component {
             question : {
                     category: '',
                     question: '',
-                    answer: ''
+                    answer: '',
+                    loaded: false
                 } // for final jeopardy
         };
     }
@@ -55,13 +56,18 @@ class Game extends Component {
     }
 
     render(){
+        if (this.state.question.loaded && window.location.pathname.endsWith('board')) {
+            window.location = 'question?q=final';
+        }
         return (
             <div id='game'>
             	<div id='game-content'>
-	                {React.cloneElement(this.props.children, {
+	                {
+                        React.cloneElement(this.props.children, {
 	                    services : this.props.services,
                         board : this.state.board,
-                        question : this.state.question
+                        final : this.state.question,
+                        round: this.state.round
 	                })}
                 </div>
             	<Scores contestants={this.state.game.contestants}
