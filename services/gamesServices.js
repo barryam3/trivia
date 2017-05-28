@@ -39,4 +39,16 @@ export default {
         });
     },
 
+    updateScore: (uid, key, diff) => {
+        return request({
+            uri: base_url + '/' + uid + '/scores',
+            method: 'PUT',
+            json: true,
+            body: {
+                key: key,
+                diff: diff
+            }
+        });
+    }
+
 }

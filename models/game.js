@@ -115,4 +115,10 @@ gameSchema.statics.askQuestion = function(uid, qid, callback) {
     });
 };
 
+gameSchema.statics.updateScore = function(uid, key, diff, callback) {
+    var updateObj = {};
+    updateObj['contestants.'+key.toString()+'.score'] = diff;
+    this.update({uid : uid}, {$inc : updateObj}, callback);
+};
+
 module.exports = mongoose.model('Game', gameSchema);

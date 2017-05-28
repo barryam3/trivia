@@ -64,7 +64,10 @@ class Game extends Component {
                         question : this.state.question
 	                })}
                 </div>
-            	<Scores contestants={this.state.game.contestants} />
+            	<Scores contestants={this.state.game.contestants}
+                    services={this.props.services}
+                    uid = {this.props.params.gameUID}
+                    />
             </div>
         );
     }

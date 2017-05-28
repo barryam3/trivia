@@ -66,4 +66,26 @@ router.put('/:uid/questions', function(req, res) {
     });
 });
 
+// Update Scores
+// PUT /games/:uid/scores
+// body: key, diff
+router.put('/:uid/scores', function(req, res) {
+    var uid = req.params.uid;
+    var key = req.body.key;
+    var diff = req.body.diff;
+
+    Game.updateScore(uid, key, diff, function(err, game) {
+        if (err) {
+            if (err.msg) {
+                utils.sendErrorResponse(res, 404, err.msg);
+            } else {
+                utils.sendErrorResponse(res, 500,
+                    'An unknown error has occurred.');
+            }
+        } else {
+            utils.sendSuccessResponse(res, game);
+        }
+    });
+});
+
 module.exports = router;
