@@ -107,7 +107,8 @@ main {
 }
 
 .qtext {
-    font-size: 6vmin;
+    font-size: 48px;
+    height: 350px;
 }
 
 .scoretext {
@@ -115,7 +116,10 @@ main {
 }
 
 .scorebutton {
-    font-size: 4vmin;
+    font-size: 32px;
+    font-weight: bold;
+    height: 50px;
+    width: 50px;
 }
 
 .finalheader {
@@ -130,6 +134,7 @@ main {
     width: 50%;
     height: 75px;
     background:#999;
+    font-size: 32px;
 }
 
 /* form used for game init */

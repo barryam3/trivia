@@ -52,6 +52,14 @@ var gameSchema = mongoose.Schema({
         	answer: String
         },
         required: true
+    },
+    screen: {
+        type: String, // board or question
+        required: true
+    },
+    shown: {
+        type: Number, // for question page only
+        required: true
     }
 });
 
@@ -104,7 +112,6 @@ gameSchema.statics.askQuestion = function(uid, qid, callback) {
                 return t2 + (q.asked ? 0 : 1);
             }, 0);
         }, 0);
-        console.log(unasked_questions);
         // build update
         var updateObj = {};
         updateObj[game.round+"."+c+".questions."+v+".asked"] = true;
@@ -119,6 +126,19 @@ gameSchema.statics.updateScore = function(uid, key, diff, callback) {
     var updateObj = {};
     updateObj['contestants.'+key.toString()+'.score'] = diff;
     this.update({uid : uid}, {$inc : updateObj}, callback);
+};
+
+gameSchema.statics.updateScreen = function(uid, screen, callback) {
+    var updateObj = {};
+    updateObj['screen'] = screen;
+    updateObj['shown'] = 0;
+    this.update({uid : uid}, {$set : updateObj}, callback);
+};
+
+gameSchema.statics.updateShown = function(uid, shown, callback) {
+    var updateObj = {};
+    updateObj['shown'] = shown;
+    this.update({uid : uid}, {$set : updateObj}, callback);
 };
 
 module.exports = mongoose.model('Game', gameSchema);

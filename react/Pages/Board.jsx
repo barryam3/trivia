@@ -9,6 +9,12 @@ class Board extends Component {
         }
     }
 
+    componentWillMount() {
+        if (this.props.master) {
+            this.props.services.games.updateScreen(this.props.params.gameUID, 'board');
+        }
+    }
+
     render() {
         if (this.props.board.length > 0) {
             var q_per_c = this.props.board[0].questions.length;
@@ -43,11 +49,17 @@ class Board extends Component {
                                                 <span>
                                                 {
                                                     !question.asked && (
-                                                        <a href={
-                                                            'question?q='+(ckey*q_per_c+qkey)
-                                                        }>
-                                                            {qkey+1}
-                                                        </a>
+                                                        this.props.master ? (
+                                                            <a href={
+                                                                'question?q='+(ckey*q_per_c+qkey)+'&master='+this.props.master
+                                                            }>
+                                                                {qkey+1}
+                                                            </a>
+                                                        ) : (
+                                                            <span>
+                                                                {qkey+1}
+                                                            </span>
+                                                        )
                                                     )
                                                 }
                                                 </span>

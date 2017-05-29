@@ -88,4 +88,46 @@ router.put('/:uid/scores', function(req, res) {
     });
 });
 
+// Update Screen
+// PUT /games/:uid/screen
+// body: screen
+router.put('/:uid/screen', function(req, res) {
+    var uid = req.params.uid;
+    var screen = req.body.screen;
+
+    Game.updateScreen(uid, screen, function(err, game) {
+        if (err) {
+            if (err.msg) {
+                utils.sendErrorResponse(res, 404, err.msg);
+            } else {
+                utils.sendErrorResponse(res, 500,
+                    'An unknown error has occurred.');
+            }
+        } else {
+            utils.sendSuccessResponse(res, game);
+        }
+    });
+});
+
+// Update Scores
+// PUT /games/:uid/shown
+// body: shown
+router.put('/:uid/shown', function(req, res) {
+    var uid = req.params.uid;
+    var shown = req.body.shown;
+
+    Game.updateShown(uid, shown, function(err, game) {
+        if (err) {
+            if (err.msg) {
+                utils.sendErrorResponse(res, 404, err.msg);
+            } else {
+                utils.sendErrorResponse(res, 500,
+                    'An unknown error has occurred.');
+            }
+        } else {
+            utils.sendSuccessResponse(res, game);
+        }
+    });
+});
+
 module.exports = router;

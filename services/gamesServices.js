@@ -49,6 +49,28 @@ export default {
                 diff: diff
             }
         });
+    },
+
+    updateScreen: (uid, screen) => {
+        return request({
+            uri: base_url + '/' + uid + '/screen',
+            method: 'PUT',
+            json: true,
+            body: {
+                screen: screen
+            }
+        });
+    },
+
+    updateShown: (uid, shown) => {
+        return request({
+            uri: base_url + '/' + uid + '/shown',
+            method: 'PUT',
+            json: true,
+            body: {
+                shown: shown
+            }
+        });
     }
 
 }

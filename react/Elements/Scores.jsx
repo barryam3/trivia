@@ -37,19 +37,25 @@ class Scores extends Component {
                                 <tbody>
                                     <tr>
                                         <td rowSpan={2}>
-                                            <button className='btn-link scorebutton'
+                                        {this.props.master &&
+                                            <button className='scorebutton'
+                                            style={{backgroundColor: 'red'}}
                                             onClick={this.updateScore(key, -1)}>
                                                 -
                                             </button>
+                                        }
                                         </td>
                                         <td>
                                             <span className='scoretext'>{c.name}</span>
                                         </td>
                                         <td rowSpan={2}>
-                                            <button className='btn-link scorebutton'
+                                        {this.props.master &&
+                                            <button className='scorebutton'
+                                            style={{backgroundColor: 'green'}}
                                             onClick={this.updateScore(key, 1)}>
                                                 +
                                             </button>
+                                        }
                                         </td>
                                     </tr>
                                     <tr>
