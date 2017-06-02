@@ -5,6 +5,10 @@ import { PropTypes } from 'prop-types';
 
 import Scores from './Elements/Scores.jsx'
 
+// Dollar value of the lowest-value question
+// 200 for classic Jeopardy
+const kDollarMultiplier = 1;
+
 class Game extends Component {
     constructor(props){
         super(props);
@@ -21,7 +25,7 @@ class Game extends Component {
                     answer: ''
                 },
                 screen: '',
-                shown: 0
+                shown: -1
             }, // all of the state
             board : [], // single vs double jeopardy
             question : {
@@ -57,7 +61,7 @@ class Game extends Component {
 
     componentWillMount() {
         this.loadGame(this.props.params.gameUID);
-        if (this.props.location.query.master != 'true') {
+        if (this.props.location.query.master != 'true' && !window.location.pathname.includes('gameover')) {
             this.tryUntil(this.checkForUpdates, Infinity, 50);
         }
     }
@@ -76,6 +80,7 @@ class Game extends Component {
                     }
                     if (res.content.round == 'final') {
                         prevState.question = res.content.final;
+                        prevState.question.loaded = true;
                     }
                     return prevState;
                 });
@@ -86,6 +91,15 @@ class Game extends Component {
         if (this.state.question.loaded && window.location.pathname.endsWith('board')) {
             window.location = 'question?q=final&master='+this.props.location.query.master;
         }
+
+        if (this.props.location.query.q != undefined && this.state.board.length > 0) {
+            var qid = this.props.location.query.q;
+            var q_per_c = this.state.board[0].questions.length;
+            var value = (qid % q_per_c) + 1; // value
+        } else {
+            var value = null;
+        }
+
         return (
             <div id='game'>
             	<div id='game-content'>
@@ -96,13 +110,17 @@ class Game extends Component {
                         final : this.state.question,
                         round: this.state.round,
                         master: this.props.location.query.master,
-                        shown: this.state.game.shown
+                        shown: this.state.game.shown,
+                        multiplier: (this.state.round == 'double' ? 2 : 1) * kDollarMultiplier,
+                        contestants: this.state.game.contestants
 	                })}
                 </div>
             	<Scores contestants={this.state.game.contestants}
                     services={this.props.services}
                     uid = {this.props.params.gameUID}
                     master = {this.props.location.query.master}
+                    multiplier = {(this.state.round == 'double' ? 2 : 1) * kDollarMultiplier}
+                    value = {value}
                     />
             </div>
         );

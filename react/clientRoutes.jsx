@@ -4,6 +4,7 @@ import Init from './Pages/Init.jsx';
 import Game from './Game.jsx';
 import Board from './Pages/Board.jsx';
 import Question from './Pages/Question.jsx';
+import GameOver from './Pages/GameOver.jsx';
 import services from '../services';
 import React from 'react';
 import {Router, Route, IndexRoute, browserHistory, Redirect} from 'react-router';
@@ -28,6 +29,7 @@ export default (
             <Route path='game/:gameUID' component={Game}>
                 <Route path='board' component={Board} />
                 <Route path='question' component={Question} />
+                <Route path='gameover' component={GameOver} />
                 <IndexRoute component={Board} render={() => (
                     <Redirect to="board"/>
                 )}/>

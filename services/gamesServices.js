@@ -1,5 +1,4 @@
-const base_url = (process.env.NODE_ENV ? '' :
-    'http://localhost:3000') + '/games';
+const base_url = 'http://127.0.0.1:3000' + '/games';
 
 var request = require('request-promise-native');
 

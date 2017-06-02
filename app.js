@@ -12,7 +12,7 @@ var games = require('./routes/games');
 
 // Mongoose for MongoDB
 mongoose.Promise = global.Promise;
-mongoose.connect(process.env.MONGOLAB_URI || 'mongodb://localhost/trivia');
+mongoose.connect('mongodb://127.0.0.1:27017/trivia');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
@@ -27,6 +27,7 @@ if (process.env.NODE_ENV !== 'production') {
     app.use(express.static(path.join(__dirname, 'public')));
 }
 app.use('/css', express.static(path.join(__dirname, 'public/css')));
+app.use('/fonts', express.static(path.join(__dirname, 'public/fonts')));
 app.use('/js', express.static(path.join(__dirname, 'public/js')));
 app.use('/vendor', express.static(path.join(__dirname, 'public/vendor')));
 

@@ -81,7 +81,9 @@ gameSchema.statics.addGame = function(uid, contestants, singlecsv, doublecsv, fi
         contestants: parseGameFiles.parseContestantsCSV(contestants),
         single: parseGameFiles.parseGameCSV(singlecsv),
         double: parseGameFiles.parseGameCSV(doublecsv),
-        final: parseGameFiles.parseFinalTXT(finaltxt)
+        final: parseGameFiles.parseFinalTXT(finaltxt),
+        screen: 'board',
+        shown: 0
     }
     this.create(obj, callback);
 };
@@ -131,7 +133,7 @@ gameSchema.statics.updateScore = function(uid, key, diff, callback) {
 gameSchema.statics.updateScreen = function(uid, screen, callback) {
     var updateObj = {};
     updateObj['screen'] = screen;
-    updateObj['shown'] = 0;
+    updateObj['shown'] = -1;
     this.update({uid : uid}, {$set : updateObj}, callback);
 };
 

@@ -28,40 +28,62 @@ class Scores extends Component {
 
     render() {
         return (
-            <table className='scores'>
+            <table id='scores'>
                 <tbody>
                     <tr>
                     {this.state.contestants.map((c, key) => (
                         <td key={key}>
-                            <table>
+                            <table className='scorecol'>
                                 <tbody>
                                     <tr>
-                                        <td rowSpan={2}>
+                                        <td rowSpan={(this.props.value != null ? 1 : 2)}>
                                         {this.props.master &&
                                             <button className='scorebutton'
                                             style={{backgroundColor: 'red'}}
-                                            onClick={this.updateScore(key, -1)}>
+                                            onClick={this.updateScore(key, -this.props.multiplier)}>
                                                 -
                                             </button>
                                         }
                                         </td>
                                         <td>
-                                            <span className='scoretext'>{c.name}</span>
+                                            <span className='scorename'>{c.name}</span>
                                         </td>
-                                        <td rowSpan={2}>
+                                        <td rowSpan={(this.props.value != null ? 1 : 2)}>
                                         {this.props.master &&
                                             <button className='scorebutton'
                                             style={{backgroundColor: 'green'}}
-                                            onClick={this.updateScore(key, 1)}>
+                                            onClick={this.updateScore(key, this.props.multiplier)}>
                                                 +
                                             </button>
                                         }
                                         </td>
                                     </tr>
                                     <tr>
+                                        {this.props.value != null &&
+                                            <td rowSpan={1}>
+                                            {this.props.master &&
+                                                <button className='scorebutton'
+                                                style={{backgroundColor: 'red'}}
+                                                onClick={this.updateScore(key, -this.props.value)}>
+                                                    W
+                                                </button>
+                                            }
+                                            </td>
+                                        }
                                         <td>
-                                            <span className='scoretext'>{c.score}</span>
+                                            <span className='scorescore'>${c.score}</span>
                                         </td>
+                                        {this.props.value != null &&
+                                            <td rowSpan={1}>
+                                            {this.props.master &&
+                                                <button className='scorebutton'
+                                                style={{backgroundColor: 'green'}}
+                                                onClick={this.updateScore(key, this.props.value)}>
+                                                    R
+                                                </button>
+                                            }
+                                            </td>
+                                        }
                                     </tr>
                                 </tbody>
                             </table>

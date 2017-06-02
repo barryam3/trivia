@@ -16,7 +16,7 @@ class Question extends Component {
         if (this.props.location.query.q == 'final') {
             this.setState({ shown: -1});
         }
-        if (this.props.shown) {
+        if (this.props.shown >= 0) {
             this.setState({ shown: this.props.shown});
         }
     }
@@ -70,12 +70,13 @@ class Question extends Component {
         var shownText = [
             'Show Question',
             'Show Answer',
-            'Return to Board'
+            (this.props.final.loaded ? 'Finish Game' : 'Return to Board')
         ]
 
         return (
             (this.props.board.length > 0 || this.props.final.loaded) ? (
             <main>
+                <span>{this.state.shown}</span>
                 {
                     (this.state.shown == -1) ? (
                         <div className='finalheader'>Final Jeopardy</div>
@@ -95,7 +96,9 @@ class Question extends Component {
                 }
                 {
                     this.props.master &&
-                    <button id='nextbutton' onClick={this.goToNext}>{shownText[this.state.shown]}</button>
+                    <button id='nextbutton' onClick={this.goToNext}>{
+                        this.state.shown < 0 ? 'Show Category' : shownText[this.state.shown]
+                    }</button>
                 }
             </main>
             ) : (<main></main>)
