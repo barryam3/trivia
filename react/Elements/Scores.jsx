@@ -36,7 +36,7 @@ class Scores extends Component {
                             <table className='scorecol'>
                                 <tbody>
                                     <tr>
-                                        <td rowSpan={(this.props.value != null ? 1 : 2)}>
+                                        <td style={{width:'15%'}} rowSpan={(this.props.value != null ? 1 : 2)}>
                                         {this.props.master &&
                                             <button className='scorebutton'
                                             style={{backgroundColor: 'red'}}
@@ -45,10 +45,10 @@ class Scores extends Component {
                                             </button>
                                         }
                                         </td>
-                                        <td>
+                                        <td style={{width:'75%'}}>
                                             <span className='scorename'>{c.name}</span>
                                         </td>
-                                        <td rowSpan={(this.props.value != null ? 1 : 2)}>
+                                        <td style={{width:'15%'}} rowSpan={(this.props.value != null ? 1 : 2)}>
                                         {this.props.master &&
                                             <button className='scorebutton'
                                             style={{backgroundColor: 'green'}}

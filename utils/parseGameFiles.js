@@ -1,5 +1,6 @@
 var CSVToArray = require('./csv_to_array').CSVToArray;
 
+// return an array of integers in range [start, stop)
 var range = function(start, stop) {
 	var arr = []
 	var i;
@@ -9,8 +10,25 @@ var range = function(start, stop) {
 	return arr;
 }
 
-exports.parseGameCSV = function(csvdata) {
+// return a random integer in the range [min, max]
+var randint = function(min, max) {
+ 	min = Math.ceil(min);
+ 	max = Math.floor(max)+1;
+ 	return Math.floor(Math.random() * (max - min)) + min;
+}
+
+exports.parseGameCSV = function(csvdata, num_dd) {
+	// parse data into 2d array
 	var arr = CSVToArray(csvdata, ',');
+	// randomize daily doubles
+	var dd = []
+	var num_q = arr[0].length*((arr.length-1)/2)-1;
+	range(0, num_dd).forEach(function(ignore) {
+		do {
+			var qid = randint(0, num_q-1);
+		} while (dd.indexOf(qid) != -1);
+		dd.push(qid);
+	});
 	var out = [];
 	range(0, arr[0].length).forEach(function(j) {
 		var title = arr[0][j];
@@ -20,7 +38,7 @@ exports.parseGameCSV = function(csvdata) {
 				question: arr[i*2+1][j],
 				answer: arr[i*2+2][j],
 				asked: false,
-				dailydouble: false // TODO
+				dailydouble: dd.indexOf(i+j*(arr.length-1)/2) != -1
 			}
 			questions.push(question);
 		});

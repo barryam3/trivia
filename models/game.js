@@ -1,6 +1,19 @@
 var mongoose = require('mongoose');
 var parseGameFiles = require('../utils/parseGameFiles');
 
+// returns 0 with probability .5
+//         1 w.p. .25
+//         2 w.p. .125
+//         ...
+//         limit with remaining probability
+var randomEarlyEnd = function(limit) {
+    var i = 0;
+    while (Math.random() < .5 && i < limit) {
+        i++;
+    } 
+    return i;
+}
+
 var gameSchema = mongoose.Schema({
     uid: {
         type: String,
@@ -18,31 +31,41 @@ var gameSchema = mongoose.Schema({
     	required: true
     },
     single: {
-        type: [{
-        	title: String,
-        	questions: [
-        		{
-        			question: String,
-        			answer: String,
-        			asked: Boolean,
-        			dailydouble: Boolean
-        		}
-        	]
-        }],
+        type: {
+            categories: [
+                {
+                	title: String,
+                	questions: [
+                		{
+                			question: String,
+                			answer: String,
+                			asked: Boolean,
+                			dailydouble: Boolean
+                		}
+                	]
+                }
+            ],
+            earlyend: Number
+        },
         required: true
     },
     double: {
-        type: [{
-        	title: String,
-        	questions: [
-        		{
-        			question: String,
-        			answer: String,
-        			asked: Boolean,
-        			dailydouble: Boolean
-        		}
-        	]
-        }],
+        type: {
+            categories: [
+                {
+                    title: String,
+                    questions: [
+                        {
+                            question: String,
+                            answer: String,
+                            asked: Boolean,
+                            dailydouble: Boolean
+                        }
+                    ]
+                }
+            ],
+            earlyend: Number
+        },
         required: true
     },
     final: {
@@ -79,8 +102,14 @@ gameSchema.statics.addGame = function(uid, contestants, singlecsv, doublecsv, fi
         uid: uid,
         round: 'single',
         contestants: parseGameFiles.parseContestantsCSV(contestants),
-        single: parseGameFiles.parseGameCSV(singlecsv),
-        double: parseGameFiles.parseGameCSV(doublecsv),
+        single: {
+            categories: parseGameFiles.parseGameCSV(singlecsv, 1),
+            earlyend: randomEarlyEnd(30) // TODO: actual num questions
+        },
+        double: {
+            categories: parseGameFiles.parseGameCSV(doublecsv, 2),
+            earlyend: randomEarlyEnd(30)
+        },
         final: parseGameFiles.parseFinalTXT(finaltxt),
         screen: 'board',
         shown: 0
@@ -102,7 +131,8 @@ gameSchema.statics.askQuestion = function(uid, qid, callback) {
             });
             return;
         }
-        var board = game.round == 'single' ? game.single : game.double;
+        var board = game.round == 'single' ? game.single.categories : game.double.categories;
+        var earlyend = game.round == 'single' ? game.single.earlyend : game.double.earlyend;
         // convert qid to two indexes
         var q_per_c = board[0].questions.length;
         var c = Math.floor(qid/q_per_c).toString(); // category
@@ -116,8 +146,9 @@ gameSchema.statics.askQuestion = function(uid, qid, callback) {
         }, 0);
         // build update
         var updateObj = {};
-        updateObj[game.round+"."+c+".questions."+v+".asked"] = true;
-        if (unasked_questions == 0) {
+        updateObj[game.round+".categories."+c+".questions."+v+".asked"] = true;
+        // next round if end condition reached
+        if (unasked_questions <= earlyend) {
             updateObj['round'] = game.round == 'single' ? 'double' : 'final';
         }
         that.update({uid : uid}, {$set : updateObj}, callback);
@@ -133,7 +164,7 @@ gameSchema.statics.updateScore = function(uid, key, diff, callback) {
 gameSchema.statics.updateScreen = function(uid, screen, callback) {
     var updateObj = {};
     updateObj['screen'] = screen;
-    updateObj['shown'] = -1;
+    updateObj['shown'] = 0;
     this.update({uid : uid}, {$set : updateObj}, callback);
 };
 

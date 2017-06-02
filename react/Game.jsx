@@ -17,15 +17,21 @@ class Game extends Component {
                 uid: '',
                 round: '',
                 contestants: [],
-                single: [],
-                double: [],
+                single: {
+                    categories: [],
+                    earlyend: 0
+                },
+                double: {
+                    categories: [],
+                    earlyend: 0
+                },
                 final: {
                     category: '',
                     question: '',
                     answer: ''
                 },
                 screen: '',
-                shown: -1
+                shown: null
             }, // all of the state
             board : [], // single vs double jeopardy
             question : {
@@ -73,10 +79,10 @@ class Game extends Component {
                 this.setState((prevState) => {
                     prevState.game = res.content;
                     if (res.content.round == 'single') {
-                        prevState.board = res.content.single;
+                        prevState.board = res.content.single.categories;
                     }
                     if (res.content.round == 'double') {
-                        prevState.board = res.content.double;
+                        prevState.board = res.content.double.categories;
                     }
                     if (res.content.round == 'final') {
                         prevState.question = res.content.final;
@@ -87,7 +93,7 @@ class Game extends Component {
             });
     }
 
-    render(){
+    render() {
         if (this.state.question.loaded && window.location.pathname.endsWith('board')) {
             window.location = 'question?q=final&master='+this.props.location.query.master;
         }
