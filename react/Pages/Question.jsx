@@ -100,7 +100,7 @@ class Question extends Component {
                         <div className='finalheader'>{this.props.location.query.q == 'final' ? 'Final Jeopardy' : 'Daily Double'}</div>
                     ) : (
                         <div>
-                            <div className='qheader'>{this.state.category}{this.props.location.query.q != 'final' ? ' -- $'+this.state.value : ''}</div>
+                            <div className='qheader'>{this.state.category}{this.props.location.query.q != 'final' ? ' -- $'+this.state.value*this.props.multiplier : ''}</div>
                             <div className='qtext'>
                                 { (this.state.shown >= (this.props.master ? 0 : 1)) && 
                                     <div style={{paddingBottom : '15px'}}>{this.state.question}</div>

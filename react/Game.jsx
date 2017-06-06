@@ -117,7 +117,7 @@ class Game extends Component {
                         round: this.state.round,
                         master: this.props.location.query.master,
                         shown: this.state.game.shown,
-                        multiplier: (this.state.round == 'double' ? 2 : 1) * kDollarMultiplier,
+                        multiplier: (this.state.game.round == 'double' ? 2 : 1) * kDollarMultiplier,
                         contestants: this.state.game.contestants
 	                })}
                 </div>
@@ -125,7 +125,7 @@ class Game extends Component {
                     services={this.props.services}
                     uid = {this.props.params.gameUID}
                     master = {this.props.location.query.master}
-                    multiplier = {(this.state.round == 'double' ? 2 : 1) * kDollarMultiplier}
+                    multiplier = {(this.state.game.round == 'double' ? 2 : 1) * kDollarMultiplier}
                     value = {value}
                     />
             </div>

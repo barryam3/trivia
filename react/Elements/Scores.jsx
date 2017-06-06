@@ -40,7 +40,7 @@ class Scores extends Component {
                                         {this.props.master &&
                                             <button className='scorebutton'
                                             style={{backgroundColor: 'red'}}
-                                            onClick={this.updateScore(key, -this.props.multiplier)}>
+                                            onClick={this.updateScore(key, -1)}>
                                                 -
                                             </button>
                                         }
@@ -52,7 +52,7 @@ class Scores extends Component {
                                         {this.props.master &&
                                             <button className='scorebutton'
                                             style={{backgroundColor: 'green'}}
-                                            onClick={this.updateScore(key, this.props.multiplier)}>
+                                            onClick={this.updateScore(key, 1)}>
                                                 +
                                             </button>
                                         }
@@ -64,7 +64,7 @@ class Scores extends Component {
                                             {this.props.master &&
                                                 <button className='scorebutton'
                                                 style={{backgroundColor: 'red'}}
-                                                onClick={this.updateScore(key, -this.props.value)}>
+                                                onClick={this.updateScore(key, -this.props.multiplier*this.props.value)}>
                                                     W
                                                 </button>
                                             }
@@ -78,7 +78,7 @@ class Scores extends Component {
                                             {this.props.master &&
                                                 <button className='scorebutton'
                                                 style={{backgroundColor: 'green'}}
-                                                onClick={this.updateScore(key, this.props.value)}>
+                                                onClick={this.updateScore(key, this.props.multiplier*this.props.value)}>
                                                     R
                                                 </button>
                                             }
