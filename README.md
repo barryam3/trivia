@@ -1,3 +1,62 @@
-Trivia
+# Trivia
 
 by Barry McNamara (bamazap@hotmail.com)
+
+## About
+This app is designed as a tool to play Jeopardy-style trivia games in real
+life. It displays questions and tracks scores, but it is not intended to be
+an online game in itself.
+
+## Dependencies
+* Node.js
+* MongoDB
+
+## Running the App 
+Once you have the dependencies installed...
+* clone the repo
+* start mongodb
+* `npm start`
+* app should be live at 127.0.0.1:3000
+
+## Using the App
+*Disclaimer: This app was created solely for personal use by its creator. Ease
+of use has occasionally been sacrificed in favor of ease of implementation,
+leading to some things being less intuitive than they would be if this app had
+been designed with distribution in mind. The app also may have bugs, like any
+application you download from the internet.*  
+
+1. Head to `127.0.0.1:3000/init` to create a game. Uid is a unique identifier
+for your game which will be used in the url. Contestant names is a list of names
+separated by commas. For the other three boxes, copy in the text from the files
+in the folder `q_and_a` (or pass in your own text in the same format--open the
+file in Excel and edit it).
+2. Load the pages `127.0.0.1:3000/game/{uid}/board?master=true` and
+   `127.0.0.1:3000/game/{uid}/board?master=false` replacing `{uid}` with the
+   uid you chose. The master page allows you to click between questions and
+   change the display. The slave page automatically updates based on the
+   actions taken in the master.
+
+## Fonts
+This app is intended to be used with the Korinna font. However, the font is not
+included as I do not have the right to distribute it. Backup fonts are defined
+in case you do not have the font. If you do, you can place the following files
+in public/fonts.
+* Korinna Bold Italic.ttf
+* Korinna Bold.ttf
+* Korinna Italic.ttf
+* Korinna Regular.ttf
+
+## Random Features
+This app automatically randomizes the locations of the daily doubles
+(universally at random, even though in the TV show the probability distribution
+isn't even). To simulate time, the game also randomly skips the last n questions
+asked in a round, with the probability of skipping n questions being roughly
+1/2^(n+1). This wouldn't be too hard to disable if you don't like it.
+
+## About the Questions
+Questions are included for demonstration purposes. These questions were written
+by myself (Barry McNamara) for a trivia game I ran with some friends using this
+app, which went rather well. They are fairly general and high-quality (if I do
+say so myself), but I make no guarantees that they are now or will remain
+accurate. Feel free to use this app and my questions for whatever you like,
+just credit me. If you have a good time, I'd love to hear about it.
