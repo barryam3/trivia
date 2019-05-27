@@ -10,14 +10,13 @@ class Scores extends Component {
     this.state = {
       contestants: this.props.contestants
     };
-    this.updateScore = this.updateScore.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({ contestants: nextProps.contestants });
   }
 
-  updateScore(key, diff) {
+  updateScore = (key, diff) => {
     return () => {
       this.setState(prevState => {
         prevState.contestants[key].score += diff;
@@ -25,7 +24,7 @@ class Scores extends Component {
       });
       Services.games.updateScore(this.props.uid, key, diff);
     };
-  }
+  };
 
   render() {
     return (

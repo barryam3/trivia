@@ -41,27 +41,25 @@ class Game extends Component {
       }, // for final jeopardy
       lastScreen: ''
     };
-    this.tryUntil = this.tryUntil.bind(this);
-    this.checkForUpdates = this.checkForUpdates.bind(this);
   }
 
   // repeatedly try function f every ddt msec for dt msec
-  tryUntil(f, dt, ddt) {
+  tryUntil = (f, dt, ddt) => {
     f();
     if (dt > 0) {
       setTimeout(() => this.tryUntil(f, dt - ddt, ddt), ddt);
     }
-  }
+  };
 
   // for slave: check for updates to screen state to see if page must be reloaded
-  checkForUpdates() {
+  checkForUpdates = () => {
     this.props.services.games.getGame(this.props.params.gameUID).then(res => {
       if (!window.location.href.endsWith(res.content.screen)) {
         window.location = res.content.screen;
       }
       this.setState({ game: res.content });
     });
-  }
+  };
 
   componentWillMount() {
     this.loadGame(this.props.params.gameUID);

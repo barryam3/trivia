@@ -15,8 +15,6 @@ class Question extends Component {
       answer: '',
       shown: 0
     };
-    this.goToNext = this.goToNext.bind(this);
-    this.updateQuestionState = this.updateQuestionState.bind(this);
   }
 
   componentWillMount() {
@@ -35,7 +33,7 @@ class Question extends Component {
     }
   }
 
-  updateQuestionState(props) {
+  updateQuestionState = props => {
     const query = new URLSearchParams(this.props.location.search);
     const q = query.get('q');
     if (props.board.length > 0 && q !== 'final') {
@@ -68,10 +66,10 @@ class Question extends Component {
         shown
       });
     }
-  }
+  };
 
   // only called by master
-  goToNext() {
+  goToNext = () => {
     const query = new URLSearchParams(this.props.location.search);
     const q = query.get('q');
     // mark the question as asked once we reveal it
@@ -93,7 +91,7 @@ class Question extends Component {
     } else {
       window.location = `board?master=${this.props.master}`;
     }
-  }
+  };
 
   render() {
     const query = new URLSearchParams(this.props.location.search);
