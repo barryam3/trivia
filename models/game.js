@@ -133,9 +133,8 @@ gameSchema.statics.getGame = function getGame(uid, callback) {
 };
 
 gameSchema.statics.askQuestion = function askQuestion(uid, qid, callback) {
-  const that = this;
   // get the game so we can figure out what round we are in
-  that.findOne({ uid }, (err, game) => {
+  this.findOne({ uid }, (err, game) => {
     if (err) {
       callback({
         msg: 'Game does not exist'
@@ -163,7 +162,7 @@ gameSchema.statics.askQuestion = function askQuestion(uid, qid, callback) {
     if (unaskedQuestions <= earlyend) {
       updateObj.round = game.round === 'single' ? 'double' : 'final';
     }
-    that.updateOne({ uid }, { $set: updateObj }, callback);
+    this.updateOne({ uid }, { $set: updateObj }, callback);
   });
 };
 
