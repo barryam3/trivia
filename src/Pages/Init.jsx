@@ -4,16 +4,13 @@ import { withRouter } from 'react-router';
 import Services from '../services';
 
 class Init extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      uid: '',
-      contestants: '',
-      singlecsv: '',
-      doublecsv: '',
-      finaltxt: ''
-    };
-  }
+  state = {
+    uid: '',
+    contestants: '',
+    singlecsv: '',
+    doublecsv: '',
+    finaltxt: ''
+  };
 
   handleChange = event => {
     this.setState({

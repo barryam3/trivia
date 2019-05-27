@@ -6,16 +6,13 @@ import FitText from '@kennethormandy/react-fittext';
 import Services from '../services';
 
 class Question extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      category: '',
-      value: '',
-      question: '',
-      answer: '',
-      shown: 0
-    };
-  }
+  state = {
+    category: '',
+    value: '',
+    question: '',
+    answer: '',
+    shown: 0
+  };
 
   componentWillMount() {
     const query = new URLSearchParams(this.props.location.search);

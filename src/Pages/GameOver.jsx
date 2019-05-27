@@ -5,11 +5,6 @@ import { withRouter } from 'react-router';
 import Services from '../services';
 
 class GameOver extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
   componentWillMount() {
     if (this.props.master) {
       Services.games.updateScreen(this.props.params.gameUID, 'gameover');

@@ -9,39 +9,36 @@ import Scores from './Elements/Scores.jsx';
 const kDollarMultiplier = 1;
 
 class Game extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      game: {
-        uid: '',
-        round: '',
-        contestants: [],
-        single: {
-          categories: [],
-          earlyend: 0
-        },
-        double: {
-          categories: [],
-          earlyend: 0
-        },
-        final: {
-          category: '',
-          question: '',
-          answer: ''
-        },
-        screen: '',
-        shown: null
-      }, // all of the state
-      board: [], // single vs double jeopardy
-      question: {
+  state = {
+    game: {
+      uid: '',
+      round: '',
+      contestants: [],
+      single: {
+        categories: [],
+        earlyend: 0
+      },
+      double: {
+        categories: [],
+        earlyend: 0
+      },
+      final: {
         category: '',
         question: '',
-        answer: '',
-        loaded: false
-      }, // for final jeopardy
-      lastScreen: ''
-    };
-  }
+        answer: ''
+      },
+      screen: '',
+      shown: null
+    }, // all of the state
+    board: [], // single vs double jeopardy
+    question: {
+      category: '',
+      question: '',
+      answer: '',
+      loaded: false
+    }, // for final jeopardy
+    lastScreen: ''
+  };
 
   // repeatedly try function f every ddt msec for dt msec
   tryUntil = (f, dt, ddt) => {

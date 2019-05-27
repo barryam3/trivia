@@ -15,11 +15,6 @@ function range(start, stop) {
 }
 
 class Board extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
   componentWillMount() {
     const { master, params } = this.props;
     if (master) {

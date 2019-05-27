@@ -5,12 +5,9 @@ import { withRouter } from 'react-router';
 import Services from '../services';
 
 class Scores extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      contestants: this.props.contestants
-    };
-  }
+  state = {
+    contestants: this.props.contestants
+  };
 
   componentWillReceiveProps(nextProps) {
     this.setState({ contestants: nextProps.contestants });
