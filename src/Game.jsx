@@ -104,9 +104,9 @@ class Game extends Component {
     }
     let value;
     if (this.props.location.query.q != null && this.state.board.length > 0) {
-      var qid = this.props.location.query.q;
-      var q_per_c = this.state.board[0].questions.length;
-      value = (qid % q_per_c) + 1; // value
+      const qID = this.props.location.query.q;
+      const qPerC = this.state.board[0].questions.length;
+      value = (qID % qPerC) + 1; // value
     } else {
       value = null;
     }
