@@ -5,11 +5,8 @@ import Game from './Game.jsx';
 import Board from './Pages/Board.jsx';
 import Question from './Pages/Question.jsx';
 import GameOver from './Pages/GameOver.jsx';
-import services from '../services';
 import React from 'react';
 import {Router, Route, IndexRoute, browserHistory, Redirect} from 'react-router';
-
-import {Component} from 'react';
 
 function redirectTo(to) {
 	function replacePath(nextState, replace) {
@@ -31,7 +28,7 @@ export default (
                 <Route path='question' component={Question} />
                 <Route path='gameover' component={GameOver} />
                 <IndexRoute component={Board} render={() => (
-                    <Redirect to="board"/>
+                    <Redirect to='board'/>
                 )}/>
             </Route>
         </Route>

@@ -29,7 +29,7 @@ var utils = (function() {
   _utils.sendSuccessResponse = function(res, content) {
     res.status(200).json({
       success: true,
-      content: content
+      content: content || {}
     }).end();
   };
 

@@ -50,7 +50,7 @@ class Game extends Component {
     tryUntil(f, dt, ddt) {
         f();
         if (dt > 0) {
-            setTimeout(function() { tryUntil(f, dt-ddt, ddt); }, ddt);
+            setTimeout(() => this.tryUntil(f, dt-ddt, ddt), ddt);
         }
     }
 

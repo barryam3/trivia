@@ -2,6 +2,8 @@ import React from 'react';
 import { Component } from 'react';
 import { withRouter } from 'react-router';
 
+import Services from '../services';
+
 class Scores extends Component {
     constructor(props) {
         super(props);
@@ -13,12 +15,11 @@ class Scores extends Component {
 
     updateScore(key, diff) {
         return () => {
-            console.log(this.state);
             this.setState((prevState) => {
                 prevState.contestants[key].score += diff;
                 return prevState;
             });
-            this.props.services.games.updateScore(this.props.uid, key, diff);
+            Services.games.updateScore(this.props.uid, key, diff);
         }
     }
 
@@ -31,7 +32,7 @@ class Scores extends Component {
             <table id='scores'>
                 <tbody>
                     <tr>
-                    {this.state.contestants.map((c, key) => (
+                    {(this.state.contestants || []).map((c, key) => (
                         <td key={key}>
                             <table className='scorecol'>
                                 <tbody>

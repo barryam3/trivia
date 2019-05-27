@@ -151,27 +151,27 @@ gameSchema.statics.askQuestion = function(uid, qid, callback) {
         if (unasked_questions <= earlyend) {
             updateObj['round'] = game.round == 'single' ? 'double' : 'final';
         }
-        that.update({uid : uid}, {$set : updateObj}, callback);
+        that.updateOne({uid : uid}, {$set : updateObj}, callback);
     });
 };
 
 gameSchema.statics.updateScore = function(uid, key, diff, callback) {
     var updateObj = {};
     updateObj['contestants.'+key.toString()+'.score'] = diff;
-    this.update({uid : uid}, {$inc : updateObj}, callback);
+    this.updateOne({uid : uid}, {$inc : updateObj}, callback);
 };
 
 gameSchema.statics.updateScreen = function(uid, screen, callback) {
     var updateObj = {};
     updateObj['screen'] = screen;
     updateObj['shown'] = 0;
-    this.update({uid : uid}, {$set : updateObj}, callback);
+    this.updateOne({uid : uid}, {$set : updateObj}, callback);
 };
 
 gameSchema.statics.updateShown = function(uid, shown, callback) {
     var updateObj = {};
     updateObj['shown'] = shown;
-    this.update({uid : uid}, {$set : updateObj}, callback);
+    this.updateOne({uid : uid}, {$set : updateObj}, callback);
 };
 
 module.exports = mongoose.model('Game', gameSchema);

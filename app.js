@@ -2,8 +2,6 @@ var express = require('express');
 var mongoose = require('mongoose');
 var path = require('path');
 var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var webpackDevHelper = require('./hotReload.js');
 
 // Require routes
 var games = require('./routes/games');
@@ -12,33 +10,25 @@ var games = require('./routes/games');
 
 // Mongoose for MongoDB
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://127.0.0.1:27017/trivia');
+mongoose.connect('mongodb://localhost/trivia', { useNewUrlParser: true });
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 
 // Express
 var app = express();
-// Set up webpack-hot-middleware for development, express-static for production
-if (process.env.NODE_ENV !== 'production') {
-    console.log("DEVELOPMENT: Turning on WebPack middleware...");
-    app = webpackDevHelper.useWebpackMiddleware(app);
-} else {
-    console.log("PRODUCTION: Serving static files from /public...");
-    app.use(express.static(path.join(__dirname, 'public')));
-}
-app.use('/css', express.static(path.join(__dirname, 'public/css')));
-app.use('/fonts', express.static(path.join(__dirname, 'public/fonts')));
-app.use('/js', express.static(path.join(__dirname, 'public/js')));
-app.use('/vendor', express.static(path.join(__dirname, 'public/vendor')));
 
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Serve static files
+const publicDir = path.join(__dirname, 'build');
+app.use(express.static(publicDir));
+
 // Set up routes
-app.use('/games', games);
+app.use('/api/games', games);
 app.get('*', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
+    res.sendFile(path.join(publicDir, 'index.html'));
 });
 
 module.exports = app;

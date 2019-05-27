@@ -1,3 +1,5 @@
+/* global $ */
+
 // make board text fit in board
 var resizeBoard = function() {
 	$('.ctitle.boardcell').textfill();

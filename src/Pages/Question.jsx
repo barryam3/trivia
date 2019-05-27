@@ -2,6 +2,8 @@ import { Component } from 'react';
 import React from 'react';
 import { withRouter } from 'react-router';
 
+import Services from '../services';
+
 class Question extends Component {
     constructor(props) {
         super(props);
@@ -25,21 +27,25 @@ class Question extends Component {
     }
 
     componentWillMount() {
+        const query = new URLSearchParams(this.props.location.search);
+        const q = query.get('q');
         if (this.props.master) {
-            var str = 'question?q=' + this.props.location.query.q;
-            this.props.services.games.updateScreen(this.props.params.gameUID, str);
+            var str = 'question?q=' + q;
+            Services.games.updateScreen(this.props.params.gameUID, str);
         }
     }
 
     updateQuestionState(props) {
-        if (props.board.length > 0 && props.location.query.q != 'final') {
-            var qid = props.location.query.q;
+        const query = new URLSearchParams(this.props.location.search);
+        const q = query.get('q');
+        if (props.board.length > 0 && q != 'final') {
+            var qid = q;
             var q_per_c = props.board[0].questions.length;
             var c = Math.floor(qid/q_per_c); // category
             var v  = qid % q_per_c; // value - 1
             var shown = props.shown;
             if (props.board[c].questions[v].dailydouble && props.master) {
-                props.services.games.updateShown(props.params.gameUID, -1);
+                Services.games.updateShown(props.params.gameUID, -1);
                 shown = -1;
             }
             this.setState({
@@ -50,10 +56,10 @@ class Question extends Component {
                 dailydouble: props.board[c].questions[v].dailydouble,
                 shown: shown
             });
-        } else if (props.location.query.q == 'final') {
+        } else if (q == 'final') {
             var shown = props.shown;
             if (props.master) {
-                props.services.games.updateShown(props.params.gameUID, -1);
+                Services.games.updateShown(props.params.gameUID, -1);
                 shown = -1;
             }
             this.setState({
@@ -67,18 +73,20 @@ class Question extends Component {
 
     // only called by master
     goToNext() {
+        const query = new URLSearchParams(this.props.location.search);
+        const q = query.get('q');
         // mark the question as asked once we reveal it
-        if (this.state.shown == '0' && this.props.location.query.q != 'final') {
-            this.props.services.games.askQuestion(this.props.params.gameUID, this.props.location.query.q);
+        if (this.state.shown == '0' && q != 'final') {
+            Services.games.askQuestion(this.props.params.gameUID, q);
         }
         // update display state
         if (this.state.shown < 2) {
-            this.props.services.games.updateShown(this.props.params.gameUID, this.state.shown+1);
+            Services.games.updateShown(this.props.params.gameUID, this.state.shown+1);
             this.setState((prevState) => {
                 prevState.shown = this.state.shown + 1;
             });
         // switch page on final click
-        } else if (this.props.location.query.q == 'final') {
+        } else if (q == 'final') {
             window.location = 'gameover?master='+this.props.master;
         } else {
             window.location = 'board?master='+this.props.master;
@@ -86,6 +94,8 @@ class Question extends Component {
     }
 
     render() {
+        const query = new URLSearchParams(this.props.location.search);
+        const q = query.get('q');
         var shownText = [
             'Show Question',
             'Show Answer',
@@ -97,10 +107,10 @@ class Question extends Component {
             <main>
                 {
                     (this.state.shown == -1) ? (
-                        <div className='finalheader'>{this.props.location.query.q == 'final' ? 'Final Jeopardy' : 'Daily Double'}</div>
+                        <div className='finalheader'>{q == 'final' ? 'Final Jeopardy' : 'Daily Double'}</div>
                     ) : (
                         <div>
-                            <div className='qheader'>{this.state.category}{this.props.location.query.q != 'final' ? ' -- $'+this.state.value*this.props.multiplier : ''}</div>
+                            <div className='qheader'>{this.state.category}{q != 'final' ? ' -- $'+this.state.value*this.props.multiplier : ''}</div>
                             <div className='qtext'>
                                 { (this.state.shown >= (this.props.master ? 0 : 1)) && 
                                     <div style={{paddingBottom : '15px'}}>{this.state.question}</div>

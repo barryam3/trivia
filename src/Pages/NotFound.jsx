@@ -3,11 +3,6 @@ import React from 'react';
 import { withRouter } from 'react-router';
 
 class NotFound extends Component {
-    constructor(props){
-        super(props);
-    }
-
-
     render(){
         return (
             <div className='container'>

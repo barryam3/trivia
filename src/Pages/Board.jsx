@@ -2,6 +2,8 @@ import { Component } from 'react';
 import React from 'react';
 import { withRouter } from 'react-router';
 
+import Services from '../services';
+
 var range = function(start, stop) {
     var arr = []
     var i;
@@ -20,7 +22,7 @@ class Board extends Component {
 
     componentWillMount() {
         if (this.props.master) {
-            this.props.services.games.updateScreen(this.props.params.gameUID, 'board');
+            Services.games.updateScreen(this.props.params.gameUID, 'board');
         }
     }
 
