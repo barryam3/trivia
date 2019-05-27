@@ -1,39 +1,40 @@
-var express = require('express');
-var router = express.Router();
-var Game = require('../models/game');
-var utils = require('../utils/utils');
+const express = require('express');
+
+const router = express.Router();
+const Game = require('../models/game');
+const utils = require('../utils/utils');
 
 // Create game
 // POST /games
-router.post('/', function(req, res) {
-  var uid = req.body.uid;
-  var contestants = req.body.contestants;
-  var singlecsv = req.body.singlecsv;
-  var doublecsv = req.body.doublecsv;
-  var finaltxt = req.body.finaltxt;
+router.post('/', (req, res) => {
+  const { uid, contestants, singlecsv, doublecsv, finaltxt } = req.body;
 
-  Game.addGame(uid, contestants, singlecsv, doublecsv, finaltxt, function(
-    err,
-    game
-  ) {
-    if (err) {
-      if (err.msg) {
-        utils.sendErrorResponse(res, 400, err.msg);
+  Game.addGame(
+    uid,
+    contestants,
+    singlecsv,
+    doublecsv,
+    finaltxt,
+    (err, game) => {
+      if (err) {
+        if (err.msg) {
+          utils.sendErrorResponse(res, 400, err.msg);
+        } else {
+          utils.sendErrorResponse(res, 500, 'An unknown error has occurred.');
+        }
       } else {
-        utils.sendErrorResponse(res, 500, 'An unknown error has occurred.');
+        utils.sendSuccessResponse(res, { uid: game.uid });
       }
-    } else {
-      utils.sendSuccessResponse(res, { uid: game.uid });
     }
-  });
+  );
 });
 
 // Get game
 // GET /games/:uid
-router.get('/:uid', function(req, res) {
-  var uid = req.params.uid;
+router.get('/:uid', (req, res) => {
+  const { uid } = req.params;
 
-  Game.getGame(uid, function(err, game) {
+  Game.getGame(uid, (err, game) => {
     if (err) {
       if (err.msg) {
         utils.sendErrorResponse(res, 404, err.msg);
@@ -49,11 +50,11 @@ router.get('/:uid', function(req, res) {
 // Ask Question
 // PUT /games/:uid/questions
 // body: qid
-router.put('/:uid/questions', function(req, res) {
-  var uid = req.params.uid;
-  var qid = req.body.qid;
+router.put('/:uid/questions', (req, res) => {
+  const { uid } = req.params;
+  const { qid } = req.body;
 
-  Game.askQuestion(uid, qid, function(err, game) {
+  Game.askQuestion(uid, qid, (err, game) => {
     if (err) {
       if (err.msg) {
         utils.sendErrorResponse(res, 404, err.msg);
@@ -69,12 +70,11 @@ router.put('/:uid/questions', function(req, res) {
 // Update Scores
 // PUT /games/:uid/scores
 // body: key, diff
-router.put('/:uid/scores', function(req, res) {
-  var uid = req.params.uid;
-  var key = req.body.key;
-  var diff = req.body.diff;
+router.put('/:uid/scores', (req, res) => {
+  const { uid } = req.params;
+  const { key, diff } = req.body;
 
-  Game.updateScore(uid, key, diff, function(err, game) {
+  Game.updateScore(uid, key, diff, (err, game) => {
     if (err) {
       if (err.msg) {
         utils.sendErrorResponse(res, 404, err.msg);
@@ -90,11 +90,11 @@ router.put('/:uid/scores', function(req, res) {
 // Update Screen
 // PUT /games/:uid/screen
 // body: screen
-router.put('/:uid/screen', function(req, res) {
-  var uid = req.params.uid;
-  var screen = req.body.screen;
+router.put('/:uid/screen', (req, res) => {
+  const { uid } = req.params;
+  const { screen } = req.body;
 
-  Game.updateScreen(uid, screen, function(err, game) {
+  Game.updateScreen(uid, screen, (err, game) => {
     if (err) {
       if (err.msg) {
         utils.sendErrorResponse(res, 404, err.msg);
@@ -110,11 +110,11 @@ router.put('/:uid/screen', function(req, res) {
 // Update Scores
 // PUT /games/:uid/shown
 // body: shown
-router.put('/:uid/shown', function(req, res) {
-  var uid = req.params.uid;
-  var shown = req.body.shown;
+router.put('/:uid/shown', (req, res) => {
+  const { uid } = req.params;
+  const { shown } = req.body;
 
-  Game.updateShown(uid, shown, function(err, game) {
+  Game.updateShown(uid, shown, (err, game) => {
     if (err) {
       if (err.msg) {
         utils.sendErrorResponse(res, 404, err.msg);

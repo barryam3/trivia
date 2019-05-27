@@ -1,73 +1,73 @@
-var CSVToArray = require('./csv_to_array').CSVToArray;
+const { CSVToArray } = require('./csv_to_array');
 
 // return an array of integers in range [start, stop)
-var range = function(start, stop) {
-  var arr = [];
-  var i;
-  for (i = 0; i < stop; i++) {
+function range(start, stop) {
+  const arr = [];
+  for (let i = 0; i < stop; i += 1) {
     arr.push(i);
   }
   return arr;
-};
+}
 
 // return a random integer in the range [min, max]
-var randint = function(min, max) {
+function randint(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max) + 1;
   return Math.floor(Math.random() * (max - min)) + min;
-};
+}
 
-exports.parseGameCSV = function(csvdata, num_dd) {
+exports.parseGameCSV = (csvdata, numDD) => {
   // parse data into 2d array
-  var arr = CSVToArray(csvdata, ',');
+  const arr = CSVToArray(csvdata, ',');
   // randomize daily doubles
-  var dd = [];
-  var num_q = arr[0].length * ((arr.length - 1) / 2) - 1;
-  range(0, num_dd).forEach(function(ignore) {
+  const dd = [];
+  const numQ = arr[0].length * ((arr.length - 1) / 2) - 1;
+  range(0, numDD).forEach(() => {
+    let qid;
     do {
-      var qid = randint(0, num_q - 1);
-    } while (dd.indexOf(qid) != -1);
+      qid = randint(0, numQ - 1);
+    } while (dd.indexOf(qid) !== -1);
     dd.push(qid);
   });
-  var out = [];
-  range(0, arr[0].length).forEach(function(j) {
-    var title = arr[0][j];
-    var questions = [];
-    range(0, (arr.length - 1) / 2).forEach(function(i) {
-      var question = {
+  const out = [];
+  range(0, arr[0].length).forEach(j => {
+    const title = arr[0][j];
+    const questions = [];
+    range(0, (arr.length - 1) / 2).forEach(i => {
+      const question = {
         question: arr[i * 2 + 1][j],
         answer: arr[i * 2 + 2][j],
         asked: false,
-        dailydouble: dd.indexOf(i + (j * (arr.length - 1)) / 2) != -1
+        dailydouble: dd.indexOf(i + (j * (arr.length - 1)) / 2) !== -1
       };
       questions.push(question);
     });
-    var category = {
-      title: title,
-      questions: questions
+    const category = {
+      title,
+      questions
     };
     out.push(category);
   });
-  out.forEach(function(category) {
-    category.questions.forEach(function(question) {});
+  out.forEach(category => {
+    category.questions.forEach(() => {});
   });
   return out;
 };
 
-exports.parseContestantsCSV = function(csvdata) {
-  var arr = CSVToArray(csvdata, ','); // split the single line on the commas
-  return arr[0].map(function(name) {
-    var contestant = {
-      name: name,
+exports.parseContestantsCSV = csvdata => {
+  const arr = CSVToArray(csvdata, ','); // split the single line on the commas
+  return arr[0].map(name => {
+    const contestant = {
+      name,
       score: 0
     };
     return contestant;
   });
 };
 
-exports.parseFinalTXT = function(txtdata) {
-  var arr = CSVToArray(txtdata, ','); // using to split by line
-  var final = {
+exports.parseFinalTXT = txtdata => {
+  const arr = CSVToArray(txtdata, ','); // using to split by line
+  const final = {
     category: arr[0][0],
     question: arr[1][0],
     answer: arr[2][0]

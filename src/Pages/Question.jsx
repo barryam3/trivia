@@ -1,5 +1,5 @@
-import { Component } from 'react';
-import React from 'react';
+import React, { Component } from 'react';
+
 import { withRouter } from 'react-router';
 import FitText from '@kennethormandy/react-fittext';
 
@@ -13,11 +13,19 @@ class Question extends Component {
       value: '',
       question: '',
       answer: '',
-      dailydouble: false,
       shown: 0
     };
     this.goToNext = this.goToNext.bind(this);
     this.updateQuestionState = this.updateQuestionState.bind(this);
+  }
+
+  componentWillMount() {
+    const query = new URLSearchParams(this.props.location.search);
+    const q = query.get('q');
+    if (this.props.master) {
+      const str = `question?q=${q}`;
+      Services.games.updateScreen(this.props.params.gameUID, str);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -27,24 +35,15 @@ class Question extends Component {
     }
   }
 
-  componentWillMount() {
-    const query = new URLSearchParams(this.props.location.search);
-    const q = query.get('q');
-    if (this.props.master) {
-      var str = 'question?q=' + q;
-      Services.games.updateScreen(this.props.params.gameUID, str);
-    }
-  }
-
   updateQuestionState(props) {
     const query = new URLSearchParams(this.props.location.search);
     const q = query.get('q');
     if (props.board.length > 0 && q !== 'final') {
-      var qid = q;
-      var q_per_c = props.board[0].questions.length;
-      var c = Math.floor(qid / q_per_c); // category
-      var v = qid % q_per_c; // value - 1
-      let shown = props.shown;
+      const qid = q;
+      const qPerC = props.board[0].questions.length;
+      const c = Math.floor(qid / qPerC); // category
+      const v = qid % qPerC; // value - 1
+      let { shown } = props;
       if (props.board[c].questions[v].dailydouble && props.master) {
         Services.games.updateShown(props.params.gameUID, -1);
         shown = -1;
@@ -54,11 +53,10 @@ class Question extends Component {
         value: v + 1,
         question: props.board[c].questions[v].question,
         answer: props.board[c].questions[v].answer,
-        dailydouble: props.board[c].questions[v].dailydouble,
-        shown: shown
+        shown
       });
     } else if (q === 'final') {
-      let shown = props.shown;
+      let { shown } = props;
       if (props.master) {
         Services.games.updateShown(props.params.gameUID, -1);
         shown = -1;
@@ -67,7 +65,7 @@ class Question extends Component {
         category: props.final.category,
         question: props.final.question,
         answer: props.final.answer,
-        shown: shown
+        shown
       });
     }
   }
@@ -91,16 +89,16 @@ class Question extends Component {
       }));
       // switch page on final click
     } else if (q === 'final') {
-      window.location = 'gameover?master=' + this.props.master;
+      window.location = `gameover?master=${this.props.master}`;
     } else {
-      window.location = 'board?master=' + this.props.master;
+      window.location = `board?master=${this.props.master}`;
     }
   }
 
   render() {
     const query = new URLSearchParams(this.props.location.search);
     const q = query.get('q');
-    var shownText = [
+    const shownText = [
       'Show Question',
       'Show Answer',
       this.props.final.loaded ? 'Finish Game' : 'Return to Board'
@@ -117,7 +115,7 @@ class Question extends Component {
             <div className="qheader">
               {this.state.category}
               {q !== 'final'
-                ? ' -- $' + this.state.value * this.props.multiplier
+                ? ` -- $${this.state.value * this.props.multiplier}`
                 : ''}
             </div>
             <div className="qtext">
@@ -135,7 +133,7 @@ class Question extends Component {
           </div>
         )}
         {this.props.master && (
-          <button id="nextbutton" onClick={this.goToNext}>
+          <button id="nextbutton" onClick={this.goToNext} type="button">
             {this.state.shown < 0
               ? 'Show Category'
               : shownText[this.state.shown]}

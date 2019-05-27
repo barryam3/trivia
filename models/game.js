@@ -1,20 +1,20 @@
-var mongoose = require('mongoose');
-var parseGameFiles = require('../utils/parseGameFiles');
+const mongoose = require('mongoose');
+const parseGameFiles = require('../utils/parseGameFiles');
 
 // returns 0 with probability .5
 //         1 w.p. .25
 //         2 w.p. .125
 //         ...
 //         limit with remaining probability
-var randomEarlyEnd = function(limit) {
-  var i = 0;
+function randomEarlyEnd(limit) {
+  let i = 0;
   while (Math.random() < 0.5 && i < limit) {
-    i++;
+    i += 1;
   }
   return i;
-};
+}
 
-var gameSchema = mongoose.Schema({
+const gameSchema = mongoose.Schema({
   uid: {
     type: String,
     required: true
@@ -88,11 +88,14 @@ var gameSchema = mongoose.Schema({
   }
 });
 
-gameSchema.path('contestants').validate(function(value) {
-  return value.length >= 2;
-}, 'Game needs to have at least two contestants');
+gameSchema
+  .path('contestants')
+  .validate(
+    value => value.length >= 2,
+    'Game needs to have at least two contestants'
+  );
 
-gameSchema.statics.addGame = function(
+gameSchema.statics.addGame = function addGame(
   uid,
   contestants,
   singlecsv,
@@ -106,8 +109,8 @@ gameSchema.statics.addGame = function(
     });
     return;
   }
-  var obj = {
-    uid: uid,
+  const obj = {
+    uid,
     round: 'single',
     contestants: parseGameFiles.parseContestantsCSV(contestants),
     single: {
@@ -125,68 +128,67 @@ gameSchema.statics.addGame = function(
   this.create(obj, callback);
 };
 
-gameSchema.statics.getGame = function(uid, callback) {
-  this.findOne({ uid: uid }, callback);
+gameSchema.statics.getGame = function getGame(uid, callback) {
+  this.findOne({ uid }, callback);
 };
 
-gameSchema.statics.askQuestion = function(uid, qid, callback) {
-  var that = this;
+gameSchema.statics.askQuestion = function askQuestion(uid, qid, callback) {
+  const that = this;
   // get the game so we can figure out what round we are in
-  that.findOne({ uid: uid }, function(err, game) {
+  that.findOne({ uid }, (err, game) => {
     if (err) {
       callback({
         msg: 'Game does not exist'
       });
       return;
     }
-    var board =
-      game.round == 'single' ? game.single.categories : game.double.categories;
-    var earlyend =
-      game.round == 'single' ? game.single.earlyend : game.double.earlyend;
+    const board =
+      game.round === 'single' ? game.single.categories : game.double.categories;
+    const earlyend =
+      game.round === 'single' ? game.single.earlyend : game.double.earlyend;
     // convert qid to two indexes
-    var q_per_c = board[0].questions.length;
-    var c = Math.floor(qid / q_per_c).toString(); // category
-    var v = (qid % q_per_c).toString(); // value - 1
+    const qPerC = board[0].questions.length;
+    const cNum = Math.floor(qid / qPerC).toString(); // category
+    const v = (qid % qPerC).toString(); // value - 1
     // count number of unasked questions
-    board[c].questions[v].asked = true; // set this one to asked since it might not be
-    var unasked_questions = board.reduce(function(t1, c) {
-      return (
-        t1 +
-        c.questions.reduce(function(t2, q) {
-          return t2 + (q.asked ? 0 : 1);
-        }, 0)
-      );
-    }, 0);
+    board[cNum].questions[v].asked = true; // set this one to asked since it might not be
+    const unaskedQuestions = board.reduce(
+      (t1, c) => t1 + c.questions.reduce((t2, q) => t2 + (q.asked ? 0 : 1), 0),
+      0
+    );
     // build update
-    var updateObj = {};
-    updateObj[
-      game.round + '.categories.' + c + '.questions.' + v + '.asked'
-    ] = true;
+    const updateObj = {};
+    updateObj[`${game.round}.categories.${cNum}.questions.${v}.asked`] = true;
     // next round if end condition reached
-    if (unasked_questions <= earlyend) {
-      updateObj['round'] = game.round == 'single' ? 'double' : 'final';
+    if (unaskedQuestions <= earlyend) {
+      updateObj.round = game.round === 'single' ? 'double' : 'final';
     }
-    that.updateOne({ uid: uid }, { $set: updateObj }, callback);
+    that.updateOne({ uid }, { $set: updateObj }, callback);
   });
 };
 
-gameSchema.statics.updateScore = function(uid, key, diff, callback) {
-  var updateObj = {};
-  updateObj['contestants.' + key.toString() + '.score'] = diff;
-  this.updateOne({ uid: uid }, { $inc: updateObj }, callback);
+gameSchema.statics.updateScore = function updateScore(
+  uid,
+  key,
+  diff,
+  callback
+) {
+  const updateObj = {};
+  updateObj[`contestants.${key.toString()}.score`] = diff;
+  this.updateOne({ uid }, { $inc: updateObj }, callback);
 };
 
-gameSchema.statics.updateScreen = function(uid, screen, callback) {
-  var updateObj = {};
-  updateObj['screen'] = screen;
-  updateObj['shown'] = 0;
-  this.updateOne({ uid: uid }, { $set: updateObj }, callback);
+gameSchema.statics.updateScreen = function updateScreen(uid, screen, callback) {
+  const updateObj = {};
+  updateObj.screen = screen;
+  updateObj.shown = 0;
+  this.updateOne({ uid }, { $set: updateObj }, callback);
 };
 
-gameSchema.statics.updateShown = function(uid, shown, callback) {
-  var updateObj = {};
-  updateObj['shown'] = shown;
-  this.updateOne({ uid: uid }, { $set: updateObj }, callback);
+gameSchema.statics.updateShown = function updateShown(uid, shown, callback) {
+  const updateObj = {};
+  updateObj.shown = shown;
+  this.updateOne({ uid }, { $set: updateObj }, callback);
 };
 
 module.exports = mongoose.model('Game', gameSchema);

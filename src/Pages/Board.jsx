@@ -1,18 +1,18 @@
-import { Component } from 'react';
-import React from 'react';
+import React, { Component } from 'react';
+
 import { withRouter } from 'react-router';
 import FitText from '@kennethormandy/react-fittext';
 
 import Services from '../services';
 
-var range = function(start, stop) {
-  var arr = [];
-  var i;
-  for (i = 0; i < stop; i++) {
+function range(start, stop) {
+  const arr = [];
+  let i;
+  for (i = 0; i < stop; i += 1) {
     arr.push(i);
   }
   return arr;
-};
+}
 
 class Board extends Component {
   constructor(props) {
@@ -21,15 +21,18 @@ class Board extends Component {
   }
 
   componentWillMount() {
-    if (this.props.master) {
-      Services.games.updateScreen(this.props.params.gameUID, 'board');
+    const { master, params } = this.props;
+    if (master) {
+      Services.games.updateScreen(params.gameUID, 'board');
     }
   }
 
   render() {
+    let numC;
+    let qPerC;
     if (this.props.board.length > 0) {
-      var num_c = this.props.board.length;
-      var q_per_c = this.props.board[0].questions.length;
+      numC = this.props.board.length;
+      qPerC = this.props.board[0].questions.length;
     }
 
     return this.props.board.length > 0 ? (
@@ -45,20 +48,17 @@ class Board extends Component {
                 </th>
               ))}
             </tr>
-            {range(0, q_per_c).map(vkey => (
+            {range(0, qPerC).map(vkey => (
               <tr key={vkey} className="qrow">
-                {range(0, num_c).map(ckey => (
+                {range(0, numC).map(ckey => (
                   <td key={ckey} className="boardcell qvalue">
                     {!this.props.board[ckey].questions[vkey].asked && (
                       <FitText compressor={0.5}>
                         {this.props.master ? (
                           <a
-                            href={
-                              'question?q=' +
-                              (ckey * q_per_c + vkey) +
-                              '&master=' +
+                            href={`question?q=${ckey * qPerC + vkey}&master=${
                               this.props.master
-                            }
+                            }`}
                           >
                             ${this.props.multiplier * (vkey + 1)}
                           </a>

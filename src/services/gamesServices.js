@@ -1,72 +1,65 @@
-const base_url = '/api/games';
+const baseURL = '/api/games';
 
 export default {
-  addGame: (uid, contestants, singlecsv, doublecsv, finaltxt) => {
-    return fetch(base_url, {
+  addGame: (uid, contestants, singlecsv, doublecsv, finaltxt) =>
+    fetch(baseURL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        uid: uid,
-        contestants: contestants,
-        singlecsv: singlecsv,
-        doublecsv: doublecsv,
-        finaltxt: finaltxt
+        uid,
+        contestants,
+        singlecsv,
+        doublecsv,
+        finaltxt
       })
-    }).then(res => res.json());
-  },
+    }).then(res => res.json()),
 
-  getGame: uid => {
-    return fetch(base_url + '/' + uid).then(res => res.json());
-  },
+  getGame: uid => fetch(`${baseURL}/${uid}`).then(res => res.json()),
 
-  askQuestion: (uid, qid) => {
-    return fetch(base_url + '/' + uid + '/questions', {
+  askQuestion: (uid, qid) =>
+    fetch(`${baseURL}/${uid}/questions`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        qid: qid
+        qid
       })
-    }).then(res => res.json());
-  },
+    }).then(res => res.json()),
 
-  updateScore: (uid, key, diff) => {
-    return fetch(base_url + '/' + uid + '/scores', {
+  updateScore: (uid, key, diff) =>
+    fetch(`${baseURL}/${uid}/scores`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        key: key,
-        diff: diff
+        key,
+        diff
       })
-    }).then(res => res.json());
-  },
+    }).then(res => res.json()),
 
-  updateScreen: (uid, screen) => {
-    return fetch(base_url + '/' + uid + '/screen', {
+  updateScreen: (uid, screen) =>
+    fetch(`${baseURL}/${uid}/screen`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        screen: screen
+        screen
       })
-    }).then(res => res.json());
-  },
+    }).then(res => res.json()),
 
-  updateShown: (uid, shown) => {
-    return fetch(base_url + '/' + uid + '/shown', {
+  updateShown: (uid, shown) =>
+    fetch(`${baseURL}/${uid}/shown`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        shown: shown
+        shown
       })
-    }).then(res => res.json());
-  }
+    }).then(res => res.json())
 };

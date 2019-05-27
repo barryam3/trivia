@@ -1,7 +1,7 @@
-import Services from '../services';
-import { Component } from 'react';
-import React from 'react';
+import React, { Component } from 'react';
+
 import { withRouter } from 'react-router';
+import Services from '../services';
 
 class Init extends Component {
   constructor(props) {
@@ -46,6 +46,7 @@ class Init extends Component {
               </td>
               <td>
                 <input
+                  id="uid"
                   type="text"
                   name="uid"
                   value={this.state.uid}
@@ -59,6 +60,7 @@ class Init extends Component {
               </td>
               <td>
                 <textarea
+                  id="contestants"
                   name="contestants"
                   value={this.state.contestants}
                   onChange={this.handleChange}
@@ -71,6 +73,7 @@ class Init extends Component {
               </td>
               <td>
                 <textarea
+                  id="singlecsv"
                   name="singlecsv"
                   value={this.state.singlecsv}
                   onChange={this.handleChange}
@@ -83,6 +86,7 @@ class Init extends Component {
               </td>
               <td>
                 <textarea
+                  id="doublecsv"
                   name="doublecsv"
                   value={this.state.doublecsv}
                   onChange={this.handleChange}
@@ -95,6 +99,7 @@ class Init extends Component {
               </td>
               <td>
                 <textarea
+                  id="finaltxt"
                   name="finaltxt"
                   value={this.state.finaltxt}
                   onChange={this.handleChange}

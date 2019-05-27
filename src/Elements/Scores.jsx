@@ -1,5 +1,5 @@
-import React from 'react';
-import { Component } from 'react';
+import React, { Component } from 'react';
+
 import { withRouter } from 'react-router';
 
 import Services from '../services';
@@ -13,6 +13,10 @@ class Scores extends Component {
     this.updateScore = this.updateScore.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({ contestants: nextProps.contestants });
+  }
+
   updateScore(key, diff) {
     return () => {
       this.setState(prevState => {
@@ -21,10 +25,6 @@ class Scores extends Component {
       });
       Services.games.updateScore(this.props.uid, key, diff);
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({ contestants: nextProps.contestants });
   }
 
   render() {
@@ -43,6 +43,7 @@ class Scores extends Component {
                       >
                         {this.props.master && (
                           <button
+                            type="button"
                             className="scorebutton"
                             style={{ backgroundColor: 'red' }}
                             onClick={this.updateScore(key, -1)}
@@ -60,6 +61,7 @@ class Scores extends Component {
                       >
                         {this.props.master && (
                           <button
+                            type="button"
                             className="scorebutton"
                             style={{ backgroundColor: 'green' }}
                             onClick={this.updateScore(key, 1)}
@@ -74,6 +76,7 @@ class Scores extends Component {
                         <td rowSpan={1}>
                           {this.props.master && (
                             <button
+                              type="button"
                               className="scorebutton"
                               style={{ backgroundColor: 'red' }}
                               onClick={this.updateScore(
@@ -93,6 +96,7 @@ class Scores extends Component {
                         <td rowSpan={1}>
                           {this.props.master && (
                             <button
+                              type="button"
                               className="scorebutton"
                               style={{ backgroundColor: 'green' }}
                               onClick={this.updateScore(

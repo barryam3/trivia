@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "@kennethormandy/react-fittext": "^0.6.0",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
     "mongoose": "^5.5.11",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
@@ -11,7 +13,10 @@
     "react-scripts": "3.0.1"
   },
   "lint-staged": {
-    "{src,routes,models,utils}/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+    "./**/*.{js,jsx,ts,tsx}": [
+      "eslint"
+    ],
+    "./**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
       "prettier --single-quote --write",
       "git add"
     ]
@@ -24,6 +29,9 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "eslintIgnore": [
+    "build"
+  ],
   "browserslist": {
     "production": [
       ">0.2%",
