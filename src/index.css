@@ -30,11 +30,14 @@ td a {
 }
 
 table {
-  /* we use nested tables to make table by column */
   width: 100%;
-  height: 100%;
   /* don't rely on cell contents for sizing */
   table-layout: fixed;
+}
+
+#game-content table {
+  /* we use nested tables to make table by column */
+  height: 100%;
 }
 
 li, button {
@@ -47,28 +50,30 @@ li, button {
   width: 90%;
   margin-left: 5%;
   margin-right: 5%;
-  /* constant height -- all children are percent */
-  height: 625px;
-}
 
-main {
-  height: 100%;
+  height: 95vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* game content (board or question) */
 #game-content {
   /* use most of the screen */
-  height: 82%;
+  flex: 1;
   /* leave space between board and scores below */
   margin-bottom: 3%;
   /* allow children to be positioned relative to its borders */
   position: relative;
 }
 
+main {
+  height: 100%;
+}
+
 /* score display table */
 #scores {
-  height: 15%;
   background-color: black;
+  flex: 0;
 }
 
 .crow {

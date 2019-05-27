@@ -32,61 +32,57 @@ class Init extends Component {
 
     render(){
         return (
-            <div id='reactRoot'>
-                <div id='page-content'>
-                	<form id='init' onSubmit={this.handleSubmit}>
-                        <table>
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <label htmlFor='uid'>uid</label>
-                                    </td>
-                                    <td>
-                                        <input type='text' name='uid' value={this.state.uid} onChange={this.handleChange} />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label htmlFor='contestants'>Contestant Names .csv:</label>
-                                    </td>
-                                    <td>
-                                        <textarea name='contestants' value={this.state.contestants} onChange={this.handleChange} />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label htmlFor='singlecsv'>Single Jeopardy .csv:</label>
-                                    </td>
-                                    <td>
-                                        <textarea name='singlecsv' value={this.state.singlecsv} onChange={this.handleChange} />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label htmlFor='doublecsv'>Double Jeopardy .csv:</label>
-                                    </td>
-                                    <td>
-                                        <textarea name='doublecsv' value={this.state.doublecsv} onChange={this.handleChange} />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label htmlFor='finaltxt'>Final Jeopardy .txt:</label>
-                                    </td>
-                                    <td>
-                                        <textarea name='finaltxt' value={this.state.finaltxt} onChange={this.handleChange} />
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colSpan='2'>
-                                        <input type="submit" value="Submit" />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </form>                    
-                </div>
-            </div>
+            <form id='init' onSubmit={this.handleSubmit}>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <label htmlFor='uid'>uid</label>
+                            </td>
+                            <td>
+                                <input type='text' name='uid' value={this.state.uid} onChange={this.handleChange} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label htmlFor='contestants'>Contestant Names .csv:</label>
+                            </td>
+                            <td>
+                                <textarea name='contestants' value={this.state.contestants} onChange={this.handleChange} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label htmlFor='singlecsv'>Single Jeopardy .csv:</label>
+                            </td>
+                            <td>
+                                <textarea name='singlecsv' value={this.state.singlecsv} onChange={this.handleChange} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label htmlFor='doublecsv'>Double Jeopardy .csv:</label>
+                            </td>
+                            <td>
+                                <textarea name='doublecsv' value={this.state.doublecsv} onChange={this.handleChange} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label htmlFor='finaltxt'>Final Jeopardy .txt:</label>
+                            </td>
+                            <td>
+                                <textarea name='finaltxt' value={this.state.finaltxt} onChange={this.handleChange} />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colSpan='2'>
+                                <input type="submit" value="Submit" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
         );
     }
 };
