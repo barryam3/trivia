@@ -39,12 +39,12 @@ class Question extends Component {
     updateQuestionState(props) {
         const query = new URLSearchParams(this.props.location.search);
         const q = query.get('q');
-        if (props.board.length > 0 && q != 'final') {
+        if (props.board.length > 0 && q !== 'final') {
             var qid = q;
             var q_per_c = props.board[0].questions.length;
             var c = Math.floor(qid/q_per_c); // category
             var v  = qid % q_per_c; // value - 1
-            var shown = props.shown;
+            let shown = props.shown;
             if (props.board[c].questions[v].dailydouble && props.master) {
                 Services.games.updateShown(props.params.gameUID, -1);
                 shown = -1;
@@ -57,8 +57,8 @@ class Question extends Component {
                 dailydouble: props.board[c].questions[v].dailydouble,
                 shown: shown
             });
-        } else if (q == 'final') {
-            var shown = props.shown;
+        } else if (q === 'final') {
+            let shown = props.shown;
             if (props.master) {
                 Services.games.updateShown(props.params.gameUID, -1);
                 shown = -1;
@@ -77,17 +77,17 @@ class Question extends Component {
         const query = new URLSearchParams(this.props.location.search);
         const q = query.get('q');
         // mark the question as asked once we reveal it
-        if (this.state.shown == '0' && q != 'final') {
+        if (this.state.shown === 0 && q !== 'final') {
             Services.games.askQuestion(this.props.params.gameUID, q);
         }
         // update display state
         if (this.state.shown < 2) {
             Services.games.updateShown(this.props.params.gameUID, this.state.shown+1);
-            this.setState((prevState) => {
-                prevState.shown = this.state.shown + 1;
-            });
+            this.setState((prevState) => ({
+                shown: prevState.shown + 1
+            }));
         // switch page on final click
-        } else if (q == 'final') {
+        } else if (q === 'final') {
             window.location = 'gameover?master='+this.props.master;
         } else {
             window.location = 'board?master='+this.props.master;
@@ -107,12 +107,12 @@ class Question extends Component {
             (this.props.board.length > 0 || this.props.final.loaded) ? (
             <main>
                 {
-                    (this.state.shown == -1) ? (
-                        <div className='finalheader'>{q == 'final' ? 'Final Jeopardy' : 'Daily Double'}</div>
+                    (this.state.shown === -1) ? (
+                        <div className='finalheader'>{q === 'final' ? 'Final Jeopardy' : 'Daily Double'}</div>
                     ) : (
                         <div>
                             <div className='qheader'>
-                                {this.state.category}{q != 'final' ? ' -- $'+this.state.value*this.props.multiplier : ''}
+                                {this.state.category}{q !== 'final' ? ' -- $'+this.state.value*this.props.multiplier : ''}
                             </div>
                                 <div className='qtext'>
                                     <FitText maxFontSize={48}>

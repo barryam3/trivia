@@ -67,7 +67,10 @@ class Game extends Component {
 
     componentWillMount() {
         this.loadGame(this.props.params.gameUID);
-        if (this.props.location.query.master != 'true' && !window.location.pathname.includes('gameover')) {
+        if (
+            this.props.location.query.master !== 'true'
+            && !window.location.pathname.includes('gameover')
+        ) {
             this.tryUntil(this.checkForUpdates, Infinity, 50);
         }
     }
@@ -79,13 +82,13 @@ class Game extends Component {
             .then((res) => {
                 this.setState((prevState) => {
                     prevState.game = res.content;
-                    if (res.content.round == 'single') {
+                    if (res.content.round === 'single') {
                         prevState.board = res.content.single.categories;
                     }
-                    if (res.content.round == 'double') {
+                    if (res.content.round === 'double') {
                         prevState.board = res.content.double.categories;
                     }
-                    if (res.content.round == 'final') {
+                    if (res.content.round === 'final') {
                         prevState.question = res.content.final;
                         prevState.question.loaded = true;
                     }
@@ -98,13 +101,13 @@ class Game extends Component {
         if (this.state.question.loaded && window.location.pathname.endsWith('board')) {
             window.location = 'question?q=final&master='+this.props.location.query.master;
         }
-
-        if (this.props.location.query.q != undefined && this.state.board.length > 0) {
+        let value;
+        if (this.props.location.query.q != null && this.state.board.length > 0) {
             var qid = this.props.location.query.q;
             var q_per_c = this.state.board[0].questions.length;
-            var value = (qid % q_per_c) + 1; // value
+            value = (qid % q_per_c) + 1; // value
         } else {
-            var value = null;
+            value = null;
         }
 
         return (
@@ -118,7 +121,7 @@ class Game extends Component {
                         round: this.state.round,
                         master: this.props.location.query.master,
                         shown: this.state.game.shown,
-                        multiplier: (this.state.game.round == 'double' ? 2 : 1) * kDollarMultiplier,
+                        multiplier: (this.state.game.round === 'double' ? 2 : 1) * kDollarMultiplier,
                         contestants: this.state.game.contestants
 	                })}
                 </div>
@@ -126,7 +129,7 @@ class Game extends Component {
                     services={this.props.services}
                     uid = {this.props.params.gameUID}
                     master = {this.props.location.query.master}
-                    multiplier = {(this.state.game.round == 'double' ? 2 : 1) * kDollarMultiplier}
+                    multiplier = {(this.state.game.round === 'double' ? 2 : 1) * kDollarMultiplier}
                     value = {value}
                     />
             </div>
