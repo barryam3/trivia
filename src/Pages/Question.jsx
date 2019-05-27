@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import FitText from '@kennethormandy/react-fittext';
 
 import Services from '../services';
@@ -19,7 +19,7 @@ class Question extends Component {
     const q = query.get('q');
     if (this.props.master) {
       const str = `question?q=${q}`;
-      Services.games.updateScreen(this.props.params.gameUID, str);
+      Services.games.updateScreen(this.props.match.params.gameUID, str);
     }
   }
 
@@ -71,12 +71,12 @@ class Question extends Component {
     const q = query.get('q');
     // mark the question as asked once we reveal it
     if (this.state.shown === 0 && q !== 'final') {
-      Services.games.askQuestion(this.props.params.gameUID, q);
+      Services.games.askQuestion(this.props.match.params.gameUID, q);
     }
     // update display state
     if (this.state.shown < 2) {
       Services.games.updateShown(
-        this.props.params.gameUID,
+        this.props.match.params.gameUID,
         this.state.shown + 1
       );
       this.setState(prevState => ({
@@ -115,14 +115,16 @@ class Question extends Component {
             </div>
             <div className="qtext">
               <FitText maxFontSize={48}>
-                {this.state.shown >= (this.props.master ? 0 : 1) && (
-                  <div style={{ paddingBottom: '15px' }}>
-                    {this.state.question}
-                  </div>
-                )}
-                {this.state.shown >= (this.props.master ? 1 : 2) && (
-                  <div>{this.state.answer}</div>
-                )}
+                <React.Fragment>
+                  {this.state.shown >= (this.props.master ? 0 : 1) && (
+                    <div style={{ paddingBottom: '15px' }}>
+                      {this.state.question}
+                    </div>
+                  )}
+                  {this.state.shown >= (this.props.master ? 1 : 2) && (
+                    <div>{this.state.answer}</div>
+                  )}
+                </React.Fragment>
               </FitText>
             </div>
           </div>

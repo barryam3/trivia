@@ -1,8 +1,19 @@
 import { Component } from 'react';
 import React from 'react';
-import { withRouter } from 'react-router';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+  withRouter
+} from 'react-router-dom';
 
 import Scores from './Elements/Scores.jsx';
+import Board from './Pages/Board';
+import Question from './Pages/Question';
+import GameOver from './Pages/GameOver';
+import services from './services';
+import NotFound from './Pages/NotFound.jsx';
 
 // Dollar value of the lowest-value question
 // 200 for classic Jeopardy
@@ -50,7 +61,7 @@ class Game extends Component {
 
   // for slave: check for updates to screen state to see if page must be reloaded
   checkForUpdates = () => {
-    this.props.services.games.getGame(this.props.params.gameUID).then(res => {
+    services.games.getGame(this.props.match.params.gameUID).then(res => {
       if (!window.location.href.endsWith(res.content.screen)) {
         window.location = res.content.screen;
       }
@@ -59,18 +70,17 @@ class Game extends Component {
   };
 
   componentWillMount() {
-    this.loadGame(this.props.params.gameUID);
-    if (
-      this.props.location.query.master !== 'true' &&
-      !window.location.pathname.includes('gameover')
-    ) {
+    const query = new URLSearchParams(this.props.location.search);
+    const master = query.get('master');
+    this.loadGame(this.props.match.params.gameUID);
+    if (master !== 'true' && !window.location.pathname.includes('gameover')) {
       this.tryUntil(this.checkForUpdates, Infinity, 50);
     }
   }
 
   // get game state from the db
   loadGame(uid) {
-    this.props.services.games.getGame(uid).then(res => {
+    services.games.getGame(uid).then(res => {
       this.setState(prevState => {
         prevState.game = res.content;
         if (res.content.round === 'single') {
@@ -89,42 +99,72 @@ class Game extends Component {
   }
 
   render() {
+    const query = new URLSearchParams(this.props.location.search);
+    const master = query.get('master');
+    const q = query.get('q');
+    const childProps = {
+      services: services,
+      board: this.state.board,
+      final: this.state.question,
+      round: this.state.round,
+      master,
+      shown: this.state.game.shown,
+      multiplier:
+        (this.state.game.round === 'double' ? 2 : 1) * kDollarMultiplier,
+      contestants: this.state.game.contestants
+    };
+
     if (
       this.state.question.loaded &&
       window.location.pathname.endsWith('board')
     ) {
-      window.location =
-        'question?q=final&master=' + this.props.location.query.master;
+      window.location = 'question?q=final&master=' + master;
     }
     let value;
-    if (this.props.location.query.q != null && this.state.board.length > 0) {
-      const qID = this.props.location.query.q;
+    if (q != null && this.state.board.length > 0) {
+      const qID = q;
       const qPerC = this.state.board[0].questions.length;
       value = (qID % qPerC) + 1; // value
     } else {
       value = null;
     }
 
+    let bUrl = '/game/:gameUID';
     return (
       <div id="game">
         <div id="game-content">
-          {React.cloneElement(this.props.children, {
-            services: this.props.services,
-            board: this.state.board,
-            final: this.state.question,
-            round: this.state.round,
-            master: this.props.location.query.master,
-            shown: this.state.game.shown,
-            multiplier:
-              (this.state.game.round === 'double' ? 2 : 1) * kDollarMultiplier,
-            contestants: this.state.game.contestants
-          })}
+          <Router>
+            <Switch>
+              <Route
+                strict={false}
+                path={bUrl + '/board'}
+                render={props => <Board {...props} {...childProps} />}
+              />
+              <Route
+                strict={false}
+                path={bUrl + '/question'}
+                render={props => <Question {...props} {...childProps} />}
+              />
+              <Route
+                strict={false}
+                path={bUrl + '/gameover'}
+                render={props => <GameOver {...props} {...childProps} />}
+              />
+              <Route
+                strict={false}
+                exact
+                path={bUrl + '/'}
+                render={() => <Redirect to={bUrl + '/board'} />}
+              />
+              <Route strict={false} path="*" component={NotFound} />
+            </Switch>
+          </Router>
         </div>
         <Scores
           contestants={this.state.game.contestants}
-          services={this.props.services}
-          uid={this.props.params.gameUID}
-          master={this.props.location.query.master}
+          services={services}
+          uid={this.props.match.params.gameUID}
+          master={master}
           multiplier={
             (this.state.game.round === 'double' ? 2 : 1) * kDollarMultiplier
           }

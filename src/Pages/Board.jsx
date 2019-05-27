@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import FitText from '@kennethormandy/react-fittext';
 
 import Services from '../services';
@@ -16,9 +16,9 @@ function range(start, stop) {
 
 class Board extends Component {
   componentWillMount() {
-    const { master, params } = this.props;
+    const { master, match } = this.props;
     if (master) {
-      Services.games.updateScreen(params.gameUID, 'board');
+      Services.games.updateScreen(match.params.gameUID, 'board');
     }
   }
 

@@ -135,7 +135,7 @@ gameSchema.statics.getGame = function getGame(uid, callback) {
 gameSchema.statics.askQuestion = function askQuestion(uid, qid, callback) {
   // get the game so we can figure out what round we are in
   this.findOne({ uid }, (err, game) => {
-    if (err) {
+    if (err || !game) {
       callback({
         msg: 'Game does not exist'
       });

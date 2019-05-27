@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 
 import Services from '../services';
 
 class GameOver extends Component {
   componentWillMount() {
     if (this.props.master) {
-      Services.games.updateScreen(this.props.params.gameUID, 'gameover');
+      Services.games.updateScreen(this.props.match.params.gameUID, 'gameover');
       window.location = 'gameover';
     }
   }
