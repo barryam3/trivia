@@ -6,7 +6,6 @@
 //
 // Used verbatim from the notes app. Many thanks and appreciates.
 var utils = (function() {
-
   var _utils = {};
 
   /*
@@ -15,10 +14,13 @@ var utils = (function() {
     The caller of this function should return after calling
   */
   _utils.sendErrorResponse = function(res, errorCode, error) {
-    res.status(errorCode).json({
-      success: false,
-      err: error
-    }).end();
+    res
+      .status(errorCode)
+      .json({
+        success: false,
+        err: error
+      })
+      .end();
   };
 
   /*
@@ -27,15 +29,17 @@ var utils = (function() {
     The caller of this function should return after calling
   */
   _utils.sendSuccessResponse = function(res, content) {
-    res.status(200).json({
-      success: true,
-      content: content || {}
-    }).end();
+    res
+      .status(200)
+      .json({
+        success: true,
+        content: content || {}
+      })
+      .end();
   };
 
   Object.freeze(_utils);
   return _utils;
-
 })();
 
 module.exports = utils;

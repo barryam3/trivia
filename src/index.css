@@ -1,12 +1,12 @@
 @font-face {
   font-family: Korinna;
-  src: url("/fonts/Korinna Regular.ttf") format("truetype");
+  src: url('/fonts/Korinna Regular.ttf') format('truetype');
 }
 
 @font-face {
   font-family: Korinna;
   font-weight: bold;
-  src: url("/fonts/Korinna Bold.ttf") format("truetype");
+  src: url('/fonts/Korinna Bold.ttf') format('truetype');
 }
 
 /* page defaults */
@@ -25,8 +25,8 @@ a {
 
 /* make all of table cell with link clickable */
 td a {
-  display:block;
-  width:100%;
+  display: block;
+  width: 100%;
 }
 
 table {
@@ -40,7 +40,8 @@ table {
   height: 100%;
 }
 
-li, button {
+li,
+button {
   cursor: pointer;
 }
 
@@ -81,7 +82,7 @@ main {
 }
 
 /* cell in category board */
-.boardcell{
+.boardcell {
   /*border: 2px solid black;*/
   border-collapse: collapse;
   background-color: blue;
@@ -93,7 +94,9 @@ main {
 }
 
 /* text in category board */
-.qvalue, .ctitle { /* span in td */
+.qvalue,
+.ctitle {
+  /* span in td */
   font-weight: bold;
   vertical-align: middle;
   font-size: 4vmin;
@@ -122,7 +125,8 @@ main {
   background-color: blue;
 }
 
-.scorename, .scorescore {
+.scorename,
+.scorescore {
   font-size: 4vmin;
   font-weight: bold;
 }
@@ -153,7 +157,7 @@ main {
   left: 25%;
   width: 50%;
   height: 32px;
-  background:#999;
+  background: #999;
   font-size: 16px;
 }
 
