@@ -127,8 +127,10 @@ main {
 }
 
 .scorebutton {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: bold;
+  width: 1.75em;
+  height: 1.75em;
 }
 
 .finalheader {

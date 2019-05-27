@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import React from 'react';
 import { withRouter } from 'react-router';
+import FitText from '@kennethormandy/react-fittext';
 
 import Services from '../services';
 
@@ -110,15 +111,19 @@ class Question extends Component {
                         <div className='finalheader'>{q == 'final' ? 'Final Jeopardy' : 'Daily Double'}</div>
                     ) : (
                         <div>
-                            <div className='qheader'>{this.state.category}{q != 'final' ? ' -- $'+this.state.value*this.props.multiplier : ''}</div>
-                            <div className='qtext'>
-                                { (this.state.shown >= (this.props.master ? 0 : 1)) && 
-                                    <div style={{paddingBottom : '15px'}}>{this.state.question}</div>
-                                }
-                                { (this.state.shown >= (this.props.master ? 1 : 2)) && 
-                                    <div>{this.state.answer}</div>
-                                }
+                            <div className='qheader'>
+                                {this.state.category}{q != 'final' ? ' -- $'+this.state.value*this.props.multiplier : ''}
                             </div>
+                                <div className='qtext'>
+                                    <FitText maxFontSize={48}>
+                                        { (this.state.shown >= (this.props.master ? 0 : 1)) && 
+                                            <div style={{paddingBottom : '15px'}}>{this.state.question}</div>
+                                        }
+                                        { (this.state.shown >= (this.props.master ? 1 : 2)) && 
+                                            <div>{this.state.answer}</div>
+                                        }
+                                    </FitText>
+                                </div>
                         </div>
                     )
                 }

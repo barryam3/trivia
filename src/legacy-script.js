@@ -2,8 +2,8 @@
 
 // make board text fit in board
 var resizeBoard = function() {
-	$('.ctitle.boardcell').textfill();
-	$('.qvalue').textfill();
+	// $('.ctitle.boardcell').textfill();
+	// $('.qvalue').textfill();
 }
 
 // repeatedly try function f every ddt msec for dt msec
@@ -18,7 +18,7 @@ var tryUntil = function(f, dt, ddt) {
 var onLoad = function() {
 	resizeBoard();
 	$('.scorebutton').width($('scorebutton').height());
-	$('.qtext').textfill({maxFontPixels: 48});
+	// $('.qtext').textfill({maxFontPixels: 48});
 }
 
 // when app loads

@@ -1,7 +1,6 @@
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import './legacy-script';
 import clientRoutes from './clientRoutes';
 
 ReactDOM.render(clientRoutes, document.getElementById('root'));

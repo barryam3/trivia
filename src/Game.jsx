@@ -74,6 +74,7 @@ class Game extends Component {
 
     // get game state from the db
     loadGame(uid) {
+        console.log(this);
         this.props.services.games.getGame(uid)
             .then((res) => {
                 this.setState((prevState) => {

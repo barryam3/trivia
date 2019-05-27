@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import React from 'react';
 import { withRouter } from 'react-router';
+import FitText from '@kennethormandy/react-fittext';
 
 import Services from '../services';
 
@@ -41,9 +42,11 @@ class Board extends Component {
                         {
                             this.props.board.map((category, ckey) => (
                                 <th key={ckey} className='boardcell ctitle'>
-                                    <span>
-                                        {category.title}
-                                    </span>
+                                    <FitText compressor={.9}>
+                                        <span>
+                                            {category.title}
+                                        </span>
+                                    </FitText>
                                 </th>
                             ))
                         }
@@ -54,21 +57,21 @@ class Board extends Component {
                                 {
                                     range(0, num_c).map((ckey) => (
                                         <td key={ckey} className='boardcell qvalue'>
-                                        {
-                                            !this.props.board[ckey].questions[vkey].asked && (
-                                                this.props.master ? (
-                                                    <a href={
-                                                        'question?q='+(ckey*q_per_c+vkey)+'&master='+this.props.master
-                                                    }>
-                                                        ${this.props.multiplier*(vkey+1)}
-                                                    </a>
-                                                ) : (
-                                                    <span>
-                                                        ${this.props.multiplier*(vkey+1)}
-                                                    </span>
-                                                )
-                                            )
-                                        }
+                                            {!this.props.board[ckey].questions[vkey].asked && (
+                                                <FitText compressor={.5}>
+                                                    {this.props.master ? (
+                                                        <a href={
+                                                            'question?q='+(ckey*q_per_c+vkey)+'&master='+this.props.master
+                                                        }>
+                                                            ${this.props.multiplier*(vkey+1)}
+                                                        </a>
+                                                    ) : (
+                                                        <span>
+                                                            ${this.props.multiplier*(vkey+1)}
+                                                        </span>
+                                                    )}
+                                                </FitText>
+                                            )}
                                         </td>  
                                     ))
                                 }
