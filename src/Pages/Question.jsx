@@ -5,6 +5,39 @@ import FitText from '@kennethormandy/react-fittext';
 
 import Services from '../services';
 
+const URL_REGEX = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
+const randomString = `${Math.random()}`.slice(2);
+/**
+ * @param {string} str
+ * @return {string[]}
+ */
+function splitOnURLs(str) {
+  const ret = str
+    .replace(URL_REGEX, url => `${randomString}${url}${randomString}`)
+    .split(randomString)
+    .map(s => s.trim())
+    .filter(s => s.length > 0);
+  console.log(ret);
+  return ret;
+}
+
+const AUDIO_FILE_EXT_REGEX = /(.mp3|.ogg|.wav)$/;
+const VIDEO_FILE_EXT_REGEX = /(.mp4|.mov)$/;
+function QuestionPart({ text, master, ...rest }) {
+  let content = text;
+  if (text.match(URL_REGEX)) {
+    const shouldAutoplay = master ? {} : { autoPlay: 'autoplay' };
+    if (text.match(AUDIO_FILE_EXT_REGEX)) {
+      content = <audio {...shouldAutoplay} src={text} />;
+    } else if (text.match(VIDEO_FILE_EXT_REGEX)) {
+      content = (
+        <video {...shouldAutoplay} style={{ width: '100%' }} src={text} />
+      );
+    }
+  }
+  return <div {...rest}>{content}</div>;
+}
+
 class Question extends Component {
   state = {
     category: '',
@@ -46,7 +79,7 @@ class Question extends Component {
       this.setState({
         category: props.board[c].title,
         value: v + 1,
-        question: props.board[c].questions[v].question,
+        question: splitOnURLs(props.board[c].questions[v].question),
         answer: props.board[c].questions[v].answer,
         shown
       });
@@ -58,7 +91,7 @@ class Question extends Component {
       }
       this.setState({
         category: props.final.category,
-        question: props.final.question,
+        question: splitOnURLs(props.final.question),
         answer: props.final.answer,
         shown
       });
@@ -74,7 +107,7 @@ class Question extends Component {
       Services.games.askQuestion(this.props.match.params.gameUID, q);
     }
     // update display state
-    if (this.state.shown < 2) {
+    if (this.state.shown < this.state.question.length + 1) {
       Services.games.updateShown(
         this.props.match.params.gameUID,
         this.state.shown + 1
@@ -90,14 +123,20 @@ class Question extends Component {
     }
   };
 
+  shownText = () => {
+    if (this.state.shown < this.state.question.length) {
+      return 'Show Question';
+    } else if (this.state.shown === this.state.question.length) {
+      return 'Show Answer';
+    } else if (this.props.final.loaded) {
+      return 'Finish Game';
+    }
+    return 'Return to Board';
+  };
+
   render() {
     const query = new URLSearchParams(this.props.location.search);
     const q = query.get('q');
-    const shownText = [
-      'Show Question',
-      'Show Answer',
-      this.props.final.loaded ? 'Finish Game' : 'Return to Board'
-    ];
 
     return this.props.board.length > 0 || this.props.final.loaded ? (
       <main>
@@ -116,12 +155,21 @@ class Question extends Component {
             <div className="qtext">
               <FitText maxFontSize={48}>
                 <React.Fragment>
-                  {this.state.shown >= (this.props.master ? 0 : 1) && (
-                    <div style={{ paddingBottom: '15px' }}>
-                      {this.state.question}
-                    </div>
-                  )}
-                  {this.state.shown >= (this.props.master ? 1 : 2) && (
+                  {this.state.question
+                    .filter(
+                      (q, i) =>
+                        this.state.shown + (this.props.master ? 1 : 0) > i
+                    )
+                    .map((q, i) => (
+                      <QuestionPart
+                        key={i}
+                        style={{ paddingBottom: '15px' }}
+                        text={q}
+                        master={this.props.master}
+                      />
+                    ))}
+                  {this.state.shown + (this.props.master ? 1 : 0) >
+                    this.state.question.length && (
                     <div>{this.state.answer}</div>
                   )}
                 </React.Fragment>
@@ -131,9 +179,7 @@ class Question extends Component {
         )}
         {this.props.master && (
           <button id="nextbutton" onClick={this.goToNext} type="button">
-            {this.state.shown < 0
-              ? 'Show Category'
-              : shownText[this.state.shown]}
+            {this.state.shown < 0 ? 'Show Category' : this.shownText()}
           </button>
         )}
       </main>
