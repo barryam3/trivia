@@ -130,6 +130,7 @@ class Game extends Component {
     }
 
     let bUrl = '/game/:gameUID';
+    const { location } = this.props;
     return (
       <div id="game">
         <div id="game-content">
@@ -154,7 +155,14 @@ class Game extends Component {
                 strict={false}
                 exact
                 path={bUrl + '/'}
-                render={() => <Redirect to={bUrl + '/board'} />}
+                render={() => (
+                  <Redirect
+                    to={{
+                      ...location,
+                      pathname: this.props.match.url + '/board'
+                    }}
+                  />
+                )}
               />
               <Route strict={false} path="*" component={NotFound} />
             </Switch>
