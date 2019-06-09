@@ -9,6 +9,12 @@
   src: url('/fonts/Korinna Bold.ttf') format('truetype');
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 /* page defaults */
 body {
   background-color: black;
@@ -73,7 +79,6 @@ main {
 
 /* score display table */
 #scores {
-  background-color: black;
   flex: 0;
 }
 
@@ -82,10 +87,37 @@ main {
 }
 
 /* cell in category board */
-.boardcell {
-  /*border: 2px solid black;*/
+#board th,
+#board td {
   border-collapse: collapse;
+}
+
+#board th,
+#board td,
+#scores > * {
   background-color: blue;
+}
+
+#scores {
+  display: flex;
+}
+
+#scores > * {
+  flex: 1;
+  margin-right: 2px;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+#scores > * > .buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+#scores > *:last-child {
+  margin-right: 0;
 }
 
 /* text displaying category title in board */

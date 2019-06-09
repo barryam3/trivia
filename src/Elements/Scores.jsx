@@ -25,94 +25,66 @@ class Scores extends Component {
 
   render() {
     return (
-      <table id="scores">
-        <tbody>
-          <tr>
-            {(this.state.contestants || []).map((c, key) => (
-              <td key={key}>
-                <table className="scorecol">
-                  <tbody>
-                    <tr>
-                      <td
-                        style={{ width: '15%' }}
-                        rowSpan={this.props.value != null ? 1 : 2}
-                      >
-                        {this.props.master && (
-                          <button
-                            type="button"
-                            className="scorebutton"
-                            style={{ backgroundColor: 'red' }}
-                            onClick={this.updateScore(key, -1)}
-                          >
-                            -
-                          </button>
-                        )}
-                      </td>
-                      <td style={{ width: '75%' }}>
-                        <span className="scorename">{c.name}</span>
-                      </td>
-                      <td
-                        style={{ width: '15%' }}
-                        rowSpan={this.props.value != null ? 1 : 2}
-                      >
-                        {this.props.master && (
-                          <button
-                            type="button"
-                            className="scorebutton"
-                            style={{ backgroundColor: 'green' }}
-                            onClick={this.updateScore(key, 1)}
-                          >
-                            +
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                    <tr>
-                      {this.props.value != null && (
-                        <td rowSpan={1}>
-                          {this.props.master && (
-                            <button
-                              type="button"
-                              className="scorebutton"
-                              style={{ backgroundColor: 'red' }}
-                              onClick={this.updateScore(
-                                key,
-                                -this.props.multiplier * this.props.value
-                              )}
-                            >
-                              W
-                            </button>
-                          )}
-                        </td>
-                      )}
-                      <td>
-                        <span className="scorescore">${c.score}</span>
-                      </td>
-                      {this.props.value != null && (
-                        <td rowSpan={1}>
-                          {this.props.master && (
-                            <button
-                              type="button"
-                              className="scorebutton"
-                              style={{ backgroundColor: 'green' }}
-                              onClick={this.updateScore(
-                                key,
-                                this.props.multiplier * this.props.value
-                              )}
-                            >
-                              R
-                            </button>
-                          )}
-                        </td>
-                      )}
-                    </tr>
-                  </tbody>
-                </table>
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
+      <section id="scores">
+        {(this.state.contestants || []).map((c, key) => (
+          <div key={key}>
+            {this.props.master && (
+              <div className="buttons">
+                <button
+                  type="button"
+                  className="scorebutton"
+                  style={{ backgroundColor: 'red' }}
+                  onClick={this.updateScore(key, -1)}
+                >
+                  -
+                </button>
+                {this.props.value != null && (
+                  <button
+                    type="button"
+                    className="scorebutton"
+                    style={{ backgroundColor: 'red' }}
+                    onClick={this.updateScore(
+                      key,
+                      -this.props.multiplier * this.props.value
+                    )}
+                  >
+                    W
+                  </button>
+                )}
+              </div>
+            )}
+            <div>
+              <div className="scorename">{c.name}</div>
+              <div className="scorescore">${c.score}</div>
+            </div>
+            {this.props.master && (
+              <div className="buttons">
+                <button
+                  type="button"
+                  className="scorebutton"
+                  style={{ backgroundColor: 'green' }}
+                  onClick={this.updateScore(key, 1)}
+                >
+                  +
+                </button>
+                {this.props.value != null && (
+                  <button
+                    type="button"
+                    className="scorebutton"
+                    style={{ backgroundColor: 'green' }}
+                    onClick={this.updateScore(
+                      key,
+                      this.props.multiplier * this.props.value
+                    )}
+                  >
+                    R
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+      </section>
     );
   }
 }

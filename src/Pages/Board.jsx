@@ -36,7 +36,7 @@ class Board extends Component {
           <tbody style={{ height: '100%' }}>
             <tr className="crow">
               {this.props.board.map((category, ckey) => (
-                <th key={ckey} className="boardcell ctitle">
+                <th key={ckey} className="ctitle">
                   <FitText compressor={0.9}>
                     <span>{category.title}</span>
                   </FitText>
@@ -46,7 +46,7 @@ class Board extends Component {
             {range(0, qPerC).map(vkey => (
               <tr key={vkey} className="qrow">
                 {range(0, numC).map(ckey => (
-                  <td key={ckey} className="boardcell qvalue">
+                  <td key={ckey} className="qvalue">
                     {!this.props.board[ckey].questions[vkey].asked && (
                       <FitText compressor={0.5}>
                         {this.props.master ? (
