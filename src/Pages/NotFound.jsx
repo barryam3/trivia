@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 class NotFound extends Component {
   render() {
     return (
-      <div className="container">
+      <div>
         <h1>
           404{' '}
           <small>We couldn&apos;t find the route you were looking for...</small>

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import { withRouter } from 'react-router-dom';
-import FitText from '@kennethormandy/react-fittext';
 
 import Services from '../services';
 
@@ -73,7 +72,7 @@ class Question extends Component {
       const v = qid % qPerC; // value - 1
       let { shown } = props;
       if (props.board[c].questions[v].dailydouble && props.master) {
-        Services.games.updateShown(props.params.gameUID, -1);
+        Services.games.updateShown(props.match.params.gameUID, -1);
         shown = -1;
       }
       this.setState({
@@ -86,7 +85,7 @@ class Question extends Component {
     } else if (q === 'final') {
       let { shown } = props;
       if (props.master) {
-        Services.games.updateShown(props.params.gameUID, -1);
+        Services.games.updateShown(props.match.params.gameUID, -1);
         shown = -1;
       }
       this.setState({
@@ -138,53 +137,63 @@ class Question extends Component {
     const query = new URLSearchParams(this.props.location.search);
     const q = query.get('q');
 
-    return this.props.board.length > 0 || this.props.final.loaded ? (
-      <main>
-        {this.state.shown === -1 ? (
-          <div className="finalheader">
-            {q === 'final' ? 'Final Jeopardy' : 'Daily Double'}
-          </div>
-        ) : (
-          <div>
-            <div className="qheader">
-              {this.state.category}
-              {q !== 'final'
-                ? ` -- $${this.state.value * this.props.multiplier}`
-                : ''}
-            </div>
-            <div className="qtext">
-              <FitText maxFontSize={48}>
-                <React.Fragment>
-                  {this.state.question
-                    .filter(
-                      (q, i) =>
-                        this.state.shown + (this.props.master ? 1 : 0) > i
-                    )
-                    .map((q, i) => (
-                      <QuestionPart
-                        key={i}
-                        style={{ paddingBottom: '15px' }}
-                        text={q}
-                        master={this.props.master}
-                      />
-                    ))}
-                  {this.state.shown + (this.props.master ? 1 : 0) >
-                    this.state.question.length && (
-                    <div>{this.state.answer}</div>
+    return (
+      <div id="question">
+        {this.props.board.length > 0 || this.props.final.loaded ? (
+          <React.Fragment>
+            {this.state.shown === -1 ? (
+              <div className="finalheader">
+                {q === 'final' ? 'Final Jeopardy' : 'Daily Double'}
+              </div>
+            ) : (
+              <div>
+                <div className="qheader">
+                  {this.state.category}
+                  {q !== 'final' ? (
+                    <span>
+                      {' '}
+                      —{' '}
+                      <span className="qvalue">
+                        ${this.state.value * this.props.multiplier}
+                      </span>
+                    </span>
+                  ) : (
+                    ''
                   )}
-                </React.Fragment>
-              </FitText>
-            </div>
-          </div>
+                </div>
+                <div className="qtext">
+                  <React.Fragment>
+                    {this.state.question
+                      .filter(
+                        (q, i) =>
+                          this.state.shown + (this.props.master ? 1 : 0) > i
+                      )
+                      .map((q, i) => (
+                        <QuestionPart
+                          key={i}
+                          style={{ paddingBottom: '15px' }}
+                          text={q}
+                          master={this.props.master}
+                        />
+                      ))}
+                    {this.state.shown + (this.props.master ? 1 : 0) >
+                      this.state.question.length && (
+                      <div>{this.state.answer}</div>
+                    )}
+                  </React.Fragment>
+                </div>
+              </div>
+            )}
+            {this.props.master && (
+              <button id="nextbutton" onClick={this.goToNext} type="button">
+                {this.state.shown < 0 ? 'Show Category' : this.shownText()}
+              </button>
+            )}
+          </React.Fragment>
+        ) : (
+          <React.Fragment />
         )}
-        {this.props.master && (
-          <button id="nextbutton" onClick={this.goToNext} type="button">
-            {this.state.shown < 0 ? 'Show Category' : this.shownText()}
-          </button>
-        )}
-      </main>
-    ) : (
-      <main />
+      </div>
     );
   }
 }

@@ -9,7 +9,6 @@
     "test": "react-scripts test"
   },
   "dependencies": {
-    "@kennethormandy/react-fittext": "^0.6.0",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "mongoose": "^5.5.11",
@@ -22,6 +21,7 @@
     "concurrently": "^4.1.0",
     "husky": "^2.3.0",
     "lint-staged": "^8.1.7",
+    "node-sass": "^4.12.0",
     "prettier": "1.17.1"
   },
   "proxy": "http://localhost:4000",

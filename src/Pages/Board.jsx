@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import { withRouter } from 'react-router-dom';
-import FitText from '@kennethormandy/react-fittext';
 
 import Services from '../services';
 
@@ -31,46 +30,46 @@ class Board extends Component {
     }
 
     return this.props.board.length > 0 ? (
-      <main>
-        <table id="board">
-          <tbody style={{ height: '100%' }}>
-            <tr className="crow">
-              {this.props.board.map((category, ckey) => (
-                <th key={ckey} className="ctitle">
-                  <FitText compressor={0.9}>
-                    <span>{category.title}</span>
-                  </FitText>
-                </th>
-              ))}
-            </tr>
-            {range(0, qPerC).map(vkey => (
-              <tr key={vkey} className="qrow">
-                {range(0, numC).map(ckey => (
-                  <td key={ckey} className="qvalue">
-                    {!this.props.board[ckey].questions[vkey].asked && (
-                      <FitText compressor={0.5}>
-                        {this.props.master ? (
-                          <a
-                            href={`question?q=${ckey * qPerC + vkey}&master=${
-                              this.props.master
-                            }`}
-                          >
-                            ${this.props.multiplier * (vkey + 1)}
-                          </a>
-                        ) : (
-                          <span>${this.props.multiplier * (vkey + 1)}</span>
-                        )}
-                      </FitText>
+      <div id="board">
+        {this.props.board.map((category, ckey) => (
+          <div
+            key={ckey}
+            className="ctitle"
+            style={{ gridRow: 1, gridColumn: ckey + 1 }}
+          >
+            <span>{category.title}</span>
+          </div>
+        ))}
+        {range(0, qPerC).map(vkey => (
+          <React.Fragment>
+            {range(0, numC).map(ckey => (
+              <div
+                key={ckey}
+                className="qvalue"
+                style={{ gridRow: vkey + 2, gridColumn: ckey + 1 }}
+              >
+                {!this.props.board[ckey].questions[vkey].asked && (
+                  <React.Fragment>
+                    {this.props.master ? (
+                      <a
+                        href={`question?q=${ckey * qPerC + vkey}&master=${
+                          this.props.master
+                        }`}
+                      >
+                        ${this.props.multiplier * (vkey + 1)}
+                      </a>
+                    ) : (
+                      <span>${this.props.multiplier * (vkey + 1)}</span>
                     )}
-                  </td>
-                ))}
-              </tr>
+                  </React.Fragment>
+                )}
+              </div>
             ))}
-          </tbody>
-        </table>
-      </main>
+          </React.Fragment>
+        ))}
+      </div>
     ) : (
-      <main />
+      <div />
     );
   }
 }

@@ -1,0 +1,174 @@
+$cell-spacing: 6px;
+$score-button-size: 1.75em;
+$min-score-cell-width: calc(10ch + 2 * 1.75em + 4px); // depends on above
+$section-spacing: 32px;
+$cell-color: #0074d9;
+$money-color: #ffdc00;
+$background: #111111;
+
+@font-face {
+  font-family: Korinna;
+  src: url('/fonts/Korinna Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: Korinna;
+  font-weight: bold;
+  src: url('/fonts/Korinna Bold.ttf') format('truetype');
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+
+  font-family: 'Korinna', 'Libre Baskerville', 'Georgia', serif;
+}
+
+a {
+  color: inherit; /* not a different color than normal text */
+  text-decoration: inherit; /* not underlined */
+}
+
+a,
+button {
+  cursor: pointer;
+}
+
+body {
+  margin: 0; /* override default */
+
+  background-color: $background;
+  color: white;
+  text-align: center;
+}
+
+/* container for the entirety of the game pages */
+#game {
+  padding: 24px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  /* game content (board or question) */
+  > #game-content {
+    flex: 1;
+    margin-bottom: $section-spacing;
+    display: flex;
+    position: relative; /* used to position next button */
+    > * {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  /* score display table */
+  > #scores {
+    flex: 0;
+    font-size: 4vmin;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax($min-score-cell-width, 1fr));
+    grid-gap: $cell-spacing;
+    > * {
+      display: flex;
+      justify-content: space-around;
+      padding: 0 8px;
+      &:last-child {
+        margin-right: 0;
+      }
+      > .buttons {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        .scorebutton {
+          font-size: 1rem;
+          font-weight: bold;
+          width: $score-button-size;
+          height: $score-button-size;
+        }
+      }
+    }
+  }
+}
+
+#board {
+  height: 100%;
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-rows: 1fr;
+  grid-gap: $cell-spacing;
+  font-weight: bold;
+  > *,
+  a {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .ctitle {
+    padding: 0.5em;
+    font-size: 2.5vmin;
+  }
+}
+
+#board,
+#scores {
+  > * {
+    background: $cell-color;
+    border-radius: 8px;
+  }
+}
+
+/* text displaying money value */
+.qvalue,
+.scorescore {
+  color: $money-color;
+}
+
+/* text in grids besides category names */
+#board .qvalue,
+#scores {
+  font-size: 4vmin;
+  font-weight: bold;
+}
+
+#question {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  > *:first-child {
+    flex: 1;
+  }
+  .qheader {
+    font-weight: bold;
+    font-size: 8vmin;
+    margin-bottom: $section-spacing;
+  }
+
+  .qtext {
+    font-size: 5vmin;
+    height: 65%;
+  }
+}
+
+.finalheader {
+  padding-top: $section-spacing;
+  font-size: 8vmin;
+}
+
+.winner {
+  font-size: 8vmin;
+}
+
+#nextbutton {
+  height: 32px;
+  padding: 0 32px;
+  font-size: 16px;
+  background: #999;
+}
+
+/* form used for game init */
+#init {
+  width: 50%;
+  margin-left: 25%;
+  margin-right: 25%;
+}

@@ -25,7 +25,7 @@ class Scores extends Component {
 
   render() {
     return (
-      <section id="scores">
+      <div id="scores">
         {(this.state.contestants || []).map((c, key) => (
           <div key={key}>
             {this.props.master && (
@@ -84,7 +84,7 @@ class Scores extends Component {
             )}
           </div>
         ))}
-      </section>
+      </div>
     );
   }
 }
