@@ -45,13 +45,7 @@ application you download from the internet._
 
 This app is intended to be used with the Korinna font. However, the font is not
 included as I do not have the right to distribute it. Backup fonts are defined
-in case you do not have the font. If you do, you can place the following files
-in public/fonts.
-
-- Korinna Bold Italic.ttf
-- Korinna Bold.ttf
-- Korinna Italic.ttf
-- Korinna Regular.ttf
+in case you do not have the font installed.
 
 ## Random Features
 

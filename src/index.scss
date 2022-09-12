@@ -6,17 +6,6 @@ $cell-color: #0074d9;
 $money-color: #ffdc00;
 $background: #111111;
 
-@font-face {
-  font-family: Korinna;
-  src: url('/fonts/Korinna Regular.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: Korinna;
-  font-weight: bold;
-  src: url('/fonts/Korinna Bold.ttf') format('truetype');
-}
-
 *,
 *::before,
 *::after {
