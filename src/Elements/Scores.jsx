@@ -28,7 +28,7 @@ class Scores extends Component {
       <div id="scores">
         {(this.state.contestants || []).map((c, key) => (
           <div key={key}>
-            {this.props.master && (
+            {this.props.leader && (
               <div className="buttons">
                 <button
                   type="button"
@@ -57,7 +57,7 @@ class Scores extends Component {
               <div className="scorename">{c.name}</div>
               <div className="scorescore">${c.score}</div>
             </div>
-            {this.props.master && (
+            {this.props.leader && (
               <div className="buttons">
                 <button
                   type="button"

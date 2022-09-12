@@ -15,8 +15,8 @@ function range(start, stop) {
 
 class Board extends Component {
   componentWillMount() {
-    const { master, match } = this.props;
-    if (master) {
+    const { leader, match } = this.props;
+    if (leader) {
       Services.games.updateScreen(match.params.gameUID, 'board');
     }
   }
@@ -50,10 +50,10 @@ class Board extends Component {
               >
                 {!this.props.board[ckey].questions[vkey].asked && (
                   <React.Fragment>
-                    {this.props.master ? (
+                    {this.props.leader ? (
                       <a
-                        href={`question?q=${ckey * qPerC + vkey}&master=${
-                          this.props.master
+                        href={`question?q=${ckey * qPerC + vkey}&leader=${
+                          this.props.leader
                         }`}
                       >
                         ${this.props.multiplier * (vkey + 1)}

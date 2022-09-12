@@ -6,7 +6,7 @@ import Services from '../services';
 
 class GameOver extends Component {
   componentWillMount() {
-    if (this.props.master) {
+    if (this.props.leader) {
       Services.games.updateScreen(this.props.match.params.gameUID, 'gameover');
       window.location = 'gameover';
     }

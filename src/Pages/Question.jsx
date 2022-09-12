@@ -22,10 +22,10 @@ function splitOnURLs(str) {
 const AUDIO_FILE_EXT_REGEX = /\.(mp3|ogg|wav)$/;
 const VIDEO_FILE_EXT_REGEX = /\.(mp4|mov)$/;
 const IMAGE_FILE_EXT_REGEX = /\.(tiff?|bmp|jpe?g|gif|png|eps)$/;
-function QuestionPart({ text, master, ...rest }) {
+function QuestionPart({ text, leader, ...rest }) {
   let content = text;
   if (text.match(URL_REGEX)) {
-    const shouldAutoplay = master ? {} : { autoPlay: 'autoplay' };
+    const shouldAutoplay = leader ? {} : { autoPlay: 'autoplay' };
     if (text.match(AUDIO_FILE_EXT_REGEX)) {
       content = <audio {...shouldAutoplay} src={text} />;
     } else if (text.match(VIDEO_FILE_EXT_REGEX)) {
@@ -54,7 +54,7 @@ class Question extends Component {
   componentWillMount() {
     const query = new URLSearchParams(this.props.location.search);
     const q = query.get('q');
-    if (this.props.master) {
+    if (this.props.leader) {
       const str = `question?q=${q}`;
       Services.games.updateScreen(this.props.match.params.gameUID, str);
     }
@@ -62,7 +62,7 @@ class Question extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.updateQuestionState(nextProps);
-    if (this.props.shown != null && !nextProps.master) {
+    if (this.props.shown != null && !nextProps.leader) {
       this.setState({ shown: this.props.shown });
     }
   }
@@ -76,7 +76,7 @@ class Question extends Component {
       const c = Math.floor(qid / qPerC); // category
       const v = qid % qPerC; // value - 1
       let { shown } = props;
-      if (props.board[c].questions[v].dailydouble && props.master) {
+      if (props.board[c].questions[v].dailydouble && props.leader) {
         Services.games.updateShown(props.match.params.gameUID, -1);
         shown = -1;
       }
@@ -89,7 +89,7 @@ class Question extends Component {
       });
     } else if (q === 'final') {
       let { shown } = props;
-      if (props.master) {
+      if (props.leader) {
         Services.games.updateShown(props.match.params.gameUID, -1);
         shown = -1;
       }
@@ -102,7 +102,7 @@ class Question extends Component {
     }
   };
 
-  // only called by master
+  // only called by leader
   goToNext = () => {
     const query = new URLSearchParams(this.props.location.search);
     const q = query.get('q');
@@ -121,9 +121,9 @@ class Question extends Component {
       }));
       // switch page on final click
     } else if (q === 'final') {
-      window.location = `gameover?master=${this.props.master}`;
+      window.location = `gameover?leader=${this.props.leader}`;
     } else {
-      window.location = `board?master=${this.props.master}`;
+      window.location = `board?leader=${this.props.leader}`;
     }
   };
 
@@ -171,17 +171,17 @@ class Question extends Component {
                     {this.state.question
                       .filter(
                         (q, i) =>
-                          this.state.shown + (this.props.master ? 1 : 0) > i
+                          this.state.shown + (this.props.leader ? 1 : 0) > i
                       )
                       .map((q, i) => (
                         <QuestionPart
                           key={i}
                           style={{ paddingBottom: '15px' }}
                           text={q}
-                          master={this.props.master}
+                          leader={this.props.leader}
                         />
                       ))}
-                    {this.state.shown + (this.props.master ? 1 : 0) >
+                    {this.state.shown + (this.props.leader ? 1 : 0) >
                       this.state.question.length && (
                       <div>{this.state.answer}</div>
                     )}
@@ -189,7 +189,7 @@ class Question extends Component {
                 </div>
               </div>
             )}
-            {this.props.master && (
+            {this.props.leader && (
               <button id="nextbutton" onClick={this.goToNext} type="button">
                 {this.state.shown < 0 ? 'Show Category' : this.shownText()}
               </button>

@@ -59,7 +59,7 @@ class Game extends Component {
     }
   };
 
-  // for slave: check for updates to screen state to see if page must be reloaded
+  // for follower: check for updates to screen state to see if page must be reloaded
   checkForUpdates = () => {
     services.games.getGame(this.props.match.params.gameUID).then(res => {
       if (!window.location.href.endsWith(res.content.screen)) {
@@ -71,9 +71,9 @@ class Game extends Component {
 
   componentWillMount() {
     const query = new URLSearchParams(this.props.location.search);
-    const master = query.get('master');
+    const leader = query.get('leader');
     this.loadGame(this.props.match.params.gameUID);
-    if (master !== 'true' && !window.location.pathname.includes('gameover')) {
+    if (leader !== 'true' && !window.location.pathname.includes('gameover')) {
       this.tryUntil(this.checkForUpdates, Infinity, 50);
     }
   }
@@ -100,14 +100,14 @@ class Game extends Component {
 
   render() {
     const query = new URLSearchParams(this.props.location.search);
-    const master = query.get('master');
+    const leader = query.get('leader');
     const q = query.get('q');
     const childProps = {
       services: services,
       board: this.state.board,
       final: this.state.question,
       round: this.state.round,
-      master,
+      leader,
       shown: this.state.game.shown,
       multiplier:
         (this.state.game.round === 'double' ? 2 : 1) * kDollarMultiplier,
@@ -118,7 +118,7 @@ class Game extends Component {
       this.state.question.loaded &&
       window.location.pathname.endsWith('board')
     ) {
-      window.location = 'question?q=final&master=' + master;
+      window.location = 'question?q=final&leader=' + leader;
     }
     let value;
     if (q != null && this.state.board.length > 0) {
@@ -172,7 +172,7 @@ class Game extends Component {
           contestants={this.state.game.contestants}
           services={services}
           uid={this.props.match.params.gameUID}
-          master={master}
+          leader={leader}
           multiplier={
             (this.state.game.round === 'double' ? 2 : 1) * kDollarMultiplier
           }
