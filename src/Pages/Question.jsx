@@ -16,7 +16,6 @@ function splitOnURLs(str) {
     .split(randomString)
     .map(s => s.trim())
     .filter(s => s.length > 0);
-  console.log(ret);
   return ret;
 }
 
