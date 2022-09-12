@@ -19,8 +19,9 @@ function splitOnURLs(str) {
   return ret;
 }
 
-const AUDIO_FILE_EXT_REGEX = /(.mp3|.ogg|.wav)$/;
-const VIDEO_FILE_EXT_REGEX = /(.mp4|.mov)$/;
+const AUDIO_FILE_EXT_REGEX = /\.(mp3|ogg|wav)$/;
+const VIDEO_FILE_EXT_REGEX = /\.(mp4|mov)$/;
+const IMAGE_FILE_EXT_REGEX = /\.(tiff?|bmp|jpe?g|gif|png|eps)$/;
 function QuestionPart({ text, master, ...rest }) {
   let content = text;
   if (text.match(URL_REGEX)) {
@@ -31,6 +32,11 @@ function QuestionPart({ text, master, ...rest }) {
       content = (
         <video {...shouldAutoplay} style={{ width: '100%' }} src={text} />
       );
+    } else if (text.match(IMAGE_FILE_EXT_REGEX)) {
+      // Height chosen imperically to maximize size without displacing score
+      // row with one line of question text and one line of answer text.
+      // TODO: Responsive media sizing.
+      content = <img style={{ height: '50vh' }} src={text} />;
     }
   }
   return <div {...rest}>{content}</div>;
