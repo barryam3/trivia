@@ -9,20 +9,24 @@
     "test": "react-scripts test"
   },
   "dependencies": {
-    "body-parser": "^1.19.0",
-    "express": "^4.17.1",
-    "mongoose": "^5.5.11",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-router-dom": "^5.0.0",
-    "react-scripts": "5.0.1"
+    "body-parser": "^1.20.0",
+    "express": "^4.18.1",
+    "mongoose": "^6.6.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^5.3.3"
   },
   "devDependencies": {
-    "concurrently": "^4.1.0",
-    "husky": "^2.3.0",
-    "lint-staged": "^8.1.7",
+    "@svgr/webpack": "^6.3.1",
+    "concurrently": "^7.4.0",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "react-scripts": "5.0.1",
     "sass": "^1.54.9",
-    "prettier": "1.17.1"
+    "prettier": "2.7.1"
+  },
+  "overrides": {
+    "@svgr/webpack": "$@svgr/webpack"
   },
   "proxy": "http://localhost:4000",
   "husky": {
