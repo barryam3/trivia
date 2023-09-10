@@ -17,7 +17,7 @@ import NotFound from './Pages/NotFound.jsx';
 
 // Dollar value of the lowest-value question
 // 200 for classic Jeopardy
-const kDollarMultiplier = 1;
+const kDollarMultiplier = 2;
 
 class Game extends Component {
   state = {
