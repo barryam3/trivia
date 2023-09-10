@@ -25,14 +25,15 @@ const IMAGE_FILE_EXT_REGEX = /\.(tiff?|bmp|jpe?g|gif|png|eps)$/;
 function QuestionPart({ text, leader, ...rest }) {
   let content = text;
   if (text.match(URL_REGEX)) {
+    const pathname = new URL(text).pathname;
     const shouldAutoplay = leader ? {} : { autoPlay: 'autoplay' };
-    if (text.match(AUDIO_FILE_EXT_REGEX)) {
+    if (pathname.match(AUDIO_FILE_EXT_REGEX)) {
       content = <audio {...shouldAutoplay} src={text} />;
-    } else if (text.match(VIDEO_FILE_EXT_REGEX)) {
+    } else if (pathname.match(VIDEO_FILE_EXT_REGEX)) {
       content = (
         <video {...shouldAutoplay} style={{ width: '100%' }} src={text} />
       );
-    } else if (text.match(IMAGE_FILE_EXT_REGEX)) {
+    } else if (pathname.match(IMAGE_FILE_EXT_REGEX)) {
       // Height chosen imperically to maximize size without displacing score
       // row with one line of question text and one line of answer text.
       // TODO: Responsive media sizing.
