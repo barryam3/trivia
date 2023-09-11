@@ -28,7 +28,7 @@ function QuestionPart({ text, leader, ...rest }) {
     const pathname = new URL(text).pathname;
     const shouldAutoplay = leader ? {} : { autoPlay: 'autoplay' };
     if (pathname.match(AUDIO_FILE_EXT_REGEX)) {
-      content = <audio {...shouldAutoplay} src={text} />;
+      content = <audio {...shouldAutoplay} src={text} controls={true} />;
     } else if (pathname.match(VIDEO_FILE_EXT_REGEX)) {
       content = (
         <video {...shouldAutoplay} style={{ width: '100%' }} src={text} />
