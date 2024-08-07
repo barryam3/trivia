@@ -1,6 +1,6 @@
 # Trivia
 
-by Barry McNamara (bamazap@hotmail.com)
+by Barry McNamara (barryam3@alum.mit.edu)
 
 ## About
 
