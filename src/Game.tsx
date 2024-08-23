@@ -1,5 +1,4 @@
-import { Component } from "react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -21,6 +20,14 @@ import { Game as IGame, Category } from "./interfaces/game";
 // 200 for classic Jeopardy
 const kDollarMultiplier = 2;
 
+// repeatedly try function f every ddt msec for dt msec
+function tryUntil(f: Function, dt: number, ddt: number) {
+  f();
+  if (dt > 0) {
+    setTimeout(() => tryUntil(f, dt - ddt, ddt), ddt);
+  }
+}
+
 interface Params {
   gameUID: string;
 }
@@ -32,8 +39,8 @@ interface State {
   lastScreen: string;
 }
 
-class Game extends Component<RouteComponentProps<Params>, State> {
-  state: State = {
+const Game: React.FC<RouteComponentProps<Params>> = (props) => {
+  const [state, setState] = useState<State>({
     game: {
       uid: "",
       round: "",
@@ -62,39 +69,31 @@ class Game extends Component<RouteComponentProps<Params>, State> {
       loaded: false,
     }, // for final jeopardy
     lastScreen: "",
-  };
+  });
 
-  // repeatedly try function f every ddt msec for dt msec
-  tryUntil = (f: Function, dt: number, ddt: number) => {
-    f();
-    if (dt > 0) {
-      setTimeout(() => this.tryUntil(f, dt - ddt, ddt), ddt);
-    }
-  };
+  useEffect(() => {
+    // for follower: check for updates to screen state to see if page must be reloaded
+    const checkForUpdates = () => {
+      services.games.getGame(props.match.params.gameUID).then((res) => {
+        if (!window.location.href.endsWith(res.content.screen)) {
+          window.location.assign(res.content.screen);
+        }
+        setState((prevState) => ({ ...prevState, game: res.content }));
+      });
+    };
 
-  // for follower: check for updates to screen state to see if page must be reloaded
-  checkForUpdates = () => {
-    services.games.getGame(this.props.match.params.gameUID).then((res) => {
-      if (!window.location.href.endsWith(res.content.screen)) {
-        window.location.assign(res.content.screen);
-      }
-      this.setState({ game: res.content });
-    });
-  };
-
-  componentWillMount() {
-    const query = new URLSearchParams(this.props.location.search);
+    const query = new URLSearchParams(props.location.search);
     const leader = query.get("leader");
-    this.loadGame(this.props.match.params.gameUID);
+    loadGame(props.match.params.gameUID);
     if (leader !== "true" && !window.location.pathname.includes("gameover")) {
-      this.tryUntil(this.checkForUpdates, Infinity, 50);
+      tryUntil(checkForUpdates, Infinity, 50);
     }
-  }
+  }, [props.location.search, props.match.params.gameUID]);
 
   // get game state from the db
-  loadGame(uid: string) {
+  const loadGame = (uid: string) => {
     services.games.getGame(uid).then((res) => {
-      this.setState((prevState) => {
+      setState((prevState) => {
         const newState = JSON.parse(JSON.stringify(prevState));
         newState.game = res.content;
         if (res.content.round === "single") {
@@ -110,90 +109,82 @@ class Game extends Component<RouteComponentProps<Params>, State> {
         return newState;
       });
     });
+  };
+
+  const query = new URLSearchParams(props.location.search);
+  const leader = Boolean(query.get("leader"));
+  const q = query.get("q");
+  const childProps = {
+    services: services,
+    board: state.board,
+    final: state.question,
+    round: state.game.round,
+    leader,
+    shown: state.game.shown,
+    multiplier: (state.game.round === "double" ? 2 : 1) * kDollarMultiplier,
+    contestants: state.game.contestants,
+  };
+
+  if (state.question.loaded && window.location.pathname.endsWith("board")) {
+    window.location.assign("question?q=final&leader=" + leader);
+  }
+  let value;
+  if (q != null && state.board.length > 0) {
+    const qID = Number(q);
+    const qPerC = state.board[0].questions.length;
+    value = (qID % qPerC) + 1; // value
+  } else {
+    value = null;
   }
 
-  render() {
-    const query = new URLSearchParams(this.props.location.search);
-    const leader = Boolean(query.get("leader"));
-    const q = query.get("q");
-    const childProps = {
-      services: services,
-      board: this.state.board,
-      final: this.state.question,
-      round: this.state.game.round,
-      leader,
-      shown: this.state.game.shown,
-      multiplier:
-        (this.state.game.round === "double" ? 2 : 1) * kDollarMultiplier,
-      contestants: this.state.game.contestants,
-    };
-
-    if (
-      this.state.question.loaded &&
-      window.location.pathname.endsWith("board")
-    ) {
-      window.location.assign("question?q=final&leader=" + leader);
-    }
-    let value;
-    if (q != null && this.state.board.length > 0) {
-      const qID = Number(q);
-      const qPerC = this.state.board[0].questions.length;
-      value = (qID % qPerC) + 1; // value
-    } else {
-      value = null;
-    }
-
-    let bUrl = "/game/:gameUID";
-    const { location } = this.props;
-    return (
-      <div id="game">
-        <div id="game-content">
-          <Router>
-            <Switch>
-              <Route
-                strict={false}
-                path={bUrl + "/board"}
-                render={(props) => <Board {...props} {...childProps} />}
-              />
-              <Route
-                strict={false}
-                path={bUrl + "/question"}
-                render={(props) => <Question {...props} {...childProps} />}
-              />
-              <Route
-                strict={false}
-                path={bUrl + "/gameover"}
-                render={(props) => <GameOver {...props} {...childProps} />}
-              />
-              <Route
-                strict={false}
-                exact
-                path={bUrl + "/"}
-                render={() => (
-                  <Redirect
-                    to={{
-                      ...location,
-                      pathname: this.props.match.url + "/board",
-                    }}
-                  />
-                )}
-              />
-              <Route strict={false} path="*" component={NotFound} />
-            </Switch>
-          </Router>
-        </div>
-        <Scores
-          contestants={this.state.game.contestants}
-          uid={this.props.match.params.gameUID}
-          leader={leader}
-          multiplier={
-            (this.state.game.round === "double" ? 2 : 1) * kDollarMultiplier
-          }
-          value={value}
-        />
+  let bUrl = "/game/:gameUID";
+  const { location } = props;
+  return (
+    <div id="game">
+      <div id="game-content">
+        <Router>
+          <Switch>
+            <Route
+              strict={false}
+              path={bUrl + "/board"}
+              render={(props) => <Board {...props} {...childProps} />}
+            />
+            <Route
+              strict={false}
+              path={bUrl + "/question"}
+              render={(props) => <Question {...props} {...childProps} />}
+            />
+            <Route
+              strict={false}
+              path={bUrl + "/gameover"}
+              render={(props) => <GameOver {...props} {...childProps} />}
+            />
+            <Route
+              strict={false}
+              exact
+              path={bUrl + "/"}
+              render={() => (
+                <Redirect
+                  to={{
+                    ...location,
+                    pathname: props.match.url + "/board",
+                  }}
+                />
+              )}
+            />
+            <Route strict={false} path="*" component={NotFound} />
+          </Switch>
+        </Router>
       </div>
-    );
-  }
-}
+      <Scores
+        contestants={state.game.contestants}
+        uid={props.match.params.gameUID}
+        leader={leader}
+        multiplier={(state.game.round === "double" ? 2 : 1) * kDollarMultiplier}
+        value={value}
+      />
+    </div>
+  );
+};
 
 export default withRouter(Game);

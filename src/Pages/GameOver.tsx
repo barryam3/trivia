@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
@@ -14,31 +14,29 @@ interface Props extends RouteComponentProps<Params> {
   contestants: Contestant[];
 }
 
-class GameOver extends Component<Props> {
-  componentWillMount() {
-    if (this.props.leader) {
-      Services.games.updateScreen(this.props.match.params.gameUID, "gameover");
+const GameOver: React.FC<Props> = ({leader, contestants, match}) => {
+  useEffect(() => {
+    if (leader) {
+      Services.games.updateScreen(match.params.gameUID, "gameover");
       window.location.assign("gameover");
     }
-  }
+  }, [leader, match.params.gameUID]);
 
-  render() {
-    return (
-      <main>
-        <div className="finalheader">Game Over</div>
-        {this.props.contestants.length > 0 && (
-          <div className="winner">
-            {
-              this.props.contestants.reduce((prev, current) =>
-                prev.score > current.score ? prev : current
-              ).name
-            }{" "}
-            wins!
-          </div>
-        )}
-      </main>
-    );
-  }
-}
+  return (
+    <main>
+      <div className="finalheader">Game Over</div>
+      {contestants.length > 0 && (
+        <div className="winner">
+          {
+            contestants.reduce((prev, current) =>
+              prev.score > current.score ? prev : current
+            ).name
+          }{" "}
+          wins!
+        </div>
+      )}
+    </main>
+  );
+};
 
 export default withRouter(GameOver);

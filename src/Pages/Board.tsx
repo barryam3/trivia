@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
@@ -24,65 +24,63 @@ interface Props extends RouteComponentProps<Params> {
   multiplier: number;
 }
 
-class Board extends Component<Props> {
-  componentWillMount() {
-    const { leader, match } = this.props;
+const Board: React.FC<Props> = (props) => {
+  const { leader, match } = props;
+  useEffect(() => {
     if (leader) {
       Services.games.updateScreen(match.params.gameUID, "board");
     }
+  }, [leader, match.params.gameUID]);
+
+  let numC: number;
+  let qPerC!: number;
+  if (props.board.length > 0) {
+    numC = props.board.length;
+    qPerC = props.board[0].questions.length;
   }
 
-  render() {
-    let numC: number;
-    let qPerC!: number;
-    if (this.props.board.length > 0) {
-      numC = this.props.board.length;
-      qPerC = this.props.board[0].questions.length;
-    }
-
-    return this.props.board.length > 0 ? (
-      <div id="board">
-        {this.props.board.map((category, ckey) => (
-          <div
-            key={ckey}
-            className="ctitle"
-            style={{ gridRow: 1, gridColumn: ckey + 1 }}
-          >
-            <span>{category.title}</span>
-          </div>
-        ))}
-        {range(0, qPerC).map((vkey) => (
-          <React.Fragment>
-            {range(0, numC).map((ckey) => (
-              <div
-                key={ckey}
-                className="qvalue"
-                style={{ gridRow: vkey + 2, gridColumn: ckey + 1 }}
-              >
-                {!this.props.board[ckey].questions[vkey].asked && (
-                  <React.Fragment>
-                    {this.props.leader ? (
-                      <a
-                        href={`question?q=${ckey * qPerC + vkey}&leader=${
-                          this.props.leader
-                        }`}
-                      >
-                        ${this.props.multiplier * (vkey + 1)}
-                      </a>
-                    ) : (
-                      <span>${this.props.multiplier * (vkey + 1)}</span>
-                    )}
-                  </React.Fragment>
-                )}
-              </div>
-            ))}
-          </React.Fragment>
-        ))}
-      </div>
-    ) : (
-      <div />
-    );
-  }
-}
+  return props.board.length > 0 ? (
+    <div id="board">
+      {props.board.map((category, ckey) => (
+        <div
+          key={ckey}
+          className="ctitle"
+          style={{ gridRow: 1, gridColumn: ckey + 1 }}
+        >
+          <span>{category.title}</span>
+        </div>
+      ))}
+      {range(0, qPerC).map((vkey) => (
+        <React.Fragment>
+          {range(0, numC).map((ckey) => (
+            <div
+              key={ckey}
+              className="qvalue"
+              style={{ gridRow: vkey + 2, gridColumn: ckey + 1 }}
+            >
+              {!props.board[ckey].questions[vkey].asked && (
+                <React.Fragment>
+                  {props.leader ? (
+                    <a
+                      href={`question?q=${ckey * qPerC + vkey}&leader=${
+                        props.leader
+                      }`}
+                    >
+                      ${props.multiplier * (vkey + 1)}
+                    </a>
+                  ) : (
+                    <span>${props.multiplier * (vkey + 1)}</span>
+                  )}
+                </React.Fragment>
+              )}
+            </div>
+          ))}
+        </React.Fragment>
+      ))}
+    </div>
+  ) : (
+    <div />
+  );
+};
 
 export default withRouter(Board);
