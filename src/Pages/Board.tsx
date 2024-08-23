@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { RouteComponentProps, withRouter } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import Services from "../services";
 import { Category } from "../interfaces/game";
@@ -18,19 +18,21 @@ interface Params {
   gameUID: string;
 }
 
-interface Props extends RouteComponentProps<Params> {
+interface Props {
   leader: boolean;
   board: Category[];
   multiplier: number;
 }
 
 const Board: React.FC<Props> = (props) => {
-  const { leader, match } = props;
+  const { leader } = props;
+  const params = useParams<Params>();
+
   useEffect(() => {
     if (leader) {
-      Services.games.updateScreen(match.params.gameUID, "board");
+      Services.games.updateScreen(params.gameUID, "board");
     }
-  }, [leader, match.params.gameUID]);
+  }, [leader, params.gameUID]);
 
   let numC: number;
   let qPerC!: number;
@@ -83,4 +85,4 @@ const Board: React.FC<Props> = (props) => {
   );
 };
 
-export default withRouter(Board);
+export default Board;

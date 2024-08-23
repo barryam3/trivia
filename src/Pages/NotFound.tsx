@@ -1,7 +1,5 @@
 import React from "react";
 
-import { withRouter } from "react-router-dom";
-
 const NotFound: React.FC = () => (
   <div>
     <h1>
@@ -10,4 +8,4 @@ const NotFound: React.FC = () => (
   </div>
 );
 
-export default withRouter(NotFound);
+export default NotFound;

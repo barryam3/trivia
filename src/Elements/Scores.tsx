@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 
-import { RouteComponentProps, withRouter } from "react-router-dom";
-
 import Services from "../services";
 import { Contestant } from "../interfaces/game";
 
-interface Props extends RouteComponentProps {
+interface Props {
   contestants: Contestant[];
   uid: string;
   leader: boolean;
@@ -89,4 +87,4 @@ const Scores: React.FC<Props> = (props) => {
   );
 };
 
-export default withRouter(Scores);
+export default Scores;

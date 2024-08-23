@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { RouteComponentProps, withRouter } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import Services from "../services";
 import { Contestant } from "../interfaces/game";
@@ -9,18 +9,20 @@ interface Params {
   gameUID: string;
 }
 
-interface Props extends RouteComponentProps<Params> {
+interface Props {
   leader: boolean;
   contestants: Contestant[];
 }
 
-const GameOver: React.FC<Props> = ({leader, contestants, match}) => {
+const GameOver: React.FC<Props> = ({ leader, contestants }) => {
+  const params = useParams<Params>();
+
   useEffect(() => {
     if (leader) {
-      Services.games.updateScreen(match.params.gameUID, "gameover");
+      Services.games.updateScreen(params.gameUID, "gameover");
       window.location.assign("gameover");
     }
-  }, [leader, match.params.gameUID]);
+  }, [leader, params.gameUID]);
 
   return (
     <main>
@@ -39,4 +41,4 @@ const GameOver: React.FC<Props> = ({leader, contestants, match}) => {
   );
 };
 
-export default withRouter(GameOver);
+export default GameOver;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { RouteComponentProps, withRouter } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 import Services from "../services";
 import { Category } from "../interfaces/game";
@@ -64,7 +64,7 @@ export interface Final {
   loaded: boolean;
 }
 
-interface Props extends RouteComponentProps<Params> {
+interface Props {
   leader: boolean;
   shown: number;
   board: Category[];
@@ -94,21 +94,23 @@ const Question: React.FC<Props> = (props) => {
   const [state, setState] = useState<State>({
     shown: props.shown,
   });
+  const params = useParams<Params>();
+  const location = useLocation();
 
   // Use this instead of props.shown or state.shown.
   const shown = Math.max(props.shown, state.shown);
 
   useEffect(() => {
-    const query = new URLSearchParams(props.location.search);
+    const query = new URLSearchParams(location.search);
     const q = query.get("q");
     if (props.leader) {
       const str = `question?q=${q}`;
-      Services.games.updateScreen(props.match.params.gameUID, str);
+      Services.games.updateScreen(params.gameUID, str);
     }
-  }, [props.leader, props.location.search, props.match.params.gameUID]);
+  }, [props.leader, location.search, params.gameUID]);
 
   const processQuestion = (props: Props): ProcessedQuestion => {
-    const query = new URLSearchParams(props.location.search);
+    const query = new URLSearchParams(location.search);
     const q = query.get("q");
     if (props.board.length > 0 && q !== "final") {
       const qid = Number(q);
@@ -117,7 +119,7 @@ const Question: React.FC<Props> = (props) => {
       const v = qid % qPerC; // value - 1
       let { shown } = props;
       if (props.board[c].questions[v].dailydouble && props.leader) {
-        Services.games.updateShown(props.match.params.gameUID, -1);
+        Services.games.updateShown(params.gameUID, -1);
         shown = -1;
       }
       return {
@@ -130,7 +132,7 @@ const Question: React.FC<Props> = (props) => {
     } else if (q === "final") {
       let { shown } = props;
       if (props.leader) {
-        Services.games.updateShown(props.match.params.gameUID, -1);
+        Services.games.updateShown(params.gameUID, -1);
         shown = -1;
       }
       return {
@@ -148,15 +150,15 @@ const Question: React.FC<Props> = (props) => {
 
   // only called by leader
   const goToNext = () => {
-    const query = new URLSearchParams(props.location.search);
+    const query = new URLSearchParams(location.search);
     const q = query.get("q");
     // mark the question as asked once we reveal it
     if (shown === 0 && q !== "final") {
-      Services.games.askQuestion(props.match.params.gameUID, Number(q));
+      Services.games.askQuestion(params.gameUID, Number(q));
     }
     // update display state
     if (shown < question.question.length + 1) {
-      Services.games.updateShown(props.match.params.gameUID, shown + 1);
+      Services.games.updateShown(params.gameUID, shown + 1);
       setState((prevState) => ({
         shown: shown + 1,
       }));
@@ -179,7 +181,7 @@ const Question: React.FC<Props> = (props) => {
     return "Return to Board";
   };
 
-  const query = new URLSearchParams(props.location.search);
+  const query = new URLSearchParams(location.search);
   const q = query.get("q");
 
   return (
@@ -237,4 +239,4 @@ const Question: React.FC<Props> = (props) => {
   );
 };
 
-export default withRouter(Question);
+export default Question;

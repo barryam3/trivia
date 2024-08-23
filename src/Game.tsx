@@ -4,8 +4,8 @@ import {
   Switch,
   Route,
   Redirect,
-  withRouter,
-  RouteComponentProps,
+  useLocation,
+  useParams,
 } from "react-router-dom";
 
 import Scores from "./Elements/Scores";
@@ -39,7 +39,7 @@ interface State {
   lastScreen: string;
 }
 
-const Game: React.FC<RouteComponentProps<Params>> = (props) => {
+const Game: React.FC = () => {
   const [state, setState] = useState<State>({
     game: {
       uid: "",
@@ -71,10 +71,13 @@ const Game: React.FC<RouteComponentProps<Params>> = (props) => {
     lastScreen: "",
   });
 
+  const params = useParams<Params>();
+  const location = useLocation();
+
   useEffect(() => {
     // for follower: check for updates to screen state to see if page must be reloaded
     const checkForUpdates = () => {
-      services.games.getGame(props.match.params.gameUID).then((res) => {
+      services.games.getGame(params.gameUID).then((res) => {
         if (!window.location.href.endsWith(res.content.screen)) {
           window.location.assign(res.content.screen);
         }
@@ -82,13 +85,13 @@ const Game: React.FC<RouteComponentProps<Params>> = (props) => {
       });
     };
 
-    const query = new URLSearchParams(props.location.search);
+    const query = new URLSearchParams(location.search);
     const leader = query.get("leader");
-    loadGame(props.match.params.gameUID);
+    loadGame(params.gameUID);
     if (leader !== "true" && !window.location.pathname.includes("gameover")) {
       tryUntil(checkForUpdates, Infinity, 50);
     }
-  }, [props.location.search, props.match.params.gameUID]);
+  }, [location.search, params.gameUID]);
 
   // get game state from the db
   const loadGame = (uid: string) => {
@@ -111,7 +114,7 @@ const Game: React.FC<RouteComponentProps<Params>> = (props) => {
     });
   };
 
-  const query = new URLSearchParams(props.location.search);
+  const query = new URLSearchParams(location.search);
   const leader = Boolean(query.get("leader"));
   const q = query.get("q");
   const childProps = {
@@ -138,7 +141,6 @@ const Game: React.FC<RouteComponentProps<Params>> = (props) => {
   }
 
   let bUrl = "/game/:gameUID";
-  const { location } = props;
   return (
     <div id="game">
       <div id="game-content">
@@ -147,17 +149,17 @@ const Game: React.FC<RouteComponentProps<Params>> = (props) => {
             <Route
               strict={false}
               path={bUrl + "/board"}
-              render={(props) => <Board {...props} {...childProps} />}
+              children={<Board {...childProps} />}
             />
             <Route
               strict={false}
               path={bUrl + "/question"}
-              render={(props) => <Question {...props} {...childProps} />}
+              children={<Question {...childProps} />}
             />
             <Route
               strict={false}
               path={bUrl + "/gameover"}
-              render={(props) => <GameOver {...props} {...childProps} />}
+              children={<GameOver {...childProps} />}
             />
             <Route
               strict={false}
@@ -167,18 +169,18 @@ const Game: React.FC<RouteComponentProps<Params>> = (props) => {
                 <Redirect
                   to={{
                     ...location,
-                    pathname: props.match.url + "/board",
+                    pathname: match.url + "/board",
                   }}
                 />
               )}
             />
-            <Route strict={false} path="*" component={NotFound} />
+            <Route strict={false} path="*" children={<NotFound />} />
           </Switch>
         </Router>
       </div>
       <Scores
         contestants={state.game.contestants}
-        uid={props.match.params.gameUID}
+        uid={params.gameUID}
         leader={leader}
         multiplier={(state.game.round === "double" ? 2 : 1) * kDollarMultiplier}
         value={value}
@@ -187,4 +189,4 @@ const Game: React.FC<RouteComponentProps<Params>> = (props) => {
   );
 };
 
-export default withRouter(Game);
+export default Game;

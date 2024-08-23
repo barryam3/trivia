@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 
-import { withRouter } from "react-router-dom";
 import Services from "../services";
 
 function redirectTo(to: string) {
@@ -130,4 +129,4 @@ const Init: React.FC = () => {
   );
 };
 
-export default withRouter(Init);
+export default Init;
