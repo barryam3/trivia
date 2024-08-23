@@ -5,7 +5,7 @@ import {
   Route,
   Redirect,
   useLocation,
-  useParams,
+  useRouteMatch,
 } from "react-router-dom";
 
 import Scores from "./Elements/Scores";
@@ -71,8 +71,9 @@ const Game: React.FC = () => {
     lastScreen: "",
   });
 
-  const params = useParams<Params>();
   const location = useLocation();
+  const match = useRouteMatch<Params>();
+  const params = match.params;
 
   useEffect(() => {
     // for follower: check for updates to screen state to see if page must be reloaded
