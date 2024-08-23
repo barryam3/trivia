@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 
 import { RouteComponentProps, withRouter } from "react-router-dom";
 
@@ -73,40 +73,42 @@ interface Props extends RouteComponentProps<Params> {
 }
 
 interface State {
-  category: string;
-  value: number;
-  question: string[];
-  answer: string;
+  /**
+   * The stage at which the question is shown. In general, 1 means question
+   * has been shown and 2 means answer has been shown, but for questions with
+   * media URLs there are multiple "questions" so the numbers go higher.
+   */
   shown: number;
 }
 
-class Question extends Component<Props, State> {
-  state: State = {
-    category: "",
-    value: 0,
-    question: [],
-    answer: "",
-    shown: 0,
-  };
+interface ProcessedQuestion extends State {
+  category: string;
+  /** The question value, multiplied. The final question has no value. */
+  value?: number;
+  /** The question text, split on URLs. */
+  question: string[];
+  answer: string;
+}
 
-  componentWillMount() {
-    const query = new URLSearchParams(this.props.location.search);
+const Question: React.FC<Props> = (props) => {
+  const [state, setState] = useState<State>({
+    shown: props.shown,
+  });
+
+  // Use this instead of props.shown or state.shown.
+  const shown = Math.max(props.shown, state.shown);
+
+  useEffect(() => {
+    const query = new URLSearchParams(props.location.search);
     const q = query.get("q");
-    if (this.props.leader) {
+    if (props.leader) {
       const str = `question?q=${q}`;
-      Services.games.updateScreen(this.props.match.params.gameUID, str);
+      Services.games.updateScreen(props.match.params.gameUID, str);
     }
-  }
+  }, [props.leader, props.location.search, props.match.params.gameUID]);
 
-  componentWillReceiveProps(nextProps: Props) {
-    this.updateQuestionState(nextProps);
-    if (this.props.shown != null && !nextProps.leader) {
-      this.setState({ shown: this.props.shown });
-    }
-  }
-
-  updateQuestionState = (props: Props) => {
-    const query = new URLSearchParams(this.props.location.search);
+  const processQuestion = (props: Props): ProcessedQuestion => {
+    const query = new URLSearchParams(props.location.search);
     const q = query.get("q");
     if (props.board.length > 0 && q !== "final") {
       const qid = Number(q);
@@ -118,127 +120,121 @@ class Question extends Component<Props, State> {
         Services.games.updateShown(props.match.params.gameUID, -1);
         shown = -1;
       }
-      this.setState({
+      return {
         category: props.board[c].title,
         value: v + 1,
         question: splitOnURLs(props.board[c].questions[v].question),
         answer: props.board[c].questions[v].answer,
         shown,
-      });
+      };
     } else if (q === "final") {
       let { shown } = props;
       if (props.leader) {
         Services.games.updateShown(props.match.params.gameUID, -1);
         shown = -1;
       }
-      this.setState({
+      return {
         category: props.final.category,
         question: splitOnURLs(props.final.question),
         answer: props.final.answer,
         shown,
-      });
+      };
+    } else {
+      throw new Error(`Invalid question number ${q}.`);
     }
   };
 
+  const question = processQuestion(props);
+
   // only called by leader
-  goToNext = () => {
-    const query = new URLSearchParams(this.props.location.search);
+  const goToNext = () => {
+    const query = new URLSearchParams(props.location.search);
     const q = query.get("q");
     // mark the question as asked once we reveal it
-    if (this.state.shown === 0 && q !== "final") {
-      Services.games.askQuestion(this.props.match.params.gameUID, Number(q));
+    if (shown === 0 && q !== "final") {
+      Services.games.askQuestion(props.match.params.gameUID, Number(q));
     }
     // update display state
-    if (this.state.shown < this.state.question.length + 1) {
-      Services.games.updateShown(
-        this.props.match.params.gameUID,
-        this.state.shown + 1
-      );
-      this.setState((prevState) => ({
-        shown: prevState.shown + 1,
+    if (shown < question.question.length + 1) {
+      Services.games.updateShown(props.match.params.gameUID, shown + 1);
+      setState((prevState) => ({
+        shown: shown + 1,
       }));
       // switch page on final click
     } else if (q === "final") {
-      window.location.assign(`gameover?leader=${this.props.leader}`);
+      window.location.assign(`gameover?leader=${props.leader}`);
     } else {
-      window.location.assign(`board?leader=${this.props.leader}`);
+      window.location.assign(`board?leader=${props.leader}`);
     }
   };
 
-  shownText = () => {
-    if (this.state.shown < this.state.question.length) {
+  const shownText = () => {
+    if (shown < question.question.length) {
       return "Show Question";
-    } else if (this.state.shown === this.state.question.length) {
+    } else if (shown === question.question.length) {
       return "Show Answer";
-    } else if (this.props.final.loaded) {
+    } else if (props.final.loaded) {
       return "Finish Game";
     }
     return "Return to Board";
   };
 
-  render() {
-    const query = new URLSearchParams(this.props.location.search);
-    const q = query.get("q");
+  const query = new URLSearchParams(props.location.search);
+  const q = query.get("q");
 
-    return (
-      <div id="question">
-        {this.props.board.length > 0 || this.props.final.loaded ? (
-          <React.Fragment>
-            {this.state.shown === -1 ? (
-              <div className="finalheader">
-                {q === "final" ? "Final Jeopardy" : "Daily Double"}
-              </div>
-            ) : (
-              <div>
-                <div className="qheader">
-                  {this.state.category}
-                  {q !== "final" ? (
-                    <span>
-                      {" "}
-                      —{" "}
-                      <span className="qvalue">
-                        ${this.state.value * this.props.multiplier}
-                      </span>
+  return (
+    <div id="question">
+      {props.board.length > 0 || props.final.loaded ? (
+        <React.Fragment>
+          {shown === -1 ? (
+            <div className="finalheader">
+              {q === "final" ? "Final Jeopardy" : "Daily Double"}
+            </div>
+          ) : (
+            <div>
+              <div className="qheader">
+                {question.category}
+                {q !== "final" ? (
+                  <span>
+                    {" "}
+                    —{" "}
+                    <span className="qvalue">
+                      ${question.value! * props.multiplier}
                     </span>
-                  ) : (
-                    ""
-                  )}
-                </div>
-                <div className="qtext">
-                  <React.Fragment>
-                    {this.state.question
-                      .filter(
-                        (q, i) =>
-                          this.state.shown + (this.props.leader ? 1 : 0) > i
-                      )
-                      .map((q, i) => (
-                        <QuestionPart
-                          key={i}
-                          style={{ paddingBottom: "15px" }}
-                          text={q}
-                          leader={this.props.leader}
-                        />
-                      ))}
-                    {this.state.shown + (this.props.leader ? 1 : 0) >
-                      this.state.question.length && (
-                      <div>{this.state.answer}</div>
-                    )}
-                  </React.Fragment>
-                </div>
+                  </span>
+                ) : (
+                  ""
+                )}
               </div>
-            )}
-            {this.props.leader && (
-              <button id="nextbutton" onClick={this.goToNext} type="button">
-                {this.state.shown < 0 ? "Show Category" : this.shownText()}
-              </button>
-            )}
-          </React.Fragment>
-        ) : (
-          <React.Fragment />
-        )}
-      </div>
-    );
-  }
-}
+              <div className="qtext">
+                <React.Fragment>
+                  {question.question
+                    .filter((q, i) => shown + (props.leader ? 1 : 0) > i)
+                    .map((q, i) => (
+                      <QuestionPart
+                        key={i}
+                        style={{ paddingBottom: "15px" }}
+                        text={q}
+                        leader={props.leader}
+                      />
+                    ))}
+                  {shown + (props.leader ? 1 : 0) >
+                    question.question.length && <div>{question.answer}</div>}
+                </React.Fragment>
+              </div>
+            </div>
+          )}
+          {props.leader && (
+            <button id="nextbutton" onClick={goToNext} type="button">
+              {shown < 0 ? "Show Category" : shownText()}
+            </button>
+          )}
+        </React.Fragment>
+      ) : (
+        <React.Fragment />
+      )}
+    </div>
+  );
+};
 
 export default withRouter(Question);
