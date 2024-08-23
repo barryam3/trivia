@@ -146,7 +146,7 @@ class Question extends Component<Props, State> {
     const q = query.get("q");
     // mark the question as asked once we reveal it
     if (this.state.shown === 0 && q !== "final") {
-      Services.games.askQuestion(this.props.match.params.gameUID, q);
+      Services.games.askQuestion(this.props.match.params.gameUID, Number(q));
     }
     // update display state
     if (this.state.shown < this.state.question.length + 1) {
