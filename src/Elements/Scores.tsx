@@ -1,22 +1,32 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import { withRouter } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from "react-router-dom";
 
-import Services from '../services';
+import Services from "../services";
+import { Contestant } from "../interfaces/game";
 
-class Scores extends Component {
+interface Props extends RouteComponentProps {
+  contestants: Contestant[];
+  uid: string;
+  leader: boolean;
+  value: number|null;
+  multiplier: number;
+}
+
+class Scores extends Component<Props> {
   state = {
-    contestants: this.props.contestants
+    contestants: this.props.contestants,
   };
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps: Props) {
     this.setState({ contestants: nextProps.contestants });
   }
 
-  updateScore = (key, diff) => {
+  updateScore = (key: number, diff: number) => {
     return () => {
-      this.setState(prevState => {
-        prevState.contestants[key].score += diff;
+      this.setState((prevState) => {
+        const newState = JSON.parse(JSON.stringify(prevState));
+        newState.contestants[key].score += diff;
         return prevState;
       });
       Services.games.updateScore(this.props.uid, key, diff);
@@ -33,7 +43,7 @@ class Scores extends Component {
                 <button
                   type="button"
                   className="scorebutton"
-                  style={{ backgroundColor: 'red' }}
+                  style={{ backgroundColor: "red" }}
                   onClick={this.updateScore(key, -1)}
                 >
                   -
@@ -42,7 +52,7 @@ class Scores extends Component {
                   <button
                     type="button"
                     className="scorebutton"
-                    style={{ backgroundColor: 'red' }}
+                    style={{ backgroundColor: "red" }}
                     onClick={this.updateScore(
                       key,
                       -this.props.multiplier * this.props.value
@@ -62,7 +72,7 @@ class Scores extends Component {
                 <button
                   type="button"
                   className="scorebutton"
-                  style={{ backgroundColor: 'green' }}
+                  style={{ backgroundColor: "green" }}
                   onClick={this.updateScore(key, 1)}
                 >
                   +
@@ -71,7 +81,7 @@ class Scores extends Component {
                   <button
                     type="button"
                     className="scorebutton"
-                    style={{ backgroundColor: 'green' }}
+                    style={{ backgroundColor: "green" }}
                     onClick={this.updateScore(
                       key,
                       this.props.multiplier * this.props.value

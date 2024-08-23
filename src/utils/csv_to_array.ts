@@ -3,7 +3,7 @@
 // arrays. The default delimiter is the comma, but this
 // can be overriden in the second argument.
 
-exports.CSVToArray = (strData, strDelimiter) => {
+export const CSVToArray = (strData: string, strDelimiter: string): string[][] => {
   // Check to see if the delimiter is defined. If not,
   // then default to comma.
   strDelimiter = strDelimiter || ',';
@@ -21,7 +21,7 @@ exports.CSVToArray = (strData, strDelimiter) => {
 
   // Create an array to hold our data. Give the array
   // a default empty first row.
-  const arrData = [[]];
+  const arrData: string[][] = [[]];
 
   // Create an array to hold our individual pattern
   // matching groups.

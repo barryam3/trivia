@@ -1,24 +1,24 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import { withRouter } from 'react-router-dom';
-import Services from '../services';
+import { RouteComponentProps, withRouter } from "react-router-dom";
+import Services from "../services";
 
-class Init extends Component {
+class Init extends Component<RouteComponentProps> {
   state = {
-    uid: '',
-    contestants: '',
-    singlecsv: '',
-    doublecsv: '',
-    finaltxt: ''
+    uid: "",
+    contestants: "",
+    singlecsv: "",
+    doublecsv: "",
+    finaltxt: "",
   };
 
-  handleChange = event => {
+  handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     this.setState({
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     });
   };
 
-  handleSubmit = event => {
+  handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     Services.games.addGame(
       this.state.uid,
@@ -101,7 +101,7 @@ class Init extends Component {
               </td>
             </tr>
             <tr>
-              <td colSpan="2">
+              <td colSpan={2}>
                 <input type="submit" value="Submit" />
               </td>
             </tr>

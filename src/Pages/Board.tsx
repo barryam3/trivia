@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 
-import { withRouter } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from "react-router-dom";
 
-import Services from '../services';
+import Services from "../services";
+import { Category } from "../interfaces/game";
 
-function range(start, stop) {
+function range(start: number, stop: number): number[] {
   const arr = [];
   let i;
   for (i = 0; i < stop; i += 1) {
@@ -13,17 +14,27 @@ function range(start, stop) {
   return arr;
 }
 
-class Board extends Component {
+interface Params {
+  gameUID: string;
+}
+
+interface Props extends RouteComponentProps<Params> {
+  leader: boolean;
+  board: Category[];
+  multiplier: number;
+}
+
+class Board extends Component<Props> {
   componentWillMount() {
     const { leader, match } = this.props;
     if (leader) {
-      Services.games.updateScreen(match.params.gameUID, 'board');
+      Services.games.updateScreen(match.params.gameUID, "board");
     }
   }
 
   render() {
-    let numC;
-    let qPerC;
+    let numC: number;
+    let qPerC!: number;
     if (this.props.board.length > 0) {
       numC = this.props.board.length;
       qPerC = this.props.board[0].questions.length;
@@ -40,9 +51,9 @@ class Board extends Component {
             <span>{category.title}</span>
           </div>
         ))}
-        {range(0, qPerC).map(vkey => (
+        {range(0, qPerC).map((vkey) => (
           <React.Fragment>
-            {range(0, numC).map(ckey => (
+            {range(0, numC).map((ckey) => (
               <div
                 key={ckey}
                 className="qvalue"
