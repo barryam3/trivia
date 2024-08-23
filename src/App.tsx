@@ -1,4 +1,3 @@
-import { Component } from "react";
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Init from "./Pages/Init";
@@ -18,26 +17,22 @@ function redirectTo(to: string) {
   return replacePath;
 }
 
-class App extends Component {
-  render() {
-    return (
-      <Router>
-        <Switch>
-          <Route
-            strict={false}
-            exact
-            path="/"
-            component={Init}
-            // @ts-ignore: Unknown prop.
-            onEnter={redirectTo("/init")}
-          />
-          <Route strict={false} path="/init" component={Init} />
-          <Route strict={false} path="/game/:gameUID" component={Game} />
-          <Route strict={false} path="*" component={NotFound} />
-        </Switch>
-      </Router>
-    );
-  }
-}
+const App: React.FC = () => (
+  <Router>
+    <Switch>
+      <Route
+        strict={false}
+        exact
+        path="/"
+        component={Init}
+        // @ts-ignore: Unknown prop.
+        onEnter={redirectTo("/init")}
+      />
+      <Route strict={false} path="/init" component={Init} />
+      <Route strict={false} path="/game/:gameUID" component={Game} />
+      <Route strict={false} path="*" component={NotFound} />
+    </Switch>
+  </Router>
+);
 
 export default App;
