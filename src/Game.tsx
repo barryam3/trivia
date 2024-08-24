@@ -10,7 +10,7 @@ import {
 
 import Scores from "./Elements/Scores";
 import Board from "./Pages/Board";
-import Question, { Final } from "./Pages/Question";
+import Question from "./Pages/Question";
 import GameOver from "./Pages/GameOver";
 import services from "./services/index";
 import NotFound from "./Pages/NotFound";
@@ -35,8 +35,8 @@ interface Params {
 interface State {
   game: IGame;
   board: Category[];
-  question: Final;
   lastScreen: string;
+  finalLoaded: boolean;
 }
 
 const Game: React.FC = () => {
@@ -60,15 +60,10 @@ const Game: React.FC = () => {
       },
       screen: "",
       shown: 0,
-    }, // all of the state
+    } as IGame, // all of the state
     board: [], // single vs double jeopardy
-    question: {
-      category: "",
-      question: "",
-      answer: "",
-      loaded: false,
-    }, // for final jeopardy
     lastScreen: "",
+    finalLoaded: false,
   });
 
   const location = useLocation();
@@ -107,8 +102,7 @@ const Game: React.FC = () => {
           newState.board = res.content.double.categories;
         }
         if (res.content.round === "final") {
-          newState.question = res.content.final;
-          newState.question.loaded = true;
+          newState.finalLoaded = true;
         }
         return newState;
       });
@@ -121,7 +115,8 @@ const Game: React.FC = () => {
   const childProps = {
     services: services,
     board: state.board,
-    final: state.question,
+    final: state.game.final,
+    finalLoaded: state.finalLoaded,
     round: state.game.round,
     leader,
     shown: state.game.shown,
@@ -129,7 +124,7 @@ const Game: React.FC = () => {
     contestants: state.game.contestants,
   };
 
-  if (state.question.loaded && window.location.pathname.endsWith("board")) {
+  if (state.finalLoaded && window.location.pathname.endsWith("board")) {
     window.location.assign("question?q=final&leader=" + leader);
   }
   let value;
@@ -142,7 +137,8 @@ const Game: React.FC = () => {
   }
 
   let bUrl = "/game/:gameUID";
-  return (
+  // Wait for game state.
+  return state.game.uid && (
     <div id="game">
       <div id="game-content">
         <Router>

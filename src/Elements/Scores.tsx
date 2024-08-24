@@ -16,15 +16,15 @@ const Scores: React.FC<Props> = (props) => {
     contestants: props.contestants,
   });
 
-  const contestants = props.leader ? state.contestants : props.contestants;
+  const contestants =
+    props.leader && state.contestants.length
+      ? state.contestants
+      : props.contestants;
 
   const updateScore = (key: number, diff: number) => {
     return () => {
-      setState((prevState) => {
-        const newState = JSON.parse(JSON.stringify(prevState));
-        newState.contestants[key].score += diff;
-        return prevState;
-      });
+      contestants[key].score += diff;
+      setState(() => ({ contestants }));
       Services.games.updateScore(props.uid, key, diff);
     };
   };

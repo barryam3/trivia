@@ -61,7 +61,6 @@ export interface Final {
   category: string;
   question: string;
   answer: string;
-  loaded: boolean;
 }
 
 interface Props {
@@ -69,6 +68,7 @@ interface Props {
   shown: number;
   board: Category[];
   final: Final;
+  finalLoaded: boolean;
   multiplier: number;
 }
 
@@ -88,6 +88,11 @@ interface ProcessedQuestion extends State {
   /** The question text, split on URLs. */
   question: string[];
   answer: string;
+  /**
+   * Daily Double and Final Jeopardy start with a splash screen and thus have
+   * an additional stage.
+   */
+  isDDorFJ?: boolean;
 }
 
 const Question: React.FC<Props> = (props) => {
@@ -119,8 +124,6 @@ const Question: React.FC<Props> = (props) => {
       const v = qid % qPerC; // value - 1
       let { shown } = props;
       if (props.board[c].questions[v].dailydouble && props.leader) {
-        Services.games.updateShown(params.gameUID, -1);
-        shown = -1;
       }
       return {
         category: props.board[c].title,
@@ -128,21 +131,19 @@ const Question: React.FC<Props> = (props) => {
         question: splitOnURLs(props.board[c].questions[v].question),
         answer: props.board[c].questions[v].answer,
         shown,
+        isDDorFJ: props.board[c].questions[v].dailydouble,
       };
     } else if (q === "final") {
       let { shown } = props;
-      if (props.leader) {
-        Services.games.updateShown(params.gameUID, -1);
-        shown = -1;
-      }
       return {
         category: props.final.category,
         question: splitOnURLs(props.final.question),
         answer: props.final.answer,
         shown,
+        isDDorFJ: true,
       };
     } else {
-      throw new Error(`Invalid question number ${q}.`);
+      throw new Error(`Invalid question number ${q} > ${props.board.length}.`);
     }
   };
 
@@ -157,7 +158,7 @@ const Question: React.FC<Props> = (props) => {
       Services.games.askQuestion(params.gameUID, Number(q));
     }
     // update display state
-    if (shown < question.question.length + 1) {
+    if (shown < question.question.length + 1 + (question.isDDorFJ ? 1 : 0)) {
       Services.games.updateShown(params.gameUID, shown + 1);
       setState((prevState) => ({
         shown: shown + 1,
@@ -171,11 +172,19 @@ const Question: React.FC<Props> = (props) => {
   };
 
   const shownText = () => {
-    if (shown < question.question.length) {
+    if (shown === 0 && question.isDDorFJ) {
+      return "Show Category";
+    } else if (
+      shown + (question.isDDorFJ ? -1 : 0) <
+      question.question.length
+    ) {
       return "Show Question";
-    } else if (shown === question.question.length) {
+    } else if (
+      shown + (question.isDDorFJ ? -1 : 0) ===
+      question.question.length
+    ) {
       return "Show Answer";
-    } else if (props.final.loaded) {
+    } else if (q === "final") {
       return "Finish Game";
     }
     return "Return to Board";
@@ -186,9 +195,9 @@ const Question: React.FC<Props> = (props) => {
 
   return (
     <div id="question">
-      {props.board.length > 0 || props.final.loaded ? (
+      {props.board.length > 0 || props.finalLoaded ? (
         <React.Fragment>
-          {shown === -1 ? (
+          {question.isDDorFJ && shown === 0 ? (
             <div className="finalheader">
               {q === "final" ? "Final Jeopardy" : "Daily Double"}
             </div>
@@ -211,7 +220,13 @@ const Question: React.FC<Props> = (props) => {
               <div className="qtext">
                 <React.Fragment>
                   {question.question
-                    .filter((q, i) => shown + (props.leader ? 1 : 0) > i)
+                    .filter(
+                      (q, i) =>
+                        shown +
+                          (props.leader ? 1 : 0) +
+                          (question.isDDorFJ ? -1 : 0) >
+                        i
+                    )
                     .map((q, i) => (
                       <QuestionPart
                         key={i}
@@ -220,7 +235,9 @@ const Question: React.FC<Props> = (props) => {
                         leader={props.leader}
                       />
                     ))}
-                  {shown + (props.leader ? 1 : 0) >
+                  {shown +
+                    (props.leader ? 1 : 0) +
+                    (question.isDDorFJ ? -1 : 0) >
                     question.question.length && <div>{question.answer}</div>}
                 </React.Fragment>
               </div>
