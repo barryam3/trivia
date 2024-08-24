@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import Services from "../services";
 import { Contestant } from "../interfaces/game";
@@ -12,19 +12,11 @@ interface Props {
 }
 
 const Scores: React.FC<Props> = (props) => {
-  const [state, setState] = useState({
-    contestants: props.contestants,
-  });
-
-  const contestants =
-    props.leader && state.contestants.length
-      ? state.contestants
-      : props.contestants;
+  const contestants = props.contestants;
 
   const updateScore = (key: number, diff: number) => {
     return () => {
       contestants[key].score += diff;
-      setState(() => ({ contestants }));
       Services.games.updateScore(props.uid, key, diff);
     };
   };

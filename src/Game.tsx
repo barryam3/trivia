@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -14,131 +14,60 @@ import Question from "./Pages/Question";
 import GameOver from "./Pages/GameOver";
 import services from "./services/index";
 import NotFound from "./Pages/NotFound";
-import { Game as IGame, Category } from "./interfaces/game";
+import { Game as IGame } from "./interfaces/game";
 
 // Dollar value of the lowest-value question
 // 200 for classic Jeopardy
 const kDollarMultiplier = 2;
 
-// repeatedly try function f every ddt msec for dt msec
-function tryUntil(f: Function, dt: number, ddt: number) {
-  f();
-  if (dt > 0) {
-    setTimeout(() => tryUntil(f, dt - ddt, ddt), ddt);
-  }
-}
-
 interface Params {
   gameUID: string;
 }
 
-interface State {
-  game: IGame;
-  board: Category[];
-  lastScreen: string;
-  finalLoaded: boolean;
+function useGameScreen(game: IGame, leader: boolean) {
+  useEffect(() => {
+    if (leader) return;
+    if (window.location.pathname.includes("gameover")) return;
+    if (!window.location.href.endsWith(game.screen)) {
+      window.location.assign(game.screen);
+    }
+  }, [game, leader]);
 }
 
 const Game: React.FC = () => {
-  const [state, setState] = useState<State>({
-    game: {
-      uid: "",
-      round: "",
-      contestants: [],
-      single: {
-        categories: [],
-        earlyend: 0,
-      },
-      double: {
-        categories: [],
-        earlyend: 0,
-      },
-      final: {
-        category: "",
-        question: "",
-        answer: "",
-      },
-      screen: "",
-      shown: 0,
-    } as IGame, // all of the state
-    board: [], // single vs double jeopardy
-    lastScreen: "",
-    finalLoaded: false,
-  });
-
   const location = useLocation();
   const match = useRouteMatch<Params>();
   const params = match.params;
 
-  useEffect(() => {
-    // for follower: check for updates to screen state to see if page must be reloaded
-    const checkForUpdates = () => {
-      services.games.getGame(params.gameUID).then((res) => {
-        if (!window.location.href.endsWith(res.content.screen)) {
-          window.location.assign(res.content.screen);
-        }
-        setState((prevState) => ({ ...prevState, game: res.content }));
-      });
-    };
-
-    const query = new URLSearchParams(location.search);
-    const leader = query.get("leader");
-    loadGame(params.gameUID);
-    if (leader !== "true" && !window.location.pathname.includes("gameover")) {
-      tryUntil(checkForUpdates, Infinity, 50);
-    }
-  }, [location.search, params.gameUID]);
-
-  // get game state from the db
-  const loadGame = (uid: string) => {
-    services.games.getGame(uid).then((res) => {
-      setState((prevState) => {
-        const newState = JSON.parse(JSON.stringify(prevState));
-        newState.game = res.content;
-        if (res.content.round === "single") {
-          newState.board = res.content.single.categories;
-        }
-        if (res.content.round === "double") {
-          newState.board = res.content.double.categories;
-        }
-        if (res.content.round === "final") {
-          newState.finalLoaded = true;
-        }
-        return newState;
-      });
-    });
-  };
-
+  const game = services.games.useGame(params.gameUID);
   const query = new URLSearchParams(location.search);
   const leader = Boolean(query.get("leader"));
-  const q = query.get("q");
-  const childProps = {
-    services: services,
-    board: state.board,
-    final: state.game.final,
-    finalLoaded: state.finalLoaded,
-    round: state.game.round,
-    leader,
-    shown: state.game.shown,
-    multiplier: (state.game.round === "double" ? 2 : 1) * kDollarMultiplier,
-    contestants: state.game.contestants,
-  };
+  useGameScreen(game, leader);
 
-  if (state.finalLoaded && window.location.pathname.endsWith("board")) {
+  let board =
+    game.round === "single" ? game.single.categories : game.double.categories;
+  const final = game.final;
+  const finalLoaded = game.round === "final";
+  const shown = game.shown;
+  const multiplier = (game.round === "double" ? 2 : 1) * kDollarMultiplier;
+  const contestants = game.contestants;
+  const q = query.get("q");
+
+  if (finalLoaded && window.location.pathname.endsWith("board")) {
     window.location.assign("question?q=final&leader=" + leader);
   }
   let value;
-  if (q != null && state.board.length > 0) {
+  if (q != null && board.length > 0) {
     const qID = Number(q);
-    const qPerC = state.board[0].questions.length;
+    const qPerC = board[0].questions.length;
     value = (qID % qPerC) + 1; // value
   } else {
     value = null;
   }
 
   let bUrl = "/game/:gameUID";
-  // Wait for game state.
-  return state.game.uid && (
+
+  return (
     <div id="game">
       <div id="game-content">
         <Router>
@@ -146,17 +75,28 @@ const Game: React.FC = () => {
             <Route
               strict={false}
               path={bUrl + "/board"}
-              children={<Board {...childProps} />}
+              children={
+                <Board leader={leader} board={board} multiplier={multiplier} />
+              }
             />
             <Route
               strict={false}
               path={bUrl + "/question"}
-              children={<Question {...childProps} />}
+              children={
+                <Question
+                  leader={leader}
+                  shown={shown}
+                  board={board}
+                  final={final}
+                  finalLoaded={finalLoaded}
+                  multiplier={multiplier}
+                />
+              }
             />
             <Route
               strict={false}
               path={bUrl + "/gameover"}
-              children={<GameOver {...childProps} />}
+              children={<GameOver leader={leader} contestants={contestants} />}
             />
             <Route
               strict={false}
@@ -176,10 +116,10 @@ const Game: React.FC = () => {
         </Router>
       </div>
       <Scores
-        contestants={state.game.contestants}
+        contestants={game.contestants}
         uid={params.gameUID}
         leader={leader}
-        multiplier={(state.game.round === "double" ? 2 : 1) * kDollarMultiplier}
+        multiplier={(game.round === "double" ? 2 : 1) * kDollarMultiplier}
         value={value}
       />
     </div>

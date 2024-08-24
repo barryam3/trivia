@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 import { useLocation, useParams } from "react-router-dom";
 
@@ -72,16 +72,7 @@ interface Props {
   multiplier: number;
 }
 
-interface State {
-  /**
-   * The stage at which the question is shown. In general, 1 means question
-   * has been shown and 2 means answer has been shown, but for questions with
-   * media URLs there are multiple "questions" so the numbers go higher.
-   */
-  shown: number;
-}
-
-interface ProcessedQuestion extends State {
+interface ProcessedQuestion {
   category: string;
   /** The question value, multiplied. The final question has no value. */
   value?: number;
@@ -96,14 +87,10 @@ interface ProcessedQuestion extends State {
 }
 
 const Question: React.FC<Props> = (props) => {
-  const [state, setState] = useState<State>({
-    shown: props.shown,
-  });
   const params = useParams<Params>();
   const location = useLocation();
 
-  // Use this instead of props.shown or state.shown.
-  const shown = Math.max(props.shown, state.shown);
+  const shown = props.shown;
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
@@ -122,7 +109,6 @@ const Question: React.FC<Props> = (props) => {
       const qPerC = props.board[0].questions.length;
       const c = Math.floor(qid / qPerC); // category
       const v = qid % qPerC; // value - 1
-      let { shown } = props;
       if (props.board[c].questions[v].dailydouble && props.leader) {
       }
       return {
@@ -130,16 +116,13 @@ const Question: React.FC<Props> = (props) => {
         value: v + 1,
         question: splitOnURLs(props.board[c].questions[v].question),
         answer: props.board[c].questions[v].answer,
-        shown,
         isDDorFJ: props.board[c].questions[v].dailydouble,
       };
     } else if (q === "final") {
-      let { shown } = props;
       return {
         category: props.final.category,
         question: splitOnURLs(props.final.question),
         answer: props.final.answer,
-        shown,
         isDDorFJ: true,
       };
     } else {
@@ -160,9 +143,6 @@ const Question: React.FC<Props> = (props) => {
     // update display state
     if (shown < question.question.length + 1 + (question.isDDorFJ ? 1 : 0)) {
       Services.games.updateShown(params.gameUID, shown + 1);
-      setState((prevState) => ({
-        shown: shown + 1,
-      }));
       // switch page on final click
     } else if (q === "final") {
       window.location.assign(`gameover?leader=${props.leader}`);

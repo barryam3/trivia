@@ -59,7 +59,7 @@ export function getGame(uid: string): Game {
   return JSON.parse(game) as Game;
 }
 
-export function askQuestion(uid: string, qid: number): void {
+export function askQuestion(uid: string, qid: number): Game {
   const game = getGame(uid);
   // get the game so we can figure out what round we are in
   const board =
@@ -81,26 +81,30 @@ export function askQuestion(uid: string, qid: number): void {
     game.round = game.round === "single" ? "double" : "final";
   }
   localStorage.setItem(uid, JSON.stringify(game));
+  return game;
 }
 
-export function updateScore(uid: string, key: number, diff: number): void {
+export function updateScore(uid: string, key: number, diff: number): Game {
   const game = getGame(uid);
   if (key < 0 || key >= game.contestants.length) {
     throw new Error(`Invalid contestant number ${key}.`);
   }
   game.contestants[key].score += diff;
   localStorage.setItem(uid, JSON.stringify(game));
+  return game;
 }
 
-export function updateScreen(uid: string, screen: string): void {
+export function updateScreen(uid: string, screen: string): Game {
   const game = getGame(uid);
   game.screen = screen;
   game.shown = 0;
   localStorage.setItem(uid, JSON.stringify(game));
+  return game;
 }
 
-export function updateShown(uid: string, shown: number): void {
+export function updateShown(uid: string, shown: number): Game {
   const game = getGame(uid);
   game.shown = shown;
   localStorage.setItem(uid, JSON.stringify(game));
+  return game;
 }
