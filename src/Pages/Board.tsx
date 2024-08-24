@@ -53,7 +53,7 @@ const Board: React.FC<Props> = (props) => {
         </div>
       ))}
       {range(0, qPerC).map((vkey) => (
-        <React.Fragment>
+        <React.Fragment key={vkey}>
           {range(0, numC).map((ckey) => (
             <div
               key={ckey}
