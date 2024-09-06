@@ -1,5 +1,5 @@
 import * as gameModel from "../models/game";
-import { Game } from "../interfaces/game";
+import type { Game } from "../interfaces/game";
 import { useEffect, useState } from "react";
 
 // Wrap function so that it returns a promise which resolves after notifying

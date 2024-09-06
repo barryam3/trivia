@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import type React from "react";
+import { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -14,7 +15,7 @@ import Question from "./Pages/Question";
 import GameOver from "./Pages/GameOver";
 import services from "./services/index";
 import NotFound from "./Pages/NotFound";
-import { Game as IGame } from "./interfaces/game";
+import type { Game as IGame } from "./interfaces/game";
 
 // Dollar value of the lowest-value question
 // 200 for classic Jeopardy
@@ -44,7 +45,7 @@ const Game: React.FC = () => {
   const leader = Boolean(query.get("leader"));
   useGameScreen(game, leader);
 
-  let board =
+  const board =
     game.round === "single" ? game.single.categories : game.double.categories;
   const final = game.final;
   const finalLoaded = game.round === "final";
@@ -54,9 +55,9 @@ const Game: React.FC = () => {
   const q = query.get("q");
 
   if (finalLoaded && window.location.pathname.endsWith("board")) {
-    window.location.assign("question?q=final&leader=" + leader);
+    window.location.assign(`question?q=final&leader=${leader}`);
   }
-  let value;
+  let value: number | null;
   if (q != null && board.length > 0) {
     const qID = Number(q);
     const qPerC = board[0].questions.length;
@@ -65,7 +66,7 @@ const Game: React.FC = () => {
     value = null;
   }
 
-  let bUrl = "/game/:gameUID";
+  const bUrl = "/game/:gameUID";
 
   return (
     <div id="game">
@@ -74,14 +75,14 @@ const Game: React.FC = () => {
           <Switch>
             <Route
               strict={false}
-              path={bUrl + "/board"}
+              path={`${bUrl}/board`}
               children={
                 <Board leader={leader} board={board} multiplier={multiplier} />
               }
             />
             <Route
               strict={false}
-              path={bUrl + "/question"}
+              path={`${bUrl}/question`}
               children={
                 <Question
                   leader={leader}
@@ -95,18 +96,18 @@ const Game: React.FC = () => {
             />
             <Route
               strict={false}
-              path={bUrl + "/gameover"}
+              path={`${bUrl}/gameover`}
               children={<GameOver leader={leader} contestants={contestants} />}
             />
             <Route
               strict={false}
               exact
-              path={bUrl + "/"}
+              path={`${bUrl}/`}
               render={() => (
                 <Redirect
                   to={{
                     ...location,
-                    pathname: match.url + "/board",
+                    pathname: `${match.url}/board`,
                   }}
                 />
               )}

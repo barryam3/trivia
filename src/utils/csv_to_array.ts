@@ -3,10 +3,13 @@
 // arrays. The default delimiter is the comma, but this
 // can be overriden in the second argument.
 
-export const CSVToArray = (strData: string, strDelimiter: string): string[][] => {
+export const CSVToArray = (
+  strData: string,
+  inputDelimiter: string
+): string[][] => {
   // Check to see if the delimiter is defined. If not,
   // then default to comma.
-  strDelimiter = strDelimiter || ',';
+  const strDelimiter = inputDelimiter || ",";
 
   // Create a regular expression to parse the CSV values.
   const objPattern = new RegExp(
@@ -16,7 +19,7 @@ export const CSVToArray = (strData: string, strDelimiter: string): string[][] =>
       '(?:"([^"]*(?:""[^"]*)*)"|' +
       // Standard fields.
       `([^"\\${strDelimiter}\\r\\n]*))`,
-    'gi'
+    "gi"
   );
 
   // Create an array to hold our data. Give the array
@@ -43,7 +46,7 @@ export const CSVToArray = (strData: string, strDelimiter: string): string[][] =>
       arrData.push([]);
     }
 
-    let strMatchedValue;
+    let strMatchedValue: string;
 
     // Now that we have our delimiter out of the way,
     // let's check to see which kind of value we
@@ -51,7 +54,7 @@ export const CSVToArray = (strData: string, strDelimiter: string): string[][] =>
     if (arrMatches[2]) {
       // We found a quoted value. When we capture
       // this value, unescape any double quotes.
-      strMatchedValue = arrMatches[2].replace(new RegExp('""', 'g'), '"');
+      strMatchedValue = arrMatches[2].replace(/""/g, '"');
     } else {
       // We found a non-quoted value.
       strMatchedValue = arrMatches[3];

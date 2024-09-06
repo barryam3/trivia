@@ -1,4 +1,4 @@
-import { Game } from "../interfaces/game";
+import type { Game } from "../interfaces/game";
 import * as parseGameFiles from "../utils/parseGameFiles";
 
 // returns 0 with probability .5

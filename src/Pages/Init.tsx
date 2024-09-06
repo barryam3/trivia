@@ -1,25 +1,9 @@
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useState } from "react";
 
 import Services from "../services";
 
-function redirectTo(to: string) {
-  function replacePath(
-    nextState: { location: { pathname: string } },
-    replace: (replacement: {}) => void
-  ) {
-    replace({
-      pathname: to,
-      state: { nextPathname: nextState.location.pathname },
-    });
-  }
-  return replacePath;
-}
-
 const Init: React.FC = () => {
-  useEffect(() => {
-    redirectTo("/init");
-  }, []);
-
   const [state, setState] = useState({
     uid: "",
     contestants: "",

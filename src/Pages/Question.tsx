@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 
 import Services from "../services";
-import { Category } from "../interfaces/game";
+import type { Category } from "../interfaces/game";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
@@ -31,7 +31,7 @@ function QuestionPart({
 }: {
   text: string;
   leader: boolean;
-  [key: string]: any;
+  [key: string]: unknown;
 }) {
   let content = <>{text}</>;
   if (text.match(URL_REGEX)) {
@@ -109,8 +109,6 @@ const Question: React.FC<Props> = (props) => {
       const qPerC = props.board[0].questions.length;
       const c = Math.floor(qid / qPerC); // category
       const v = qid % qPerC; // value - 1
-      if (props.board[c].questions[v].dailydouble && props.leader) {
-      }
       return {
         category: props.board[c].title,
         value: v + 1,
@@ -118,16 +116,16 @@ const Question: React.FC<Props> = (props) => {
         answer: props.board[c].questions[v].answer,
         isDDorFJ: props.board[c].questions[v].dailydouble,
       };
-    } else if (q === "final") {
+    }
+    if (q === "final") {
       return {
         category: props.final.category,
         question: splitOnURLs(props.final.question),
         answer: props.final.answer,
         isDDorFJ: true,
       };
-    } else {
-      throw new Error(`Invalid question number ${q} > ${props.board.length}.`);
     }
+    throw new Error(`Invalid question number ${q} > ${props.board.length}.`);
   };
 
   const question = processQuestion(props);
@@ -154,17 +152,14 @@ const Question: React.FC<Props> = (props) => {
   const shownText = () => {
     if (shown === 0 && question.isDDorFJ) {
       return "Show Category";
-    } else if (
-      shown + (question.isDDorFJ ? -1 : 0) <
-      question.question.length
-    ) {
+    }
+    if (shown + (question.isDDorFJ ? -1 : 0) < question.question.length) {
       return "Show Question";
-    } else if (
-      shown + (question.isDDorFJ ? -1 : 0) ===
-      question.question.length
-    ) {
+    }
+    if (shown + (question.isDDorFJ ? -1 : 0) === question.question.length) {
       return "Show Answer";
-    } else if (q === "final") {
+    }
+    if (q === "final") {
       return "Finish Game";
     }
     return "Return to Board";
@@ -190,7 +185,7 @@ const Question: React.FC<Props> = (props) => {
                     {" "}
                     —{" "}
                     <span className="qvalue">
-                      ${question.value! * props.multiplier}
+                      ${(question.value ?? 0) * props.multiplier}
                     </span>
                   </span>
                 ) : (
@@ -209,7 +204,7 @@ const Question: React.FC<Props> = (props) => {
                     )
                     .map((q, i) => (
                       <QuestionPart
-                        key={i}
+                        key={q}
                         style={{ paddingBottom: "15px" }}
                         text={q}
                         leader={props.leader}

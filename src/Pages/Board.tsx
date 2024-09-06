@@ -3,16 +3,8 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 import Services from "../services";
-import { Category } from "../interfaces/game";
-
-function range(start: number, stop: number): number[] {
-  const arr = [];
-  let i;
-  for (i = 0; i < stop; i += 1) {
-    arr.push(i);
-  }
-  return arr;
-}
+import type { Category } from "../interfaces/game";
+import { range } from "../utils/range";
 
 interface Params {
   gameUID: string;
@@ -45,7 +37,7 @@ const Board: React.FC<Props> = (props) => {
     <div id="board">
       {props.board.map((category, ckey) => (
         <div
-          key={ckey}
+          key={category.title}
           className="ctitle"
           style={{ gridRow: 1, gridColumn: ckey + 1 }}
         >
