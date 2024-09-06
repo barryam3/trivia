@@ -1,20 +1,17 @@
 import { CSVToArray } from "./csv_to_array";
-import { Question, Category, Contestant, FinalRound } from "../interfaces/game";
-
-// return an array of integers in range [start, stop)
-function range(start: number, stop: number): number[] {
-  const arr = [];
-  for (let i = 0; i < stop; i += 1) {
-    arr.push(i);
-  }
-  return arr;
-}
+import type {
+  Question,
+  Category,
+  Contestant,
+  FinalRound,
+} from "../interfaces/game";
+import { range } from "./range";
 
 // return a random integer in the range [min, max]
 function randint(min: number, max: number): number {
-  min = Math.ceil(min);
-  max = Math.floor(max) + 1;
-  return Math.floor(Math.random() * (max - min)) + min;
+  const lb = Math.ceil(min);
+  const ub = Math.floor(max) + 1;
+  return Math.floor(Math.random() * (ub - lb)) + lb;
 }
 
 export const parseGameCSV = (csvdata: string, numDD: number): Category[] => {
@@ -23,18 +20,18 @@ export const parseGameCSV = (csvdata: string, numDD: number): Category[] => {
   // randomize daily doubles
   const dd: number[] = [];
   const numQ = arr[0].length * ((arr.length - 1) / 2) - 1;
-  range(0, numDD).forEach(() => {
-    let qid;
+  for (let i = 0; i < numDD; i++) {
+    let qid: number;
     do {
       qid = randint(0, numQ - 1);
     } while (dd.indexOf(qid) !== -1);
     dd.push(qid);
-  });
+  }
   const out: Category[] = [];
-  range(0, arr[0].length).forEach((j) => {
+  for (const j of range(0, arr[0].length)) {
     const title = arr[0][j];
     const questions: Question[] = [];
-    range(0, (arr.length - 1) / 2).forEach((i) => {
+    for (const i of range(0, (arr.length - 1) / 2)) {
       const question = {
         question: arr[i * 2 + 1][j],
         answer: arr[i * 2 + 2][j],
@@ -42,16 +39,13 @@ export const parseGameCSV = (csvdata: string, numDD: number): Category[] => {
         dailydouble: dd.indexOf(i + (j * (arr.length - 1)) / 2) !== -1,
       };
       questions.push(question);
-    });
+    }
     const category = {
       title,
       questions,
     };
     out.push(category);
-  });
-  out.forEach((category) => {
-    category.questions.forEach(() => {});
-  });
+  }
   return out;
 };
 

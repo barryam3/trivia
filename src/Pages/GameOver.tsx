@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import type React from "react";
+import { useEffect } from "react";
 
 import { useParams } from "react-router-dom";
 
 import Services from "../services";
-import { Contestant } from "../interfaces/game";
+import type { Contestant } from "../interfaces/game";
 
 interface Params {
   gameUID: string;
