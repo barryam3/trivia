@@ -1,41 +1,33 @@
 import React, { useEffect } from "react";
 
-import { useParams } from "react-router-dom";
-
 import Services from "../services";
 import type { Category } from "../interfaces/game";
 import { range } from "../utils/range";
 
-interface Params {
-  gameUID: string;
-}
-
 interface Props {
+  gameUID: string;
   leader: boolean;
   board: Category[];
   multiplier: number;
 }
 
-const Board: React.FC<Props> = (props) => {
-  const { leader } = props;
-  const params = useParams<Params>();
-
+const Board: React.FC<Props> = ({ gameUID, leader, board, multiplier }) => {
   useEffect(() => {
     if (leader) {
-      Services.games.updateScreen(params.gameUID, "board");
+      Services.games.updateScreen(gameUID, "board");
     }
-  }, [leader, params.gameUID]);
+  }, [leader, gameUID]);
 
   let numC: number;
   let qPerC!: number;
-  if (props.board.length > 0) {
-    numC = props.board.length;
-    qPerC = props.board[0].questions.length;
+  if (board.length > 0) {
+    numC = board.length;
+    qPerC = board[0].questions.length;
   }
 
-  return props.board.length > 0 ? (
+  return board.length > 0 ? (
     <div id="board">
-      {props.board.map((category, ckey) => (
+      {board.map((category, ckey) => (
         <div
           key={category.title}
           className="ctitle"
@@ -52,18 +44,18 @@ const Board: React.FC<Props> = (props) => {
               className="qvalue"
               style={{ gridRow: vkey + 2, gridColumn: ckey + 1 }}
             >
-              {!props.board[ckey].questions[vkey].asked && (
+              {!board[ckey].questions[vkey].asked && (
                 <React.Fragment>
-                  {props.leader ? (
+                  {leader ? (
                     <a
-                      href={`question?q=${ckey * qPerC + vkey}&leader=${
-                        props.leader
-                      }`}
+                      href={`question?q=${
+                        ckey * qPerC + vkey
+                      }&leader=${leader}`}
                     >
-                      ${props.multiplier * (vkey + 1)}
+                      ${multiplier * (vkey + 1)}
                     </a>
                   ) : (
-                    <span>${props.multiplier * (vkey + 1)}</span>
+                    <span>${multiplier * (vkey + 1)}</span>
                   )}
                 </React.Fragment>
               )}

@@ -1,12 +1,11 @@
 import type React from "react";
 import { useEffect } from "react";
 import {
-  BrowserRouter as Router,
-  Switch,
+  Routes,
   Route,
-  Redirect,
   useLocation,
-  useRouteMatch,
+  useParams,
+  Navigate,
 } from "react-router-dom";
 
 import Scores from "./Elements/Scores";
@@ -21,7 +20,7 @@ import type { Game as IGame } from "./interfaces/game";
 // 200 for classic Jeopardy
 const kDollarMultiplier = 2;
 
-interface Params {
+interface Params extends Record<string, string | undefined> {
   gameUID: string;
 }
 
@@ -37,10 +36,11 @@ function useGameScreen(game: IGame, leader: boolean) {
 
 const Game: React.FC = () => {
   const location = useLocation();
-  const match = useRouteMatch<Params>();
-  const params = match.params;
-
-  const game = services.games.useGame(params.gameUID);
+  const { gameUID } = useParams<Params>();
+  if (!gameUID) {
+    throw new Error('Missing "gameUID" parameter');
+  }
+  const game = services.games.useGame(gameUID);
   const query = new URLSearchParams(location.search);
   const leader = Boolean(query.get("leader"));
   useGameScreen(game, leader);
@@ -66,59 +66,55 @@ const Game: React.FC = () => {
     value = null;
   }
 
-  const bUrl = "/game/:gameUID";
-
   return (
     <div id="game">
       <div id="game-content">
-        <Router>
-          <Switch>
-            <Route
-              strict={false}
-              path={`${bUrl}/board`}
-              children={
-                <Board leader={leader} board={board} multiplier={multiplier} />
-              }
-            />
-            <Route
-              strict={false}
-              path={`${bUrl}/question`}
-              children={
-                <Question
-                  leader={leader}
-                  shown={shown}
-                  board={board}
-                  final={final}
-                  finalLoaded={finalLoaded}
-                  multiplier={multiplier}
-                />
-              }
-            />
-            <Route
-              strict={false}
-              path={`${bUrl}/gameover`}
-              children={<GameOver leader={leader} contestants={contestants} />}
-            />
-            <Route
-              strict={false}
-              exact
-              path={`${bUrl}/`}
-              render={() => (
-                <Redirect
-                  to={{
-                    ...location,
-                    pathname: `${match.url}/board`,
-                  }}
-                />
-              )}
-            />
-            <Route strict={false} path="*" children={<NotFound />} />
-          </Switch>
-        </Router>
+        <Routes>
+          <Route
+            path={"board"}
+            element={
+              <Board
+                gameUID={gameUID}
+                leader={leader}
+                board={board}
+                multiplier={multiplier}
+              />
+            }
+          />
+          <Route
+            path={"question"}
+            element={
+              <Question
+                gameUID={gameUID}
+                leader={leader}
+                shown={shown}
+                board={board}
+                final={final}
+                finalLoaded={finalLoaded}
+                multiplier={multiplier}
+              />
+            }
+          />
+          <Route
+            path={"gameover"}
+            element={
+              <GameOver
+                gameUID={gameUID}
+                leader={leader}
+                contestants={contestants}
+              />
+            }
+          />
+          <Route
+            path={""}
+            element={<Navigate replace to={{ pathname: "board" }} />}
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </div>
       <Scores
         contestants={game.contestants}
-        uid={params.gameUID}
+        uid={gameUID}
         leader={leader}
         multiplier={(game.round === "double" ? 2 : 1) * kDollarMultiplier}
         value={value}

@@ -1,29 +1,22 @@
 import type React from "react";
 import { useEffect } from "react";
 
-import { useParams } from "react-router-dom";
-
 import Services from "../services";
 import type { Contestant } from "../interfaces/game";
 
-interface Params {
-  gameUID: string;
-}
-
 interface Props {
+  gameUID: string;
   leader: boolean;
   contestants: Contestant[];
 }
 
-const GameOver: React.FC<Props> = ({ leader, contestants }) => {
-  const params = useParams<Params>();
-
+const GameOver: React.FC<Props> = ({ gameUID, leader, contestants }) => {
   useEffect(() => {
     if (leader) {
-      Services.games.updateScreen(params.gameUID, "gameover");
+      Services.games.updateScreen(gameUID, "gameover");
       window.location.assign("gameover");
     }
-  }, [leader, params.gameUID]);
+  }, [leader, gameUID]);
 
   return (
     <main>

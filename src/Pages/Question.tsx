@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import Services from "../services";
 import type { Category } from "../interfaces/game";
@@ -53,10 +53,6 @@ function QuestionPart({
   return <div {...rest}>{content}</div>;
 }
 
-interface Params {
-  gameUID: string;
-}
-
 export interface Final {
   category: string;
   question: string;
@@ -64,6 +60,7 @@ export interface Final {
 }
 
 interface Props {
+  gameUID: string;
   leader: boolean;
   shown: number;
   board: Category[];
@@ -86,66 +83,67 @@ interface ProcessedQuestion {
   isDDorFJ?: boolean;
 }
 
-const Question: React.FC<Props> = (props) => {
-  const params = useParams<Params>();
+const Question: React.FC<Props> = ({
+  gameUID,
+  leader,
+  shown,
+  board,
+  final,
+  finalLoaded,
+  multiplier,
+}) => {
   const location = useLocation();
-
-  const shown = props.shown;
+  const query = new URLSearchParams(location.search);
+  const q = query.get("q");
 
   useEffect(() => {
-    const query = new URLSearchParams(location.search);
-    const q = query.get("q");
-    if (props.leader) {
+    if (leader) {
       const str = `question?q=${q}`;
-      Services.games.updateScreen(params.gameUID, str);
+      Services.games.updateScreen(gameUID, str);
     }
-  }, [props.leader, location.search, params.gameUID]);
+  }, [leader, q, gameUID]);
 
-  const processQuestion = (props: Props): ProcessedQuestion => {
-    const query = new URLSearchParams(location.search);
-    const q = query.get("q");
-    if (props.board.length > 0 && q !== "final") {
+  const processQuestion = (): ProcessedQuestion => {
+    if (board.length > 0 && q !== "final") {
       const qid = Number(q);
-      const qPerC = props.board[0].questions.length;
+      const qPerC = board[0].questions.length;
       const c = Math.floor(qid / qPerC); // category
       const v = qid % qPerC; // value - 1
       return {
-        category: props.board[c].title,
+        category: board[c].title,
         value: v + 1,
-        question: splitOnURLs(props.board[c].questions[v].question),
-        answer: props.board[c].questions[v].answer,
-        isDDorFJ: props.board[c].questions[v].dailydouble,
+        question: splitOnURLs(board[c].questions[v].question),
+        answer: board[c].questions[v].answer,
+        isDDorFJ: board[c].questions[v].dailydouble,
       };
     }
     if (q === "final") {
       return {
-        category: props.final.category,
-        question: splitOnURLs(props.final.question),
-        answer: props.final.answer,
+        category: final.category,
+        question: splitOnURLs(final.question),
+        answer: final.answer,
         isDDorFJ: true,
       };
     }
-    throw new Error(`Invalid question number ${q} > ${props.board.length}.`);
+    throw new Error(`Invalid question number ${q} > ${board.length}.`);
   };
 
-  const question = processQuestion(props);
+  const question = processQuestion();
 
   // only called by leader
   const goToNext = () => {
-    const query = new URLSearchParams(location.search);
-    const q = query.get("q");
     // mark the question as asked once we reveal it
     if (shown === 0 && q !== "final") {
-      Services.games.askQuestion(params.gameUID, Number(q));
+      Services.games.askQuestion(gameUID, Number(q));
     }
     // update display state
     if (shown < question.question.length + 1 + (question.isDDorFJ ? 1 : 0)) {
-      Services.games.updateShown(params.gameUID, shown + 1);
+      Services.games.updateShown(gameUID, shown + 1);
       // switch page on final click
     } else if (q === "final") {
-      window.location.assign(`gameover?leader=${props.leader}`);
+      window.location.assign(`gameover?leader=${leader}`);
     } else {
-      window.location.assign(`board?leader=${props.leader}`);
+      window.location.assign(`board?leader=${leader}`);
     }
   };
 
@@ -165,12 +163,9 @@ const Question: React.FC<Props> = (props) => {
     return "Return to Board";
   };
 
-  const query = new URLSearchParams(location.search);
-  const q = query.get("q");
-
   return (
     <div id="question">
-      {props.board.length > 0 || props.finalLoaded ? (
+      {board.length > 0 || finalLoaded ? (
         <React.Fragment>
           {question.isDDorFJ && shown === 0 ? (
             <div className="finalheader">
@@ -185,7 +180,7 @@ const Question: React.FC<Props> = (props) => {
                     {" "}
                     —{" "}
                     <span className="qvalue">
-                      ${(question.value ?? 0) * props.multiplier}
+                      ${(question.value ?? 0) * multiplier}
                     </span>
                   </span>
                 ) : (
@@ -198,7 +193,7 @@ const Question: React.FC<Props> = (props) => {
                     .filter(
                       (q, i) =>
                         shown +
-                          (props.leader ? 1 : 0) +
+                          (leader ? 1 : 0) +
                           (question.isDDorFJ ? -1 : 0) >
                         i
                     )
@@ -207,18 +202,16 @@ const Question: React.FC<Props> = (props) => {
                         key={q}
                         style={{ paddingBottom: "15px" }}
                         text={q}
-                        leader={props.leader}
+                        leader={leader}
                       />
                     ))}
-                  {shown +
-                    (props.leader ? 1 : 0) +
-                    (question.isDDorFJ ? -1 : 0) >
+                  {shown + (leader ? 1 : 0) + (question.isDDorFJ ? -1 : 0) >
                     question.question.length && <div>{question.answer}</div>}
                 </React.Fragment>
               </div>
             </div>
           )}
-          {props.leader && (
+          {leader && (
             <button id="nextbutton" onClick={goToNext} type="button">
               {shown < 0 ? "Show Category" : shownText()}
             </button>
