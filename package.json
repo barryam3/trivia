@@ -1,34 +1,35 @@
 {
   "name": "trivia",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
-    "start": "node bin/www",
-    "dev": "concurrently \"react-scripts start\" \"node bin/www\"",
+    "start": "serve -s build",
+    "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test"
   },
   "dependencies": {
-    "body-parser": "^1.20.0",
-    "express": "^4.18.1",
-    "mongoose": "^6.6.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^5.3.3"
   },
   "devDependencies": {
     "@svgr/webpack": "^6.3.1",
-    "concurrently": "^7.4.0",
+    "@types/jest": "^29.5.12",
+    "@types/react": "^18.3.4",
+    "@types/react-dom": "^18.3.0",
+    "@types/react-router-dom": "^5.3.3",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
+    "prettier": "2.7.1",
     "react-scripts": "5.0.1",
     "sass": "^1.54.9",
-    "prettier": "2.7.1"
+    "serve": "^14.2.3",
+    "typescript": "^4.9.5"
   },
   "overrides": {
     "@svgr/webpack": "$@svgr/webpack"
   },
-  "proxy": "http://localhost:4000",
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
