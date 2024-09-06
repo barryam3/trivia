@@ -43,7 +43,6 @@ export function addGame(
       earlyend: randomEarlyEnd(30),
     },
     final: parseGameFiles.parseFinalTXT(finaltxt),
-    screen: "board",
     shown: 0,
   };
   validateGame(obj);
@@ -51,12 +50,16 @@ export function addGame(
   return obj;
 }
 
+// Dollar value of the lowest-value question
+// 200 for classic Jeopardy
+const kDollarMultiplier = 2;
+
 export function getGame(uid: string): Game {
   const game = localStorage.getItem(uid);
   if (!game) {
     throw new Error(`Game with uid ${uid} does not exist.`);
   }
-  return JSON.parse(game) as Game;
+  return { ...JSON.parse(game), multiplier: kDollarMultiplier } as Game;
 }
 
 export function askQuestion(uid: string, qid: number): Game {

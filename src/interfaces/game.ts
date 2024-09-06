@@ -35,4 +35,5 @@ export interface Game {
 	final: FinalRound;
 	screen: string;
 	shown: number;
+	multiplier: number;
 }

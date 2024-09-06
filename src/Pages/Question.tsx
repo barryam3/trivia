@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 import Services from "../services";
-import type { Category } from "../interfaces/game";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
@@ -59,16 +58,6 @@ export interface Final {
   answer: string;
 }
 
-interface Props {
-  gameUID: string;
-  leader: boolean;
-  shown: number;
-  board: Category[];
-  final: Final;
-  finalLoaded: boolean;
-  multiplier: number;
-}
-
 interface ProcessedQuestion {
   category: string;
   /** The question value, multiplied. The final question has no value. */
@@ -83,15 +72,12 @@ interface ProcessedQuestion {
   isDDorFJ?: boolean;
 }
 
-const Question: React.FC<Props> = ({
-  gameUID,
-  leader,
-  shown,
-  board,
-  final,
-  finalLoaded,
-  multiplier,
-}) => {
+const Question: React.FC = () => {
+  const game = Services.games.useGame();
+  const leader = Services.games.useLeader();
+  const board =
+    game.round === "single" ? game.single.categories : game.double.categories;
+  const final = game.final;
   const location = useLocation();
   const query = new URLSearchParams(location.search);
   const q = query.get("q");
@@ -99,9 +85,9 @@ const Question: React.FC<Props> = ({
   useEffect(() => {
     if (leader) {
       const str = `question?q=${q}`;
-      Services.games.updateScreen(gameUID, str);
+      Services.games.updateScreen(game.uid, str);
     }
-  }, [leader, q, gameUID]);
+  }, [leader, q, game.uid]);
 
   const processQuestion = (): ProcessedQuestion => {
     if (board.length > 0 && q !== "final") {
@@ -129,16 +115,18 @@ const Question: React.FC<Props> = ({
   };
 
   const question = processQuestion();
+  const shown = game.shown;
+  console.log(game, game.shown);
 
   // only called by leader
   const goToNext = () => {
     // mark the question as asked once we reveal it
     if (shown === 0 && q !== "final") {
-      Services.games.askQuestion(gameUID, Number(q));
+      Services.games.askQuestion(game.uid, Number(q));
     }
     // update display state
     if (shown < question.question.length + 1 + (question.isDDorFJ ? 1 : 0)) {
-      Services.games.updateShown(gameUID, shown + 1);
+      Services.games.updateShown(game.uid, shown + 1);
       // switch page on final click
     } else if (q === "final") {
       window.location.assign(`gameover?leader=${leader}`);
@@ -163,6 +151,8 @@ const Question: React.FC<Props> = ({
     return "Return to Board";
   };
 
+  const finalLoaded = game.round === "final";
+
   return (
     <div id="question">
       {board.length > 0 || finalLoaded ? (
@@ -180,7 +170,7 @@ const Question: React.FC<Props> = ({
                     {" "}
                     —{" "}
                     <span className="qvalue">
-                      ${(question.value ?? 0) * multiplier}
+                      ${(question.value ?? 0) * game.multiplier}
                     </span>
                   </span>
                 ) : (

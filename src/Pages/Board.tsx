@@ -1,22 +1,19 @@
 import React, { useEffect } from "react";
 
 import Services from "../services";
-import type { Category } from "../interfaces/game";
 import { range } from "../utils/range";
+import services from "../services";
 
-interface Props {
-  gameUID: string;
-  leader: boolean;
-  board: Category[];
-  multiplier: number;
-}
-
-const Board: React.FC<Props> = ({ gameUID, leader, board, multiplier }) => {
+const Board: React.FC = () => {
+  const leader = services.games.useLeader();
+  const game = services.games.useGame();
+  const board =
+    game.round === "single" ? game.single.categories : game.double.categories;
   useEffect(() => {
     if (leader) {
-      Services.games.updateScreen(gameUID, "board");
+      Services.games.updateScreen(game.uid, "board");
     }
-  }, [leader, gameUID]);
+  }, [leader, game.uid]);
 
   let numC: number;
   let qPerC!: number;
@@ -52,10 +49,10 @@ const Board: React.FC<Props> = ({ gameUID, leader, board, multiplier }) => {
                         ckey * qPerC + vkey
                       }&leader=${leader}`}
                     >
-                      ${multiplier * (vkey + 1)}
+                      ${game.multiplier * (vkey + 1)}
                     </a>
                   ) : (
-                    <span>${multiplier * (vkey + 1)}</span>
+                    <span>${game.multiplier * (vkey + 1)}</span>
                   )}
                 </React.Fragment>
               )}

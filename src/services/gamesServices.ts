@@ -1,6 +1,7 @@
 import * as gameModel from "../models/game";
 import type { Game } from "../interfaces/game";
 import { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 
 // Wrap function so that it returns a promise which resolves after notifying
 // the broadcast channel or rejects with any thrown error. This was both to
@@ -27,14 +28,24 @@ const gamesServices = {
   updateScreen: promisify(gameModel.updateScreen),
   updateShown: promisify(gameModel.updateShown),
   /** Hook for getting game and responding to mutations. */
-  useGame(uid: string): Game {
-    const [state, setState] = useState(gameModel.getGame(uid));
+  useGame(): Game {
+    const { gameUID } = useParams<"gameUID">();
+    if (!gameUID) {
+      throw new Error('Missing "gameUID" parameter');
+    }
+    const [state, setState] = useState(gameModel.getGame(gameUID));
     useEffect(() => {
-      const bc = new BroadcastChannel(uid);
+      const bc = new BroadcastChannel(gameUID);
       bc.onmessage = (e: MessageEvent<Game>) => setState(e.data);
       return () => bc.close();
-    }, [uid]);
+    }, [gameUID]);
     return state;
+  },
+  /** Hook for getting whether this window is for the leader view. */
+  useLeader(): boolean {
+    const location = useLocation();
+    const query = new URLSearchParams(location.search);
+    return Boolean(query.get("leader"));
   },
 };
 
