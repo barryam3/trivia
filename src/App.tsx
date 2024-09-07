@@ -21,9 +21,10 @@ const router = createBrowserRouter(
       path: "/game/:gameUID",
       element: <Game />,
       children: [
+        // If the user loads "/game/:gameUID" default to round 1.
         {
           path: "",
-          loader: () => replace(`round/1${window.location.search}`),
+          loader: () => replace(`1${window.location.search}`),
         },
         {
           path: ":round",
