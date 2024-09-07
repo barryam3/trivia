@@ -7,7 +7,7 @@ const Scores: React.FC = () => {
   const { uid, contestants, multiplier } = Services.games.useGame();
   const leader = Services.games.useLeader();
   const params = useParams<"question">();
-  const value = Number(params.question ?? 1);
+  const value = Number(params.question ?? 1) + 1;
 
   const updateScore = (key: number, diff: number) => {
     return () => {
