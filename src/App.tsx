@@ -7,46 +7,59 @@ import GameOver from "./Pages/GameOver";
 import Game from "./Game";
 import NotFound from "./Pages/NotFound";
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      loader: () => replace("init"),
+    },
+    {
+      path: "/init",
+      element: <Init />,
+    },
+    {
+      path: "/game/:gameUID",
+      element: <Game />,
+      children: [
+        {
+          path: "",
+          loader: () => replace(`round/1${window.location.search}`),
+        },
+        {
+          path: ":round",
+          children: [
+            {
+              path: "",
+              element: <Board />,
+            },
+            ...["", ":stage"].map((optionalStage) => ({
+              path: `:category/:question/${optionalStage}`,
+              element: <Question />,
+            })),
+          ],
+        },
+        {
+          path: "gameover",
+          element: <GameOver />,
+        },
+      ],
+    },
+    {
+      path: "*",
+      element: <NotFound />,
+    },
+  ],
+  // Enable all future flags to minimize churn in the future.
   {
-    path: "/",
-    loader: () => replace("init"),
-  },
-  {
-    path: "/init",
-    element: <Init />,
-  },
-  {
-    path: "/game/:gameUID/*",
-    element: <Game />,
-    children: [
-      {
-        path: "",
-        loader: () => replace(`board${window.location.search}`),
-      },
-      {
-        path: "board",
-        element: <Board />,
-      },
-      {
-        path: "question",
-        element: <Question />,
-      },
-      {
-        path: "gameover",
-        element: <GameOver />,
-      },
-      {
-        path: "*",
-        element: <NotFound />,
-      },
-    ],
-  },
-  {
-    path: "*",
-    element: <NotFound />,
-  },
-]);
+    future: {
+      v7_fetcherPersist: true,
+      v7_normalizeFormMethod: true,
+      v7_partialHydration: true,
+      v7_relativeSplatPath: true,
+      v7_skipActionErrorRevalidation: true,
+    },
+  }
+);
 
 const App: React.FC = () => <RouterProvider router={router} />;
 

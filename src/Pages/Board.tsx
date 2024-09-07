@@ -1,19 +1,19 @@
-import React, { useEffect } from "react";
+import React from "react";
 
-import Services from "../services";
 import { range } from "../utils/range";
 import services from "../services";
+import NotFound from "./NotFound";
+import { Link, useLocation } from "react-router-dom";
 
 const Board: React.FC = () => {
   const leader = services.games.useLeader();
   const game = services.games.useGame();
-  const board =
-    game.round === "single" ? game.single.categories : game.double.categories;
-  useEffect(() => {
-    if (leader) {
-      Services.games.updateScreen(game.uid, "board");
-    }
-  }, [leader, game.uid]);
+  const round = services.games.useRound();
+  const { search } = useLocation();
+  if (!round) {
+    return <NotFound />;
+  }
+  const board = round.categories;
 
   let numC: number;
   let qPerC!: number;
@@ -44,13 +44,9 @@ const Board: React.FC = () => {
               {!board[ckey].questions[vkey].asked && (
                 <React.Fragment>
                   {leader ? (
-                    <a
-                      href={`question?q=${
-                        ckey * qPerC + vkey
-                      }&leader=${leader}`}
-                    >
+                    <Link to={{ pathname: `${ckey}/${vkey}`, search: search }}>
                       ${game.multiplier * (vkey + 1)}
-                    </a>
+                    </Link>
                   ) : (
                     <span>${game.multiplier * (vkey + 1)}</span>
                   )}

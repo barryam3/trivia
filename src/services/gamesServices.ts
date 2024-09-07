@@ -1,5 +1,5 @@
 import * as gameModel from "../models/game";
-import type { Game } from "../interfaces/game";
+import type { Round, Game } from "../interfaces/game";
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 
@@ -25,8 +25,6 @@ const gamesServices = {
   addGame: promisify(gameModel.addGame),
   askQuestion: promisify(gameModel.askQuestion),
   updateScore: promisify(gameModel.updateScore),
-  updateScreen: promisify(gameModel.updateScreen),
-  updateShown: promisify(gameModel.updateShown),
   /** Hook for getting game and responding to mutations. */
   useGame(): Game {
     const { gameUID } = useParams<"gameUID">();
@@ -46,6 +44,18 @@ const gamesServices = {
     const location = useLocation();
     const query = new URLSearchParams(location.search);
     return Boolean(query.get("leader"));
+  },
+  useRound(): Round | null {
+    const game = this.useGame();
+    const params = useParams<"round">();
+    switch (params.round) {
+      case "1":
+        return game.single;
+      case "2":
+        return game.double;
+      default:
+        return null;
+    }
   },
 };
 
