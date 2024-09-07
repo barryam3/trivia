@@ -17,26 +17,22 @@ function randint(min: number, max: number): number {
 export const parseGameCSV = (csvdata: string, numDD: number): Category[] => {
   // parse data into 2d array
   const arr = CSVToArray(csvdata, ",");
-  // randomize daily doubles
-  const dd: number[] = [];
-  const numQ = arr[0].length * ((arr.length - 1) / 2) - 1;
-  for (let i = 0; i < numDD; i++) {
-    let qid: number;
-    do {
-      qid = randint(0, numQ - 1);
-    } while (dd.indexOf(qid) !== -1);
-    dd.push(qid);
-  }
   const out: Category[] = [];
   for (const j of range(0, arr[0].length)) {
     const title = arr[0][j];
     const questions: Question[] = [];
     for (const i of range(0, (arr.length - 1) / 2)) {
+      let questionText = arr[i * 2 + 1][j];
+      let dailydouble = false;
+      if (questionText.startsWith("[DD]: ")) {
+        questionText = questionText.slice(6);
+        dailydouble = true;
+      }
       const question = {
-        question: arr[i * 2 + 1][j],
+        question: questionText,
         answer: arr[i * 2 + 2][j],
         asked: false,
-        dailydouble: dd.indexOf(i + (j * (arr.length - 1)) / 2) !== -1,
+        dailydouble,
       };
       questions.push(question);
     }

@@ -35,17 +35,31 @@ application you download from the internet._
    questions and change the display. The follower page automatically updates
    based on the actions taken in the leader.
 
+## Input Format
+
+The expected format for the Jeopardy and Double Jeopardy rounds is a CSV file.
+
+```
+Category1,Category2
+Cat1Question1,Cat2Question2
+Cat1Answer1,Cat2Answer1
+```
+
+### Daily Doubles
+
+Daily Doubles are questions prefixed by `[DD]: `.
+
+### Media
+
+Links to image, audio, and video files are automatically detected by their
+file extensions. These create multi-part questions, where text is displayed
+before and/or after the media.
+
 ## Fonts
 
 This app is intended to be used with the Korinna font. However, the font is not
 included as I do not have the right to distribute it. Backup fonts are defined
 in case you do not have the font installed.
-
-## Random Features
-
-This app automatically randomizes the locations of the daily doubles
-(universally at random, even though in the TV show the probability distribution
-isn't even).
 
 ## About the Questions
 
@@ -55,6 +69,13 @@ app, which went rather well. They are fairly general and high-quality (if I do
 say so myself), but I make no guarantees that they are now or will remain
 accurate. Feel free to use this app and my questions for whatever you like,
 just credit me. If you have a good time, I'd love to hear about it.
+
+Jeopardy on TV is a game of Answers and Questions i.e. the host says "The first
+USn President" and the contestant says "Who's Washington?" This app uses
+Questions and Answers terminology i.e. the strings called questions are
+displayed before the strings called answers. But there's no restrictions on the
+text, just "The first US President" would be the "question" and "Who's
+Washington" would be the "answer."
 
 ## Development
 
