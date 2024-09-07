@@ -29,8 +29,8 @@ application you download from the internet._
    separated by commas. For the other three boxes, copy in the text from the files
    in the folder `q_and_a` (or pass in your own text in the same format--open the
    file in Excel and edit it).
-2. Load the pages `localhost:3000/game/{uid}/board?leader=true` and
-   `localhost:3000/game/{uid}/board?leader=false` replacing `{uid}` with the
+2. Load the pages `localhost:3000/game/{uid}/1?leader=true` and
+   `localhost:3000/game/{uid}/1` replacing `{uid}` with the
    uid you chose. The leader page allows you to click between questions and
    change the display. The follower page automatically updates based on the
    actions taken in the leader.
@@ -45,9 +45,7 @@ in case you do not have the font installed.
 
 This app automatically randomizes the locations of the daily doubles
 (universally at random, even though in the TV show the probability distribution
-isn't even). To simulate time, the game also randomly skips the last n questions
-asked in a round, with the probability of skipping n questions being roughly
-1/2^(n+1). This wouldn't be too hard to disable if you don't like it.
+isn't even).
 
 ## About the Questions
 

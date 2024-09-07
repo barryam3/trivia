@@ -5,7 +5,6 @@ export interface Contestant {
 
 export interface Round {
 	categories: Category[];
-	earlyend: number;
 }
 
 export interface Category {
@@ -28,11 +27,9 @@ export interface FinalRound {
 
 export interface Game {
 	uid: string;
-	round: string;
 	contestants: Contestant[];
 	single: Round;
 	double: Round;
 	final: FinalRound;
-	screen: string;
-	shown: number;
+	multiplier: number;
 }

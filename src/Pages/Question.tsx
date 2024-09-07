@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import Services from "../services";
-import type { Category } from "../interfaces/game";
+import NotFound from "./NotFound";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
@@ -53,23 +53,10 @@ function QuestionPart({
   return <div {...rest}>{content}</div>;
 }
 
-interface Params {
-  gameUID: string;
-}
-
 export interface Final {
   category: string;
   question: string;
   answer: string;
-}
-
-interface Props {
-  leader: boolean;
-  shown: number;
-  board: Category[];
-  final: Final;
-  finalLoaded: boolean;
-  multiplier: number;
 }
 
 interface ProcessedQuestion {
@@ -83,149 +70,161 @@ interface ProcessedQuestion {
    * Daily Double and Final Jeopardy start with a splash screen and thus have
    * an additional stage.
    */
-  isDDorFJ?: boolean;
+  isDD?: boolean;
+  isFJ?: boolean;
 }
 
-const Question: React.FC<Props> = (props) => {
-  const params = useParams<Params>();
-  const location = useLocation();
-
-  const shown = props.shown;
-
-  useEffect(() => {
-    const query = new URLSearchParams(location.search);
-    const q = query.get("q");
-    if (props.leader) {
-      const str = `question?q=${q}`;
-      Services.games.updateScreen(params.gameUID, str);
-    }
-  }, [props.leader, location.search, params.gameUID]);
-
-  const processQuestion = (props: Props): ProcessedQuestion => {
-    const query = new URLSearchParams(location.search);
-    const q = query.get("q");
-    if (props.board.length > 0 && q !== "final") {
-      const qid = Number(q);
-      const qPerC = props.board[0].questions.length;
-      const c = Math.floor(qid / qPerC); // category
-      const v = qid % qPerC; // value - 1
-      return {
-        category: props.board[c].title,
-        value: v + 1,
-        question: splitOnURLs(props.board[c].questions[v].question),
-        answer: props.board[c].questions[v].answer,
-        isDDorFJ: props.board[c].questions[v].dailydouble,
-      };
-    }
-    if (q === "final") {
-      return {
-        category: props.final.category,
-        question: splitOnURLs(props.final.question),
-        answer: props.final.answer,
-        isDDorFJ: true,
-      };
-    }
-    throw new Error(`Invalid question number ${q} > ${props.board.length}.`);
+function useQuestionParams() {
+  const params = useParams<"round" | "category" | "question" | "stage">();
+  return {
+    round: Number(params.round),
+    category: Number(params.category),
+    question: Number(params.question),
+    stage: Number(params.stage ?? 0),
   };
+}
 
-  const question = processQuestion(props);
+function useQuestion(): ProcessedQuestion | null {
+  const game = Services.games.useGame();
+  const round = Services.games.useRound();
+  const params = useQuestionParams();
+  const board = round?.categories ?? [];
+  if (board.length > 0) {
+    const category = board[params.category];
+    const question = category.questions[params.question];
+    return {
+      category: category.title,
+      value: params.question + 1,
+      question: splitOnURLs(question.question),
+      answer: question.answer,
+      isDD: question.dailydouble,
+    };
+  }
+  if (params.round === 3) {
+    const final = game.final;
+    return {
+      category: final.category,
+      question: splitOnURLs(final.question),
+      answer: final.answer,
+      isFJ: true,
+    };
+  }
+  return null;
+}
 
-  // only called by leader
+function useAllAsked() {
+  const round = Services.games.useRound();
+  return round?.categories.every((c) => c.questions.every((q) => q.asked));
+}
+
+const Question: React.FC = () => {
+  const question = useQuestion();
+  const params = useQuestionParams();
+  const game = Services.games.useGame();
+  const allAsked = useAllAsked();
+  const leader = Services.games.useLeader();
+  const navigate = useNavigate();
+  const { search } = useLocation();
+
+  if (!question) {
+    return <NotFound />;
+  }
+
+  const stage = params.stage;
+  const isDDorFJ = question.isDD || question.isFJ;
+
   const goToNext = () => {
-    const query = new URLSearchParams(location.search);
-    const q = query.get("q");
-    // mark the question as asked once we reveal it
-    if (shown === 0 && q !== "final") {
-      Services.games.askQuestion(params.gameUID, Number(q));
+    if (!question.isFJ) {
+      Services.games.askQuestion(
+        game.uid,
+        params.round,
+        params.category,
+        params.question
+      );
     }
-    // update display state
-    if (shown < question.question.length + 1 + (question.isDDorFJ ? 1 : 0)) {
-      Services.games.updateShown(params.gameUID, shown + 1);
-      // switch page on final click
-    } else if (q === "final") {
-      window.location.assign(`gameover?leader=${props.leader}`);
+    if (stage >= question.question.length + 1 + (isDDorFJ ? 1 : 0)) {
+      if (question.isFJ) {
+        navigate({ pathname: "../../gameover" });
+      } else if (allAsked && params.round === 1) {
+        navigate({ pathname: '../../2', search });
+      } else if (allAsked && params.round === 2) {
+        navigate({ pathname: '../../3/1/1', search });
+      } else {
+        navigate({ pathname: "..", search });
+      }
     } else {
-      window.location.assign(`board?leader=${props.leader}`);
+      navigate(
+        {
+          pathname: `../${params.category}/${params.question}/${stage + 1}`,
+          search,
+        },
+        { relative: "route" }
+      );
     }
   };
 
-  const shownText = () => {
-    if (shown === 0 && question.isDDorFJ) {
+  const stageText = () => {
+    if (stage === 0 && isDDorFJ) {
       return "Show Category";
     }
-    if (shown + (question.isDDorFJ ? -1 : 0) < question.question.length) {
+    if (stage + (isDDorFJ ? -1 : 0) < question.question.length) {
       return "Show Question";
     }
-    if (shown + (question.isDDorFJ ? -1 : 0) === question.question.length) {
+    if (stage + (isDDorFJ ? -1 : 0) === question.question.length) {
       return "Show Answer";
     }
-    if (q === "final") {
+    if (question.isFJ) {
       return "Finish Game";
     }
     return "Return to Board";
   };
 
-  const query = new URLSearchParams(location.search);
-  const q = query.get("q");
-
   return (
     <div id="question">
-      {props.board.length > 0 || props.finalLoaded ? (
-        <React.Fragment>
-          {question.isDDorFJ && shown === 0 ? (
-            <div className="finalheader">
-              {q === "final" ? "Final Jeopardy" : "Daily Double"}
-            </div>
-          ) : (
-            <div>
-              <div className="qheader">
-                {question.category}
-                {q !== "final" ? (
-                  <span>
-                    {" "}
-                    —{" "}
-                    <span className="qvalue">
-                      ${(question.value ?? 0) * props.multiplier}
-                    </span>
-                  </span>
-                ) : (
-                  ""
-                )}
-              </div>
-              <div className="qtext">
-                <React.Fragment>
-                  {question.question
-                    .filter(
-                      (q, i) =>
-                        shown +
-                          (props.leader ? 1 : 0) +
-                          (question.isDDorFJ ? -1 : 0) >
-                        i
-                    )
-                    .map((q, i) => (
-                      <QuestionPart
-                        key={q}
-                        style={{ paddingBottom: "15px" }}
-                        text={q}
-                        leader={props.leader}
-                      />
-                    ))}
-                  {shown +
-                    (props.leader ? 1 : 0) +
-                    (question.isDDorFJ ? -1 : 0) >
-                    question.question.length && <div>{question.answer}</div>}
-                </React.Fragment>
-              </div>
-            </div>
-          )}
-          {props.leader && (
-            <button id="nextbutton" onClick={goToNext} type="button">
-              {shown < 0 ? "Show Category" : shownText()}
-            </button>
-          )}
-        </React.Fragment>
+      {isDDorFJ && stage === 0 ? (
+        <div className="finalheader">
+          {question.isFJ ? "Final Jeopardy" : "Daily Double"}
+        </div>
       ) : (
-        <React.Fragment />
+        <div>
+          <div className="qheader">
+            {question.category}
+            {!question.isFJ ? (
+              <span>
+                {" "}
+                —{" "}
+                <span className="qvalue">
+                  ${(question.value ?? 0) * game.multiplier}
+                </span>
+              </span>
+            ) : (
+              ""
+            )}
+          </div>
+          <div className="qtext">
+            <React.Fragment>
+              {question.question
+                .filter(
+                  (q, i) => stage + (leader ? 1 : 0) + (isDDorFJ ? -1 : 0) > i
+                )
+                .map((q, i) => (
+                  <QuestionPart
+                    key={q}
+                    style={{ paddingBottom: "15px" }}
+                    text={q}
+                    leader={leader}
+                  />
+                ))}
+              {stage + (leader ? 1 : 0) + (isDDorFJ ? -1 : 0) >
+                question.question.length && <div>{question.answer}</div>}
+            </React.Fragment>
+          </div>
+        </div>
+      )}
+      {leader && (
+        <button id="nextbutton" onClick={goToNext} type="button">
+          {stage < 0 ? "Show Category" : stageText()}
+        </button>
       )}
     </div>
   );
