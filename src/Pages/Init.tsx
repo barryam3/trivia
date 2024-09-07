@@ -2,8 +2,10 @@ import type React from "react";
 import { useState } from "react";
 
 import Services from "../services";
+import { useNavigate } from "react-router-dom";
 
 const Init: React.FC = () => {
+  const navigate = useNavigate();
   const [state, setState] = useState({
     uid: "",
     contestants: "",
@@ -30,6 +32,8 @@ const Init: React.FC = () => {
       state.doublecsv,
       state.finaltxt
     );
+    window.open(`/game/${state.uid}/1`);
+    navigate(`/game/${state.uid}/1?leader=true`);
   };
 
   return (
