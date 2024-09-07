@@ -29,11 +29,11 @@ application you download from the internet._
    separated by commas. For the other three boxes, copy in the text from the files
    in the folder `q_and_a` (or pass in your own text in the same format--open the
    file in Excel and edit it).
-2. Load the pages `localhost:3000/game/{uid}/1?leader=true` and
-   `localhost:3000/game/{uid}/1` replacing `{uid}` with the
-   uid you chose. The leader page allows you to click between questions and
-   change the display. The follower page automatically updates based on the
-   actions taken in the leader.
+2. The pages `localhost:3000/game/{uid}/1?leader=true` and
+   `localhost:3000/game/{uid}/1` will automatically open replacing the `{uid}`
+   with the uid you chose. The leader page allows you to click between
+   questions and change the display. The follower page automatically updates
+   based on the actions taken in the leader.
 
 ## Fonts
 
