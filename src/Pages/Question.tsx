@@ -224,9 +224,24 @@ const Question: React.FC = () => {
         </div>
       )}
       {leader && (
-        <button id="nextbutton" onClick={goToNext} type="button">
-          {stage < 0 ? "Show Category" : stageText()}
-        </button>
+        <>
+          {question.isFJ && (
+            <audio
+              src="https://www.televisiontunes.com/uploads/audio/Jeopardy%20-%201997%20-%20Think%20Music.mp3"
+              controls={true}
+            />
+          )}
+          {question.isDD && (
+            <audio
+              src="https://www.televisiontunes.com/uploads/audio/Jeopardy%20-%20Daily%20Double%20Sound%20Effect.mp3"
+              controls={true}
+              autoPlay={true}
+            />
+          )}
+          <button id="nextbutton" onClick={goToNext} type="button">
+            {stage < 0 ? "Show Category" : stageText()}
+          </button>
+        </>
       )}
     </div>
   );
