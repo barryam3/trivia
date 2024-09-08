@@ -32,8 +32,8 @@ const Init: React.FC = () => {
       state.doublecsv,
       state.finaltxt
     );
-    window.open(`/game/${state.uid}/1`);
-    navigate(`/game/${state.uid}/1?leader=true`);
+    window.open(`/game/${state.uid}/1/-1`);
+    navigate(`/game/${state.uid}/1/-1?leader=true`);
   };
 
   return (

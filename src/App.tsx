@@ -6,6 +6,7 @@ import Question from "./Pages/Question";
 import GameOver from "./Pages/GameOver";
 import Game from "./Game";
 import NotFound from "./Pages/NotFound";
+import Category from "./Pages/Category";
 
 const router = createBrowserRouter(
   [
@@ -33,10 +34,19 @@ const router = createBrowserRouter(
               path: "",
               element: <Board />,
             },
-            ...["", ":stage"].map((optionalStage) => ({
-              path: `:category/:question/${optionalStage}`,
-              element: <Question />,
-            })),
+            {
+              path: ":category",
+              children: [
+                {
+                  path: "",
+                  element: <Category />,
+                },
+                ...["", ":stage"].map((optionalStage) => ({
+                  path: `:question/${optionalStage}`,
+                  element: <Question />,
+                })),
+              ],
+            },
           ],
         },
         {
