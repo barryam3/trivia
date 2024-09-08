@@ -144,22 +144,24 @@ const Question: React.FC = () => {
     }
     if (stage >= question.question.length + 1 + (isDDorFJ ? 1 : 0)) {
       if (question.isFJ) {
-        navigate({ pathname: "../../gameover" });
+        // To Game Over page.
+        navigate({ pathname: "../../../gameover" });
       } else if (allAsked && params.round === 1) {
-        navigate({ pathname: '../../2', search });
+        // To Double Jeopardy.
+        navigate({ pathname: "../../../2/-1", search });
       } else if (allAsked && params.round === 2) {
-        navigate({ pathname: '../../3/1/1', search });
+        // To Final Jeopardy.
+        navigate({ pathname: "../../../3/1/1", search });
       } else {
-        navigate({ pathname: "..", search });
+        // Back to Board.
+        navigate({ pathname: "../..", search });
       }
     } else {
-      navigate(
-        {
-          pathname: `../${params.category}/${params.question}/${stage + 1}`,
-          search,
-        },
-        { relative: "route" }
-      );
+      // To next stage.
+      navigate({
+        pathname: `../${params.question}/${stage + 1}`,
+        search,
+      });
     }
   };
 

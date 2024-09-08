@@ -7,13 +7,6 @@ import type {
 } from "../interfaces/game";
 import { range } from "./range";
 
-// return a random integer in the range [min, max]
-function randint(min: number, max: number): number {
-  const lb = Math.ceil(min);
-  const ub = Math.floor(max) + 1;
-  return Math.floor(Math.random() * (ub - lb)) + lb;
-}
-
 export const parseGameCSV = (csvdata: string, numDD: number): Category[] => {
   // parse data into 2d array
   const arr = CSVToArray(csvdata, ",");
