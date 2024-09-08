@@ -9,8 +9,22 @@ const Scores: React.FC = () => {
   const params = useParams<"question">();
   const value = Number(params.question ?? 1) + 1;
 
-  const updateScore = (key: number, diff: number) => {
+  const getScoreDiff = (op: "add" | "subtract") => {
+    const diff = Number(prompt(`How many points to ${op}?`));
+    return op === "add" ? diff : -diff;
+  };
+
+  const updateScore = (
+    key: number,
+    op: "add" | "subtract",
+    absDiff?: number
+  ) => {
     return () => {
+      const diff = absDiff
+        ? op === "add"
+          ? absDiff
+          : -absDiff
+        : getScoreDiff(op);
       contestants[key].score += diff;
       Services.games.updateScore(uid, key, diff);
     };
@@ -26,7 +40,7 @@ const Scores: React.FC = () => {
                 type="button"
                 className="scorebutton"
                 style={{ backgroundColor: "red" }}
-                onClick={updateScore(key, -1)}
+                onClick={updateScore(key, "subtract")}
               >
                 -
               </button>
@@ -35,7 +49,7 @@ const Scores: React.FC = () => {
                   type="button"
                   className="scorebutton"
                   style={{ backgroundColor: "red" }}
-                  onClick={updateScore(key, -multiplier * value)}
+                  onClick={updateScore(key, "subtract", multiplier * value)}
                 >
                   W
                 </button>
@@ -52,7 +66,7 @@ const Scores: React.FC = () => {
                 type="button"
                 className="scorebutton"
                 style={{ backgroundColor: "green" }}
-                onClick={updateScore(key, 1)}
+                onClick={updateScore(key, "add")}
               >
                 +
               </button>
@@ -61,7 +75,7 @@ const Scores: React.FC = () => {
                   type="button"
                   className="scorebutton"
                   style={{ backgroundColor: "green" }}
-                  onClick={updateScore(key, multiplier * value)}
+                  onClick={updateScore(key, "add", multiplier * value)}
                 >
                   R
                 </button>
