@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 const Scores: React.FC = () => {
   const { uid, contestants, multiplier } = Services.games.useGame();
   const leader = Services.games.useLeader();
-  const params = useParams<"question">();
+  const params = useParams<"question" | "round" | "category">();
   const value = Number(params.question ?? 1) + 1;
 
   const getScoreDiff = (op: "add" | "subtract") => {
@@ -26,7 +26,14 @@ const Scores: React.FC = () => {
           : -absDiff
         : getScoreDiff(op);
       contestants[key].score += diff;
-      Services.games.updateScore(uid, key, diff);
+      Services.games.updateScore(
+        uid,
+        key,
+        diff,
+        Number(params.round),
+        Number(params.category),
+        Number(params.question)
+      );
     };
   };
 

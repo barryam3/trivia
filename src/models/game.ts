@@ -32,6 +32,7 @@ export function addGame(
     },
     final: parseGameFiles.parseFinalTXT(finaltxt),
     multiplier: kDollarMultiplier,
+    logs: [],
   };
   validateGame(obj);
   localStorage.setItem(uid, JSON.stringify(obj));
@@ -59,12 +60,21 @@ export function askQuestion(
   return game;
 }
 
-export function updateScore(uid: string, key: number, diff: number): Game {
+export function updateScore(
+  uid: string,
+  key: number,
+  diff: number,
+  round: number,
+  category: number,
+  question: number
+): Game {
   const game = getGame(uid);
   if (key < 0 || key >= game.contestants.length) {
     throw new Error(`Invalid contestant number ${key}.`);
   }
-  game.contestants[key].score += diff;
+  const contestant = game.contestants[key];
+  contestant.score += diff;
+  game.logs.push([contestant.name, round, category, question, diff]);
   localStorage.setItem(uid, JSON.stringify(game));
   return game;
 }
