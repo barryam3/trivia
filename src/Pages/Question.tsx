@@ -145,7 +145,7 @@ const Question: React.FC = () => {
     if (stage >= question.question.length + 1 + (isDDorFJ ? 1 : 0)) {
       if (question.isFJ) {
         // To Game Over page.
-        navigate({ pathname: "../../../gameover" });
+        navigate({ pathname: "../../../gameover", search });
       } else if (allAsked && params.round === 1) {
         // To Double Jeopardy.
         navigate({ pathname: "../../../2/-1", search });
