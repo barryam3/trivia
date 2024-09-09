@@ -69,6 +69,8 @@ const router = createBrowserRouter(
       v7_relativeSplatPath: true,
       v7_skipActionErrorRevalidation: true,
     },
+    // https://github.com/rafgraph/spa-github-pages
+    basename: window.location.href.includes("github.io") ? "/trivia" : "/",
   }
 );
 
