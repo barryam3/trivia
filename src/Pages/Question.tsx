@@ -23,7 +23,7 @@ function splitOnURLs(str: string) {
 
 const AUDIO_FILE_EXT_REGEX = /\.(mp3|ogg|wav|oga)$/;
 const VIDEO_FILE_EXT_REGEX = /\.(mp4|mov)$/;
-const IMAGE_FILE_EXT_REGEX = /\.(tiff?|bmp|jpe?g|gif|png|eps)$/;
+const IMAGE_FILE_EXT_REGEX = /\.(tiff?|bmp|jpe?g|gif|png|eps|webp)$/;
 function QuestionPart({
   text,
   leader,
