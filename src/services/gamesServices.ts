@@ -49,6 +49,18 @@ const gamesServices = {
         return null;
     }
   },
+  useMultiplier(): number {
+    const game = this.useGame();
+    const params = useParams<"round">();
+    switch (params.round) {
+      case "1":
+        return game.multiplier;
+      case "2":
+        return game.multiplier * 2;
+      default:
+        return 0;
+    }
+  },
 };
 
 export default gamesServices;

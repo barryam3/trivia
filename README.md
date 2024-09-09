@@ -57,9 +57,9 @@ before and/or after the media.
 
 ## Fonts
 
-This app is intended to be used with the Korinna font. However, the font is not
-included as I do not have the right to distribute it. Backup fonts are defined
-in case you do not have the font installed.
+This app is intended to be used with the Korinna and "Swiss 921 BT" fonts.
+However, the font is not included as I do not have the right to distribute
+it. Backup fonts are defined in case you do not have the font installed.
 
 ## About the Questions
 
