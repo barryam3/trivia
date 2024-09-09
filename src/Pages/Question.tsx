@@ -125,6 +125,7 @@ const Question: React.FC = () => {
   const leader = Services.games.useLeader();
   const navigate = useNavigate();
   const { search } = useLocation();
+  const multiplier = Services.games.useMultiplier();
 
   if (!question) {
     return <NotFound />;
@@ -196,7 +197,7 @@ const Question: React.FC = () => {
                 {" "}
                 —{" "}
                 <span className="qvalue">
-                  ${(question.value ?? 0) * game.multiplier}
+                  ${(question.value ?? 0) * multiplier}
                 </span>
               </span>
             ) : (

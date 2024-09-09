@@ -4,10 +4,11 @@ import Services from "../services";
 import { useParams } from "react-router-dom";
 
 const Scores: React.FC = () => {
-  const { uid, contestants, multiplier } = Services.games.useGame();
+  const { uid, contestants } = Services.games.useGame();
+  const multiplier = Services.games.useMultiplier();
   const leader = Services.games.useLeader();
   const params = useParams<"question" | "round" | "category">();
-  const value = Number(params.question ?? 1) + 1;
+  const value = params.question ? Number(params.question) + 1 : 0;
 
   const getScoreDiff = (op: "add" | "subtract") => {
     const diff = Number(prompt(`How many points to ${op}?`));
@@ -25,6 +26,7 @@ const Scores: React.FC = () => {
           ? absDiff
           : -absDiff
         : getScoreDiff(op);
+      if (diff === 0) return;
       contestants[key].score += diff;
       Services.games.updateScore(
         uid,
@@ -64,8 +66,10 @@ const Scores: React.FC = () => {
             </div>
           )}
           <div>
+            <div className={`scorescore ${c.score < 0 ? "negative" : ""}`}>
+              {`${c.score < 0 ? "-" : ""}$${Math.abs(c.score)}`}
+            </div>
             <div className="scorename">{c.name}</div>
-            <div className="scorescore">${c.score}</div>
           </div>
           {leader && (
             <div className="buttons">

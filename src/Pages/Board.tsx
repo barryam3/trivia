@@ -10,6 +10,7 @@ const Board: React.FC = () => {
   const game = services.games.useGame();
   const round = services.games.useRound();
   const { search } = useLocation();
+  const multiplier = services.games.useMultiplier();
   if (!round) {
     return <NotFound />;
   }
@@ -45,10 +46,10 @@ const Board: React.FC = () => {
                 <React.Fragment>
                   {leader ? (
                     <Link to={{ pathname: `${ckey}/${vkey}`, search: search }}>
-                      ${game.multiplier * (vkey + 1)}
+                      ${multiplier * (vkey + 1)}
                     </Link>
                   ) : (
-                    <span>${game.multiplier * (vkey + 1)}</span>
+                    <span>${multiplier * (vkey + 1)}</span>
                   )}
                 </React.Fragment>
               )}

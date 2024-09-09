@@ -11,7 +11,7 @@ $background: #111111;
 *::after {
   box-sizing: border-box;
 
-  font-family: 'Korinna', 'Libre Baskerville', 'Georgia', serif;
+  font-family: 'Swiss 921 BT', Impact, sans-serif;
 }
 
 a {
@@ -59,7 +59,7 @@ body {
     > * {
       display: flex;
       justify-content: space-around;
-      padding: 0 8px;
+      padding: 8px;
       &:last-child {
         margin-right: 0;
       }
@@ -94,8 +94,9 @@ body {
     align-items: center;
   }
   .ctitle {
-    padding: 0.5em;
-    font-size: 2.5vmin;
+    padding: 0.25em 0.5em;
+    font-size: 3vmin;
+    text-transform: uppercase;
   }
 }
 
@@ -108,15 +109,24 @@ body {
 }
 
 /* text displaying money value */
-.qvalue,
-.scorescore {
+.qvalue {
   color: $money-color;
+}
+
+.scorescore {
+  color: white;
+  &.negative {
+    color: darkred;
+  }
+}
+.scorename {
+  font-family: 'Patrick Hand', cursive;
 }
 
 /* text in grids besides category names */
 #board .qvalue,
 #scores {
-  font-size: 4vmin;
+  font-size: 6vmin;
   font-weight: bold;
 }
 
@@ -131,17 +141,24 @@ body {
     font-weight: bold;
     font-size: 8vmin;
     margin-bottom: $section-spacing;
+    text-transform: uppercase;
   }
 
-  .qtext {
+  .qtext > * {
     font-size: 5vmin;
     height: 65%;
+    font-family: 'Korinna', 'Libre Baskerville', 'Georgia', serif;
   }
 }
 
 .finalheader {
   padding-top: $section-spacing;
   font-size: 8vmin;
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .winner {
