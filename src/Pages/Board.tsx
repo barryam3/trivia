@@ -7,7 +7,6 @@ import { Link, useLocation } from "react-router-dom";
 
 const Board: React.FC = () => {
   const leader = services.games.useLeader();
-  const game = services.games.useGame();
   const round = services.games.useRound();
   const { search } = useLocation();
   const multiplier = services.games.useMultiplier();
