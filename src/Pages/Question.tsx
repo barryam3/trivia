@@ -41,7 +41,12 @@ function QuestionPart({
       content = <audio {...shouldAutoplay} src={text} controls={true} />;
     } else if (pathname.match(VIDEO_FILE_EXT_REGEX)) {
       content = (
-        <video {...shouldAutoplay} style={{ height: "50vh" }} src={text} />
+        <video
+          {...shouldAutoplay}
+          style={{ height: "50vh" }}
+          src={text}
+          controls={true}
+        />
       );
     } else if (pathname.match(IMAGE_FILE_EXT_REGEX)) {
       // Height chosen imperically to maximize size without displacing score
