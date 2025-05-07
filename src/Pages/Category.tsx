@@ -1,6 +1,6 @@
 import type React from "react";
 import Services from "../services";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router";
 
 function useCategoryParams() {
   const params = useParams<"category" | "round">();

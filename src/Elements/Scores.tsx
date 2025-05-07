@@ -1,7 +1,7 @@
 import type React from "react";
 
 import Services from "../services";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 
 const Scores: React.FC = () => {
   const { uid, contestants } = Services.games.useGame();

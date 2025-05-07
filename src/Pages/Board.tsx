@@ -3,7 +3,7 @@ import React from "react";
 import { range } from "../utils/range";
 import services from "../services";
 import NotFound from "./NotFound";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router";
 
 const Board: React.FC = () => {
   const leader = services.games.useLeader();

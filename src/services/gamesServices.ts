@@ -1,7 +1,7 @@
 import * as gameModel from "../models/game";
 import type { Round, Game } from "../interfaces/game";
 import { useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router";
 
 const withBroadcast =
   <A extends unknown[]>(f: (uid: string, ...args: A) => Game) =>

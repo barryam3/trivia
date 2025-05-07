@@ -2,7 +2,7 @@ import type React from "react";
 import { useState } from "react";
 
 import Services from "../services";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const Init: React.FC = () => {
   const navigate = useNavigate();

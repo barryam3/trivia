@@ -1,5 +1,6 @@
 import type React from "react";
-import { createBrowserRouter, RouterProvider, replace } from "react-router-dom";
+import { createBrowserRouter, replace } from "react-router";
+import { RouterProvider } from "react-router/dom";
 import Init from "./Pages/Init";
 import Board from "./Pages/Board";
 import Question from "./Pages/Question";
