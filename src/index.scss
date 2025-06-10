@@ -39,7 +39,7 @@ body {
   display: flex;
   flex-direction: column;
   /* game content (board or question) */
-  > #game-content {
+  #game-content {
     flex: 1;
     margin-bottom: $section-spacing;
     display: flex;
@@ -50,7 +50,7 @@ body {
     }
   }
   /* score display table */
-  > #scores {
+  #scores {
     flex: 0;
     font-size: 4vmin;
     display: grid;
@@ -74,6 +74,16 @@ body {
           height: $score-button-size;
         }
       }
+    }
+  }
+  #team-scores {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    font-size: 4vmin;
+    > * {
+      width: 100%;
+      padding: 8px;
     }
   }
 }
@@ -101,7 +111,8 @@ body {
 }
 
 #board,
-#scores {
+#scores,
+#team-scores {
   > * {
     background: $cell-color;
     border-radius: 8px;
@@ -197,4 +208,25 @@ body {
     object-fit: contain;
     transform: translate(-25%, -25%);
   }
+}
+
+.hstack {
+  display: flex;
+}
+
+.flex1 {
+  flex: 1;
+}
+
+.reverse {
+  flex-direction: row-reverse;
+}
+
+.pad {
+  padding: 0 8px;
+}
+
+.vstack {
+  display: flex;
+  flex-direction: column;
 }
