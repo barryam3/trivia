@@ -14,6 +14,7 @@ const Board: React.FC = () => {
     return <NotFound />;
   }
   const board = round.categories;
+  console.log(multiplier);
 
   let numC: number;
   let qPerC!: number;
