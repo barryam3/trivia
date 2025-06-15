@@ -78,50 +78,50 @@ const TeamScores: React.FC<TeamScoresProps> = ({ teamIndex }) => {
       <Score reverse={reverse} score={teamScore} name={teams[teamIndex]} />
       {contestants
         .map((c, key) => (
-          <div key={c.name}>
+          <div key={c.name} className={reverse ? "reverse" : ""}>
+            <Score reverse={reverse} score={c.score} name={c.name} />
             {leader && (
-              <div className="buttons">
-                <button
-                  type="button"
-                  className="scorebutton"
-                  style={{ backgroundColor: "red" }}
-                  onClick={updateScore(key, "subtract")}
-                >
-                  -
-                </button>
-                {value != null && (
+              <div className="hstack">
+                <div className="buttons vstack">
                   <button
                     type="button"
                     className="scorebutton"
                     style={{ backgroundColor: "red" }}
-                    onClick={updateScore(key, "subtract", multiplier * value)}
+                    onClick={updateScore(key, "subtract")}
                   >
-                    W
+                    -
                   </button>
-                )}
-              </div>
-            )}
-            <Score reverse={reverse} score={c.score} name={c.name} />
-            {leader && (
-              <div className="buttons">
-                <button
-                  type="button"
-                  className="scorebutton"
-                  style={{ backgroundColor: "green" }}
-                  onClick={updateScore(key, "add")}
-                >
-                  +
-                </button>
-                {value != null && (
+                  {value != null && (
+                    <button
+                      type="button"
+                      className="scorebutton"
+                      style={{ backgroundColor: "red" }}
+                      onClick={updateScore(key, "subtract", multiplier * value)}
+                    >
+                      W
+                    </button>
+                  )}{" "}
+                </div>
+                <div className="buttons vstack">
                   <button
                     type="button"
                     className="scorebutton"
                     style={{ backgroundColor: "green" }}
-                    onClick={updateScore(key, "add", multiplier * value)}
+                    onClick={updateScore(key, "add")}
                   >
-                    R
+                    +
                   </button>
-                )}
+                  {value != null && (
+                    <button
+                      type="button"
+                      className="scorebutton"
+                      style={{ backgroundColor: "green" }}
+                      onClick={updateScore(key, "add", multiplier * value)}
+                    >
+                      R
+                    </button>
+                  )}
+                </div>
               </div>
             )}
           </div>
