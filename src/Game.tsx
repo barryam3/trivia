@@ -23,6 +23,8 @@ const Game: React.FC = () => {
     return () => bc.close();
   }, [leader, location, navigate]);
 
+  services.buzzer.useBuzzer();
+
   return (
     <div id="game">
       <div id="game-content">
