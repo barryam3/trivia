@@ -29,7 +29,7 @@ const Game: React.FC = () => {
   return (
     <div id="game">
       <SerialButton />
-      <div className="hstack flex1">
+      <div className="hstack flex1 fill-parent">
         {teams && <TeamScores teamIndex={0} />}
         <div id="game-content">
           <Outlet />

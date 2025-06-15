@@ -84,6 +84,8 @@ body {
     > * {
       width: 100%;
       padding: 8px;
+      display: flex;
+      justify-content: space-between;
     }
   }
 }
@@ -229,4 +231,9 @@ body {
 .vstack {
   display: flex;
   flex-direction: column;
+}
+
+.fill-parent {
+  height: 100%;
+  width: 100%;
 }
