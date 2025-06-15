@@ -14,6 +14,7 @@ function useCategory() {
 }
 
 const Category: React.FC = () => {
+  const game = Services.games.useGame();
   const round = Services.games.useRound();
   const category = useCategory();
   const params = useCategoryParams();
@@ -22,8 +23,13 @@ const Category: React.FC = () => {
   const { search } = useLocation();
   const isLastCateogry =
     params.category === (round?.categories.length ?? 0) - 1;
+  // If board is enabled, display all questions, then go to board.
+  // If board is disabled, go to the first question in the category.
   const goToNext = () => {
-    if (isLastCateogry) {
+    if (game.disableBoard && params.category >= 0) {
+      // To next question.
+      navigate({ pathname: `../${params.category}/0`, search });
+    } else if (isLastCateogry) {
       // Go to Board.
       navigate({ pathname: "..", search });
     } else {

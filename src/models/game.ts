@@ -1,5 +1,6 @@
 import type { Game } from "../interfaces/game";
 import * as parseGameFiles from "../utils/parseGameFiles";
+import { CSVToArray } from "../utils/csv_to_array";
 
 // Dollar value of the lowest-value question
 // 200 for classic Jeopardy
@@ -16,11 +17,15 @@ export function addGame(
   contestants: string,
   singlecsv: string,
   doublecsv: string,
-  finaltxt: string
+  finaltxt: string,
+  teamsCSV: string
 ) {
   if (uid.length === 0) {
     throw new Error("Unique identifier for game cannot be empty");
   }
+  const teams: string[] | undefined = CSVToArray(teamsCSV, ",")[0];
+  // For now only 2-team games are supported.
+  const isTeams = teams?.length !== 2;
   const obj: Game = {
     uid,
     contestants: parseGameFiles.parseContestantsCSV(contestants),
@@ -33,6 +38,9 @@ export function addGame(
     final: parseGameFiles.parseFinalTXT(finaltxt),
     multiplier: kDollarMultiplier,
     logs: [],
+    teams: isTeams ? teams : undefined,
+    // For now team games must disable the board.
+    disableBoard: isTeams,
   };
   validateGame(obj);
   localStorage.setItem(uid, JSON.stringify(obj));

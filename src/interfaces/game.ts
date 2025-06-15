@@ -47,4 +47,5 @@ export interface Game {
       /*score=*/ number
     ]
   >;
+  disableBoard: boolean;
 }
