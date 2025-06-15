@@ -1,5 +1,5 @@
 import * as gameModel from "../models/game";
-import type { Round, Game } from "../interfaces/game";
+import type { Round, Game, Category } from "../interfaces/game";
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router";
 
@@ -49,6 +49,11 @@ const gamesServices = {
       default:
         return null;
     }
+  },
+  useCategory(): Category | null {
+    const round = this.useRound();
+    const { category } = useParams<"category">();
+    return round?.categories[Number(category)] ?? null;
   },
   useMultiplier(): number {
     const game = this.useGame();

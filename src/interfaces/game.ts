@@ -48,4 +48,5 @@ export interface Game {
     ]
   >;
   buzzedInContestant?: number;
+  disableBoard: boolean;
 }
