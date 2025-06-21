@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import configServices from "../services/configServices";
 
-const Init: React.FC = () => {
+const Config: React.FC = () => {
   const [state, setState] = useState(configServices.getConfig());
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -12,7 +12,7 @@ const Init: React.FC = () => {
   };
 
   return (
-    <form id="init" onSubmit={handleSubmit}>
+    <form id="config" onSubmit={handleSubmit}>
       <table>
         <tbody>
           <tr>
@@ -45,4 +45,4 @@ const Init: React.FC = () => {
   );
 };
 
-export default Init;
+export default Config;
