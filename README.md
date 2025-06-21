@@ -55,6 +55,20 @@ Links to image, audio, and video files are automatically detected by their
 file extensions. These create multi-part questions, where text is displayed
 before and/or after the media.
 
+### Teams
+
+An optional list of teams can be given. If given, contestants are divided into
+teams.
+
+**At this time, only two-team games are supported.** The first half of
+contestants (rounded up) are on the first team, and the second half (rounded
+down) are on the second team. Contestant scores are tracked individually but
+rolled up into a team score.
+
+**At this time, team games do not support the Jeopardy! board.** Instead,
+questions are presented in order, asking all questions in a category in order,
+then moving on to the next category.
+
 ## Fonts
 
 This app is intended to be used with the Korinna and "Swiss 921 BT" fonts.
