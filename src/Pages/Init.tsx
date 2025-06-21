@@ -9,6 +9,7 @@ const Init: React.FC = () => {
   const [state, setState] = useState({
     uid: "",
     contestants: "",
+    teams: "",
     singlecsv: "",
     doublecsv: "",
     finaltxt: "",
@@ -30,7 +31,8 @@ const Init: React.FC = () => {
       state.contestants,
       state.singlecsv,
       state.doublecsv,
-      state.finaltxt
+      state.finaltxt,
+      state.teams,
     );
     window.open(`/game/${state.uid}/1/-1`);
     navigate(`/game/${state.uid}/1/-1?leader=true`);
@@ -63,6 +65,19 @@ const Init: React.FC = () => {
                 id="contestants"
                 name="contestants"
                 value={state.contestants}
+                onChange={handleChange}
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label htmlFor="teams">Teams .csv:</label>
+            </td>
+            <td>
+              <textarea
+                id="teams"
+                name="teams"
+                value={state.teams}
                 onChange={handleChange}
               />
             </td>

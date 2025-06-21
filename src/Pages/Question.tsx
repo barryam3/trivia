@@ -131,7 +131,7 @@ const Question: React.FC = () => {
   const navigate = useNavigate();
   const { search } = useLocation();
   const multiplier = Services.games.useMultiplier();
-
+  const category = Services.games.useCategory();
   if (!question) {
     return <NotFound />;
   }
@@ -158,6 +158,22 @@ const Question: React.FC = () => {
       } else if (allAsked && params.round === 2) {
         // To Final Jeopardy.
         navigate({ pathname: "../../../3/1/1", search });
+      } else if (game.disableBoard) {
+        // To next question.
+        const nextQuestion = params.question + 1;
+        if (nextQuestion < (category?.questions.length ?? 0)) {
+          // To next question in category.
+          navigate({
+            pathname: `../../../${params.round}/${params.category}/${nextQuestion}`,
+            search,
+          });
+        } else {
+          // To next category.
+          navigate({
+            pathname: `../../../${params.round}/${params.category + 1}`,
+            search,
+          });
+        }
       } else {
         // Back to Board.
         navigate({ pathname: "../..", search });

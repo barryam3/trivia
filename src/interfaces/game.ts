@@ -28,6 +28,12 @@ export interface FinalRound {
 export interface Game {
   uid: string;
   contestants: Contestant[];
+  /**
+   * Length 2 if present. Contestants are split into two teams, with the first
+   * half (rounding up) on the first team and the second half (rounding down) on
+   * the second. This changes the scorekeeping UI.
+   */
+  teams?: string[];
   single: Round;
   double: Round;
   final: FinalRound;
@@ -42,4 +48,5 @@ export interface Game {
     ]
   >;
   buzzedInContestant?: number;
+  disableBoard: boolean;
 }
