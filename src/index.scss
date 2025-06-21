@@ -181,3 +181,19 @@ body {
   margin-left: 25%;
   margin-right: 25%;
 }
+
+.serial-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  z-index: 2;
+  overflow: hidden;
+  > img {
+    width: 200%;
+    height: 200%;
+    object-fit: contain;
+    transform: translate(-25%, -25%);
+  }
+}
