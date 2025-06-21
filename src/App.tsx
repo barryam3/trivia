@@ -8,6 +8,7 @@ import GameOver from "./Pages/GameOver";
 import Game from "./Game";
 import NotFound from "./Pages/NotFound";
 import Category from "./Pages/Category";
+import Config from "./Pages/Config";
 
 const router = createBrowserRouter(
   [
@@ -18,6 +19,10 @@ const router = createBrowserRouter(
     {
       path: "/init",
       element: <Init />,
+    },
+    {
+      path: "/config",
+      element: <Config />,
     },
     {
       path: "/game/:gameUID",

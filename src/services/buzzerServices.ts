@@ -1,6 +1,7 @@
 import type * as _ from "w3c-web-serial";
 import gamesServices from "./gamesServices";
-import { useEffect, useState, createContext } from "react";
+import configServices from "./configServices";
+import { useEffect, useState } from "react";
 
 // A subscribable value. Inspired by BehaviorSubject from RxJS.
 class BehaviorSubject<T> {
@@ -104,12 +105,13 @@ export function connect(gameUID: string) {
     if (entries.length !== 1) {
       return;
     }
-    const [contestant, state] = entries[0];
-    // TODO: This is a hack to get the contestant number.
-    const contestantNumber = Number(contestant) - 39;
+    const [pin, state] = entries[0];
     if (state === 0) {
-      gamesServices.setBuzz(gameUID, contestantNumber);
+      const { pinMappings } = configServices.getConfig();
+      const contestant = pinMappings.indexOf(Number(pin));
+      gamesServices.setBuzz(gameUID, contestant);
     } else if (state === 1) {
+      gamesServices.setBuzz(gameUID, undefined);
     }
   }).finally(() => {
     gamesServices.setBuzz(gameUID, undefined);
