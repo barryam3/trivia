@@ -106,6 +106,9 @@ body {
     background: $cell-color;
     border-radius: 8px;
   }
+  .buzzed {
+    background: rgb(86, 189, 182);
+  } 
 }
 
 /* text displaying money value */
@@ -173,8 +176,25 @@ body {
 }
 
 /* form used for game init */
-#init {
+#init,
+#config {
   width: 50%;
   margin-left: 25%;
   margin-right: 25%;
+}
+
+.serial-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  z-index: 2;
+  overflow: hidden;
+  > img {
+    width: 200%;
+    height: 200%;
+    object-fit: contain;
+    transform: translate(-25%, -25%);
+  }
 }

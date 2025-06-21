@@ -4,6 +4,7 @@ import { Outlet, useLocation, useNavigate } from "react-router";
 
 import Scores from "./Elements/Scores";
 import services from "./services/index";
+import { SerialButton } from "./Elements/SerialButton";
 
 const Game: React.FC = () => {
   const location = useLocation();
@@ -25,6 +26,7 @@ const Game: React.FC = () => {
 
   return (
     <div id="game">
+      <SerialButton />
       <div id="game-content">
         <Outlet />
       </div>

@@ -41,4 +41,5 @@ export interface Game {
       /*score=*/ number
     ]
   >;
+  buzzedInContestant?: number;
 }

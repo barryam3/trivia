@@ -78,3 +78,10 @@ export function updateScore(
   localStorage.setItem(uid, JSON.stringify(game));
   return game;
 }
+
+export function setBuzz(uid: string, key: number | undefined): Game {
+  const game = getGame(uid);
+  game.buzzedInContestant = key;
+  localStorage.setItem(uid, JSON.stringify(game));
+  return game;
+}

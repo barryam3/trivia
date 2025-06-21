@@ -61,6 +61,24 @@ This app is intended to be used with the Korinna and "Swiss 921 BT" fonts.
 However, the font is not included as I do not have the right to distribute
 it. Backup fonts are defined in case you do not have the font installed.
 
+## Buzzers
+
+This application supports a serial connection to an external lockout buzzer
+system. 
+
+I use a pair of Rolls GS76RL Game Show Buzzer System units connected to an
+Arduino Mega via DB9 to DuPont cables. The Arduino runs a very simple program
+that just reports when GPIO pin states change. See
+[my Arduino Real All GPIO Pins gist](https://gist.github.com/barryam3/8d584e33b63830d70d650c0be64dbf01)
+for the code I'm using on the Arduino. I'm using pins 38-52 (even) for
+contestants 1-8 and pins 39-53 (odd) for contestants 9-16, but this is
+configurable on the `/config` page. In theory you could connect any serial
+device that sends the same JSON messages.
+
+Once you have everything wired up, click the button in the top right of the
+screen on the host view to connect. If everything is set up properly, the app
+will show which contestant is buzzed in.
+
 ## About the Questions
 
 Questions are included for demonstration purposes. These questions were written

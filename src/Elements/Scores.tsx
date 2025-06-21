@@ -4,7 +4,7 @@ import Services from "../services";
 import { useParams } from "react-router";
 
 const Scores: React.FC = () => {
-  const { uid, contestants } = Services.games.useGame();
+  const { uid, contestants, buzzedInContestant } = Services.games.useGame();
   const multiplier = Services.games.useMultiplier();
   const leader = Services.games.useLeader();
   const params = useParams<"question" | "round" | "category">();
@@ -42,7 +42,7 @@ const Scores: React.FC = () => {
   return (
     <div id="scores">
       {contestants.map((c, key) => (
-        <div key={c.name}>
+        <div key={c.name} className={buzzedInContestant === key ? "buzzed" : ""}>
           {leader && (
             <div className="buttons">
               <button
