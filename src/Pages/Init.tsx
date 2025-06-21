@@ -13,7 +13,6 @@ const Init: React.FC = () => {
     singlecsv: "",
     doublecsv: "",
     finaltxt: "",
-    disableBoard: false,
   });
 
   const handleChange = (

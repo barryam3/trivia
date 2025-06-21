@@ -128,7 +128,6 @@ const Question: React.FC = () => {
   const game = Services.games.useGame();
   const allAsked = useAllAsked();
   const round = Services.games.useRound();
-  console.log(round?.categories.map((c) => c.questions.map((q) => q.asked)));
   const leader = Services.games.useLeader();
   const navigate = useNavigate();
   const { search } = useLocation();
