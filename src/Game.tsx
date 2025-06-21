@@ -11,6 +11,9 @@ const Game: React.FC = () => {
   const location = useLocation();
   const leader = services.games.useLeader();
   const { teams } = services.games.useGame();
+  const { pathname } = useLocation();
+  const isGameOver = pathname.includes("gameover");
+  const showTeamScores = teams && (leader || isGameOver);
 
   // Whenever a navigation happens in the leader view, make all follower views navigate.
   const navigate = useNavigate();
@@ -30,11 +33,11 @@ const Game: React.FC = () => {
     <div id="game">
       <SerialButton />
       <div className="hstack flex1 fill-parent">
-        {teams && <TeamScores teamIndex={0} />}
+        {showTeamScores && <TeamScores teamIndex={0} />}
         <div id="game-content">
           <Outlet />
         </div>
-        {teams && <TeamScores teamIndex={1} />}
+        {showTeamScores && <TeamScores teamIndex={1} />}
       </div>
       {!teams && <Scores />}
     </div>

@@ -127,7 +127,6 @@ const Question: React.FC = () => {
   const params = useQuestionParams();
   const game = Services.games.useGame();
   const allAsked = useAllAsked();
-  const round = Services.games.useRound();
   const leader = Services.games.useLeader();
   const navigate = useNavigate();
   const { search } = useLocation();
