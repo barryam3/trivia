@@ -2,6 +2,7 @@ import type React from "react";
 
 import Services from "../services";
 import type { Contestant } from "../interfaces/game";
+import scoreServices from "../services/scoreServices";
 
 function computeWinningContestants(
   contestants: { name: string; score: number }[]
@@ -15,13 +16,11 @@ function computeWinners(contestants: Contestant[], teams?: string[]) {
     return computeWinningContestants(contestants);
   }
   const teamsWithScores = teams.map((name, teamIndex) => {
-    const onTeam = (key: number) =>
-      key >= (teamIndex * contestants.length) / teams.length &&
-      key < ((teamIndex + 1) * contestants.length) / teams.length;
-
-    const score = contestants
-      .filter((_, key) => onTeam(key))
-      .reduce((acc, c) => acc + c.score, 0);
+    const score = scoreServices.computeTeamScore(
+      teams,
+      contestants,
+      teamIndex
+    );
     return { name, score };
   });
   return computeWinningContestants(teamsWithScores);

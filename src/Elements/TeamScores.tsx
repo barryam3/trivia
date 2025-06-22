@@ -2,6 +2,7 @@ import type React from "react";
 
 import Services from "../services";
 import { useParams } from "react-router";
+import scoreServices from "../services/scoreServices";
 
 interface ScoreProps {
   reverse: boolean;
@@ -25,7 +26,7 @@ interface TeamScoresProps {
 
 // Component to display the scores for a single team in a column.
 const TeamScores: React.FC<TeamScoresProps> = ({ teamIndex }) => {
-  const { uid, contestants, teams } = Services.games.useGame();
+  const { contestants, teams, buzzedInContestant } = Services.games.useGame();
   if (!teams) {
     throw new Error("TeamScores requires teams.");
   }
@@ -33,52 +34,30 @@ const TeamScores: React.FC<TeamScoresProps> = ({ teamIndex }) => {
   const leader = Services.games.useLeader();
   const params = useParams<"question" | "round" | "category">();
   const value = params.question ? Number(params.question) + 1 : 0;
-
-  const getScoreDiff = (op: "add" | "subtract") => {
-    const diff = Number(prompt(`How many points to ${op}?`));
-    return op === "add" ? diff : -diff;
-  };
-
-  const updateScore = (
-    key: number,
-    op: "add" | "subtract",
-    absDiff?: number
-  ) => {
-    return () => {
-      const diff = absDiff
-        ? op === "add"
-          ? absDiff
-          : -absDiff
-        : getScoreDiff(op);
-      if (diff === 0) return;
-      contestants[key].score += diff;
-      Services.games.updateScore(
-        uid,
-        key,
-        diff,
-        Number(params.round),
-        Number(params.category),
-        Number(params.question)
-      );
-    };
-  };
-
-  const onTeam = (key: number) =>
-    key >= (teamIndex * contestants.length) / teams.length &&
-    key < ((teamIndex + 1) * contestants.length) / teams.length;
-
-  const teamScore = contestants
-    .filter((_, key) => onTeam(key))
-    .reduce((acc, c) => acc + c.score, 0);
+  const updateScore = scoreServices.useUpdateScoreCallback();
 
   const reverse = teamIndex < teams.length - 1;
+
+  const onTeam = (key: number) =>
+    scoreServices.onTeam(teams, contestants, teamIndex, key);
+
+  const teamScore = scoreServices.computeTeamScore(
+    teams,
+    contestants,
+    teamIndex
+  );
 
   return (
     <div id="team-scores">
       <Score reverse={reverse} score={teamScore} name={teams[teamIndex]} />
       {contestants
         .map((c, key) => (
-          <div key={c.name} className={reverse ? "reverse" : ""}>
+          <div
+            key={c.name}
+            className={`${buzzedInContestant === key ? "buzzed" : ""} ${
+              reverse ? "reverse" : ""
+            }`}
+          >
             <Score reverse={reverse} score={c.score} name={c.name} />
             {leader && (
               <div className="hstack">

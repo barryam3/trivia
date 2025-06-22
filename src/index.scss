@@ -91,9 +91,11 @@ body {
 }
 
 .timer-bars {
-  height: 8px;
+  height: 16px;
   width: 100%;
   display: flex;
+  margin-bottom: -16px;
+  margin-top: 8px;
   > * {
     background-color: rgb(67, 47, 54);
     border-color: rgb(152, 128, 138);
@@ -115,7 +117,7 @@ body {
 .buzzed-in-bar {
   position: absolute;
   left: 0;
-  background:white;
+  background: white;
   height: 8px;
   width: 100%;
 }
@@ -160,6 +162,12 @@ body {
   .buzzed {
     position: relative;
     overflow: hidden;
+  }
+}
+
+#team-scores {
+  .buzzed {
+    background: rgb(93, 234, 242);
   }
 }
 

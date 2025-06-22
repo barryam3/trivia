@@ -90,6 +90,7 @@ export function updateScore(
 export function setBuzz(uid: string, key: number | undefined): Game {
   const game = getGame(uid);
   game.buzzedInContestant = key;
+  game.extraneousBuzzedInContestants = undefined;
   localStorage.setItem(uid, JSON.stringify(game));
   return game;
 }
@@ -97,6 +98,16 @@ export function setBuzz(uid: string, key: number | undefined): Game {
 export function setBuzzerConnected(uid: string, connected: boolean): Game {
   const game = getGame(uid);
   game.buzzerConnected = connected;
+  localStorage.setItem(uid, JSON.stringify(game));
+  return game;
+}
+
+export function addExtraneousBuzz(uid: string, contestant: number): Game {
+  const game = getGame(uid);
+  if (game.extraneousBuzzedInContestants == null) {
+    game.extraneousBuzzedInContestants = [];
+  }
+  game.extraneousBuzzedInContestants.push(contestant);
   localStorage.setItem(uid, JSON.stringify(game));
   return game;
 }
