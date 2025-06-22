@@ -2,64 +2,15 @@ import React from "react";
 
 import Services from "../services";
 import { useParams } from "react-router";
-import { useEventCallback } from "usehooks-ts";
+import scoreServices from "../services/scoreServices";
 
 const Scores: React.FC = () => {
-  const { uid, contestants, buzzedInContestant, buzzerConnected } =
-    Services.games.useGame();
+  const { contestants, buzzedInContestant } = Services.games.useGame();
   const multiplier = Services.games.useMultiplier();
   const leader = Services.games.useLeader();
   const params = useParams<"question" | "round" | "category">();
   const value = params.question ? Number(params.question) + 1 : 0;
-
-  const getScoreDiff = (op: "add" | "subtract") => {
-    const diff = Number(prompt(`How many points to ${op}?`));
-    return op === "add" ? diff : -diff;
-  };
-
-  const updateScore = (
-    key: number,
-    op: "add" | "subtract",
-    absDiff?: number
-  ) => {
-    return () => {
-      const diff = absDiff
-        ? op === "add"
-          ? absDiff
-          : -absDiff
-        : getScoreDiff(op);
-      if (diff === 0) return;
-      contestants[key].score += diff;
-      Services.games.updateScore(
-        uid,
-        key,
-        diff,
-        Number(params.round),
-        Number(params.category),
-        Number(params.question)
-      );
-    };
-  };
-
-  const onKeyDown = useEventCallback((e: KeyboardEvent) => {
-    if (buzzedInContestant == null) return;
-    if (!"rw".includes(e.key)) return;
-    const diff = multiplier * value * (e.key === "r" ? 1 : -1);
-    Services.games.updateScore(
-      uid,
-      buzzedInContestant,
-      diff,
-      Number(params.round),
-      Number(params.category),
-      Number(params.question)
-    );
-  });
-
-  React.useEffect(() => {
-    if (!buzzerConnected) return;
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [buzzerConnected, onKeyDown]);
+  const updateScore = scoreServices.useUpdateScoreCallback();
 
   return (
     <div id="scores">

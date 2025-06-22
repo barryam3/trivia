@@ -49,5 +49,6 @@ export interface Game {
   >;
   buzzerConnected?: boolean;
   buzzedInContestant?: number;
+  extraneousBuzzedInContestants?: number[];
   disableBoard: boolean;
 }

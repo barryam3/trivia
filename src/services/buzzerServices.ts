@@ -1,9 +1,12 @@
 import type * as _ from "w3c-web-serial";
 import gamesServices from "./gamesServices";
 import configServices from "./configServices";
+import { BehaviorSubject } from "../utils/behavior_subject";
 
 // We track the connected state in two places: the game, for reactivity, and here, for freshness.
 let connected = false;
+
+const buzzedInContestant = new BehaviorSubject<number | undefined>(undefined);
 
 // Matches the first single-level JSON object in a string, and the rest of the string after it.
 const JSON_REGEX = /({[^}]*})(.*)/g;
@@ -54,10 +57,47 @@ async function serialListen(onValue: (value: string) => void): Promise<void> {
   }
 }
 
+/** Listen for buzzes from the buzzer system. */
+function listenForBuzz(gameUID: string) {
+  buzzedInContestant.subscribe((contestant) => {
+    // The buzzer system may reset, but buzzes in the app must be dismissed by the host.
+    if (contestant == null) return;
+
+    const game = gamesServices.getGame(gameUID);
+    if (game.buzzedInContestant == null) {
+      // 1st player to buzz in.
+      gamesServices.setBuzz(gameUID, contestant);
+    } else {
+      // Subsequent players to buzz in after the buzzer system has reset but before the buzz has been dismissed in the
+      // app by the host.
+      gamesServices.addExtraneousBuzz(gameUID, contestant);
+    }
+  });
+}
+
+/** Dismiss the buzz in the UI when the buzzer system is reset. */
+function dismissBuzz(gameUID: string): Promise<void> {
+  if (buzzedInContestant.value == null) {
+    gamesServices.setBuzz(gameUID, undefined);
+    return Promise.resolve();
+  }
+
+  return new Promise<void>((resolve) => {
+    const onBuzz = (value: number | undefined) => {
+      if (value != null) return;
+      gamesServices.setBuzz(gameUID, undefined);
+      buzzedInContestant.unsubscribe(onBuzz);
+      resolve();
+    };
+    buzzedInContestant.subscribe(onBuzz);
+  });
+}
+
 export function connect(gameUID: string) {
   if (connected) return;
   connected = true;
   gamesServices.setBuzzerConnected(gameUID, true);
+  listenForBuzz(gameUID);
   serialListen((value: string) => {
     let obj: Record<string, number>;
     try {
@@ -73,12 +113,12 @@ export function connect(gameUID: string) {
     if (state === 0) {
       const { pinMappings } = configServices.getConfig();
       const contestant = pinMappings.indexOf(Number(pin));
-      gamesServices.setBuzz(gameUID, contestant);
+      buzzedInContestant.next(contestant);
     } else if (state === 1) {
-      gamesServices.setBuzz(gameUID, undefined);
+      buzzedInContestant.next(undefined);
     }
   }).finally(() => {
-    gamesServices.setBuzz(gameUID, undefined);
+    buzzedInContestant.next(undefined);
     connected = false;
     gamesServices.setBuzzerConnected(gameUID, false);
   });
@@ -88,18 +128,19 @@ export function connect(gameUID: string) {
 function fakeConnect(gameUID: string) {
   connected = true;
   gamesServices.setBuzzerConnected(gameUID, true);
+  listenForBuzz(gameUID);
   document.addEventListener("keydown", (e) => {
     if ("12345678".includes(e.key)) {
       let contestant = Number(e.key) - 1;
       if (e.shiftKey) {
         contestant += 8;
       }
-      gamesServices.setBuzz(gameUID, contestant);
+      buzzedInContestant.next(contestant);
       setTimeout(() => {
-        gamesServices.setBuzz(gameUID, undefined);
+        buzzedInContestant.next(undefined);
       }, 3000);
     } else if (e.key === "0") {
-      gamesServices.setBuzz(gameUID, undefined);
+      buzzedInContestant.next(undefined);
     }
   });
 }
@@ -114,10 +155,11 @@ function useConnected(): boolean {
     gamesServices.setBuzzerConnected(game.uid, false);
     gamesServices.setBuzz(game.uid, undefined);
   }
-  return !!gamesServices.useGame().buzzerConnected;
+  return !!game.buzzerConnected;
 }
 
 export default {
   connect,
   useConnected,
+  dismissBuzz,
 };
