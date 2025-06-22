@@ -47,6 +47,7 @@ export interface Game {
       /*score=*/ number
     ]
   >;
+  buzzerConnected?: boolean;
   buzzedInContestant?: number;
   disableBoard: boolean;
 }
