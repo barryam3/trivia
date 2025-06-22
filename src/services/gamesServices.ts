@@ -18,6 +18,8 @@ const gamesServices = {
   askQuestion: withBroadcast(gameModel.askQuestion),
   updateScore: withBroadcast(gameModel.updateScore),
   setBuzz: withBroadcast(gameModel.setBuzz),
+  setBuzzerConnected: withBroadcast(gameModel.setBuzzerConnected),
+  getGame: gameModel.getGame,
   /** Hook for getting game and responding to mutations. */
   useGame(): Game {
     const { gameUID } = useParams<"gameUID">();

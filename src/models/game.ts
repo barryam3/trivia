@@ -93,3 +93,10 @@ export function setBuzz(uid: string, key: number | undefined): Game {
   localStorage.setItem(uid, JSON.stringify(game));
   return game;
 }
+
+export function setBuzzerConnected(uid: string, connected: boolean): Game {
+  const game = getGame(uid);
+  game.buzzerConnected = connected;
+  localStorage.setItem(uid, JSON.stringify(game));
+  return game;
+}

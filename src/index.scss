@@ -90,6 +90,44 @@ body {
   }
 }
 
+.timer-bars {
+  height: 8px;
+  width: 100%;
+  display: flex;
+  > * {
+    background-color: rgb(67, 47, 54);
+    border-color: rgb(152, 128, 138);
+    border-width: 2px;
+    border-style: solid;
+    flex: 1;
+  }
+  >:first-child {
+    border-left-width: 4px;
+  }
+  >:last-child {
+    border-right-width: 4px;
+  }
+  > .timer-bar-lit {
+    background-color: rgb(215, 0, 40);
+  }
+}
+
+.buzzed-in-bar {
+  position: absolute;
+  left: 0;
+  background:white;
+  height: 8px;
+  width: 100%;
+}
+
+.buzzed-in-bar-top {
+  top: 0;
+}
+
+.buzzed-in-bar-bottom {
+  bottom: 0;
+}
+
 #board {
   height: 100%;
   display: grid;
@@ -120,8 +158,9 @@ body {
     border-radius: 8px;
   }
   .buzzed {
-    background: rgb(86, 189, 182);
-  } 
+    position: relative;
+    overflow: hidden;
+  }
 }
 
 /* text displaying money value */

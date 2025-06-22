@@ -6,13 +6,15 @@ import Scores from "./Elements/Scores";
 import TeamScores from "./Elements/TeamScores";
 import services from "./services/index";
 import { SerialButton } from "./Elements/SerialButton";
+import { TimerBars } from "./Elements/TimerBars";
 
 const Game: React.FC = () => {
   const location = useLocation();
   const leader = services.games.useLeader();
-  const { teams } = services.games.useGame();
+  const { teams, buzzedInContestant } = services.games.useGame();
   const { pathname } = useLocation();
   const isGameOver = pathname.includes("gameover");
+  const buzzerConnected = services.buzzer.useConnected();
   const showTeamScores = teams && (leader || isGameOver);
 
   // Whenever a navigation happens in the leader view, make all follower views navigate.
@@ -40,6 +42,7 @@ const Game: React.FC = () => {
         {showTeamScores && <TeamScores teamIndex={1} />}
       </div>
       {!teams && <Scores />}
+      {buzzerConnected && <TimerBars buzzed={buzzedInContestant != null} />}
     </div>
   );
 };
