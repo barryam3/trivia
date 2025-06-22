@@ -41,7 +41,10 @@ export function useUpdateScoreCallback() {
         Number(params.category),
         Number(params.question)
       );
-      buzzerServices.dismissBuzz(uid);
+      setTimeout(
+        () => buzzerServices.dismissBuzz(uid),
+        op === "add" ? 1000 : 0
+      );
     };
   };
 
@@ -53,7 +56,9 @@ export function useUpdateScoreCallback() {
       buzzerServices.dismissBuzz(uid);
       return;
     }
-    await buzzerServices.dismissBuzz(uid);
+    if (e.key === "w") {
+      await buzzerServices.dismissBuzz(uid);
+    }
     const diff = multiplier * value * (e.key === "r" ? 1 : -1);
     gamesServices.updateScore(
       uid,
@@ -63,13 +68,19 @@ export function useUpdateScoreCallback() {
       Number(params.category),
       Number(params.question)
     );
+    if (e.key === "r") {
+      setTimeout(() => buzzerServices.dismissBuzz(uid), 1000);
+    }
   });
 
   React.useEffect(() => {
     if (!buzzerConnected || !leader || keydownListenerInstalled) return;
     keydownListenerInstalled = true;
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      keydownListenerInstalled = false;
+    };
   }, [buzzerConnected, onKeyDown, leader]);
 
   return updateScore;
