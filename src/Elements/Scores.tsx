@@ -42,7 +42,6 @@ const Scores: React.FC = () => {
   };
 
   const onKeyDown = useEventCallback((e: KeyboardEvent) => {
-    console.log("onKeyDown", e.key, buzzedInContestant);
     if (buzzedInContestant == null) return;
     if (!"rw".includes(e.key)) return;
     const diff = multiplier * value * (e.key === "r" ? 1 : -1);
@@ -58,7 +57,6 @@ const Scores: React.FC = () => {
 
   React.useEffect(() => {
     if (!buzzerConnected) return;
-    console.log("adding keydown listener");
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [buzzerConnected, onKeyDown]);
