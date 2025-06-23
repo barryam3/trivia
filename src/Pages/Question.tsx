@@ -4,6 +4,8 @@ import { useLocation, useNavigate, useParams } from "react-router";
 
 import Services from "../services";
 import NotFound from "./NotFound";
+import scoreServices from "../services/scoreServices";
+import { useEventCallback } from "usehooks-ts";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
@@ -202,6 +204,37 @@ const Question: React.FC = () => {
     }
     return "Return to Board";
   };
+
+  const onRightAnswer = useEventCallback(() => {
+    // If answer is not yet shown.
+    if (stage < question.question.length + 1 + (isDDorFJ ? 1 : 0)) {
+      // Show answer.
+      navigate({
+        pathname: `../${params.question}/${ question.question.length + 1 + (isDDorFJ ? 1 : 0)}`,
+        search,
+      });
+    }
+  });
+
+  React.useEffect(() => {
+    return scoreServices.onRightAnswer(onRightAnswer);
+  }, [onRightAnswer]);
+
+  const onKeyDown = useEventCallback((e: KeyboardEvent) => {
+    if (e.key === " ") {
+      goToNext();
+    }
+    if (e.key === "Backspace") {
+      navigate(-1);
+    }
+  });
+
+  React.useEffect(() => {
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onKeyDown]);
 
   return (
     <div id="question">

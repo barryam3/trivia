@@ -7,6 +7,7 @@ import TeamScores from "./Elements/TeamScores";
 import services from "./services/index";
 import { SerialButton } from "./Elements/SerialButton";
 import { TimerBars } from "./Elements/TimerBars";
+import { DynamicScores } from "./Elements/DynamicScores";
 
 const Game: React.FC = () => {
   const location = useLocation();
@@ -42,6 +43,7 @@ const Game: React.FC = () => {
         {showTeamScores && <TeamScores teamIndex={1} />}
       </div>
       {!teams && <Scores />}
+      {teams && <DynamicScores />}
       {buzzerConnected && <TimerBars buzzed={buzzedInContestant != null} />}
     </div>
   );

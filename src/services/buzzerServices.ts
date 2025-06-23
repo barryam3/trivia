@@ -6,10 +6,10 @@ import { BehaviorSubject } from "../utils/behavior_subject";
 // We track the connected state in two places: the game, for reactivity, and here, for freshness.
 let connected = false;
 
-const buzzedInContestant = new BehaviorSubject<number | undefined>(undefined);
+const buzzedInContestants = new BehaviorSubject<Set<number>>(new Set());
 
 // Matches the first single-level JSON object in a string, and the rest of the string after it.
-const JSON_REGEX = /({[^}]*})(.*)/g;
+const JSON_REGEX = /({[^{}}]*})(.*)/g;
 
 async function serialListen(onValue: (value: string) => void): Promise<void> {
   if (!("serial" in navigator)) {
@@ -39,19 +39,20 @@ async function serialListen(onValue: (value: string) => void): Promise<void> {
   // Listen to data coming from the serial device.
   let cumulativeValue = "";
   try {
-    while (true) {
-      const { value, done } = await reader.read();
-      cumulativeValue += value;
-      const match = JSON_REGEX.exec(cumulativeValue);
-      if (match) {
-        onValue(match[1]);
-        cumulativeValue = match[2];
-      }
-      if (done) {
-        break;
+  while (true) {
+    const { value, done } = await reader.read();
+    cumulativeValue += value;
+    const match = JSON_REGEX.exec(cumulativeValue);
+    if (match) {
+      onValue(match[1]);
+      cumulativeValue = match[2];
+    }
+    if (done) {
+      break;
       }
     }
   } finally {
+    reader.releaseLock();
     await port.close();
     await readableStreamClosed;
   }
@@ -59,37 +60,48 @@ async function serialListen(onValue: (value: string) => void): Promise<void> {
 
 /** Listen for buzzes from the buzzer system. */
 function listenForBuzz(gameUID: string) {
-  buzzedInContestant.subscribe((contestant) => {
+  buzzedInContestants.subscribe((contestants) => {
     // The buzzer system may reset, but buzzes in the app must be dismissed by the host.
-    if (contestant == null) return;
+    if (contestants.size === 0) return;
 
     const game = gamesServices.getGame(gameUID);
     if (game.buzzedInContestant == null) {
       // 1st player to buzz in.
-      gamesServices.setBuzz(gameUID, contestant);
+      if (contestants.size !== 1) {
+        throw new Error("Multiple contestants buzzed in simultaneously.");
+      }
+      gamesServices.setBuzz(gameUID, Array.from(contestants)[0]);
     } else {
       // Subsequent players to buzz in after the buzzer system has reset but before the buzz has been dismissed in the
       // app by the host.
-      gamesServices.addExtraneousBuzz(gameUID, contestant);
+      for (const contestant of contestants) {
+        if (
+          game.buzzedInContestant === contestant ||
+          game.extraneousBuzzedInContestants?.includes(contestant)
+        ) {
+          continue;
+        }
+        gamesServices.addExtraneousBuzz(gameUID, contestant);
+      }
     }
   });
 }
 
 /** Dismiss the buzz in the UI when the buzzer system is reset. */
 function dismissBuzz(gameUID: string): Promise<void> {
-  if (buzzedInContestant.value == null) {
+  if (buzzedInContestants.value.size === 0) {
     gamesServices.setBuzz(gameUID, undefined);
     return Promise.resolve();
   }
 
   return new Promise<void>((resolve) => {
-    const onBuzz = (value: number | undefined) => {
-      if (value != null) return;
+    const onBuzz = (value: Set<number>) => {
+      if (value.size > 0) return;
       gamesServices.setBuzz(gameUID, undefined);
-      buzzedInContestant.unsubscribe(onBuzz);
+      buzzedInContestants.unsubscribe(onBuzz);
       resolve();
     };
-    buzzedInContestant.subscribe(onBuzz);
+    buzzedInContestants.subscribe(onBuzz);
   });
 }
 
@@ -110,15 +122,19 @@ export function connect(gameUID: string) {
       return;
     }
     const [pin, state] = entries[0];
+    const { pinMappings } = configServices.getConfig();
+    const contestant = pinMappings.indexOf(Number(pin));
     if (state === 0) {
-      const { pinMappings } = configServices.getConfig();
-      const contestant = pinMappings.indexOf(Number(pin));
-      buzzedInContestant.next(contestant);
+      buzzedInContestants.next(
+        new Set(buzzedInContestants.value).add(contestant)
+      );
     } else if (state === 1) {
-      buzzedInContestant.next(undefined);
+      const set = new Set(buzzedInContestants.value);
+      set.delete(contestant);
+      buzzedInContestants.next(set);
     }
   }).finally(() => {
-    buzzedInContestant.next(undefined);
+    buzzedInContestants.next(new Set());
     connected = false;
     gamesServices.setBuzzerConnected(gameUID, false);
   });
@@ -135,12 +151,16 @@ function fakeConnect(gameUID: string) {
       if (e.shiftKey) {
         contestant += 8;
       }
-      buzzedInContestant.next(contestant);
+      buzzedInContestants.next(
+        new Set(buzzedInContestants.value).add(contestant)
+      );
       setTimeout(() => {
-        buzzedInContestant.next(undefined);
+        const set = new Set(buzzedInContestants.value);
+        set.delete(contestant);
+        buzzedInContestants.next(set);
       }, 3000);
     } else if (e.key === "0") {
-      buzzedInContestant.next(undefined);
+      buzzedInContestants.next(new Set());
     }
   });
 }
