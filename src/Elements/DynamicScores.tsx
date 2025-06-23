@@ -19,20 +19,13 @@ export const DynamicScores: React.FC = () => {
     const addedContestants = Array.from(nextContestantsToShow).filter(
       (contestant) => !contestantsToShow.has(contestant)
     );
-    if (removedContestants.length > 0) {
-      setTimeout(() => {
-        setContestantsToShow((prevContestantsToShow) => {
-          for (const contestant of removedContestants) {
-            prevContestantsToShow.delete(contestant);
-          }
-          return new Set(prevContestantsToShow);
-        });
-      }, 0);
-    }
-    if (addedContestants.length > 0) {
+    if (removedContestants.length > 0 || addedContestants.length > 0) {
       setContestantsToShow((prevContestantsToShow) => {
         for (const contestant of addedContestants) {
           prevContestantsToShow.add(contestant);
+        }
+        for (const contestant of removedContestants) {
+          prevContestantsToShow.delete(contestant);
         }
         return new Set(prevContestantsToShow);
       });
