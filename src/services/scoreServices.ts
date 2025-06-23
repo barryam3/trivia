@@ -7,9 +7,17 @@ import type { Contestant } from "../interfaces/game";
 
 let keydownListenerInstalled = false;
 
+const rightAnswerEventSource = new EventTarget();
+const rightAnswerEventName = "right-answer";
+export function onRightAnswer(callback: () => void): () => void {
+  rightAnswerEventSource.addEventListener(rightAnswerEventName, callback);
+  return () => {
+    rightAnswerEventSource.removeEventListener(rightAnswerEventName, callback);
+  };
+}
+
 export function useUpdateScoreCallback() {
-  const { uid, contestants, buzzedInContestant, buzzerConnected } =
-    gamesServices.useGame();
+  const { uid, buzzedInContestant, buzzerConnected } = gamesServices.useGame();
   const multiplier = gamesServices.useMultiplier();
   const leader = gamesServices.useLeader();
   const params = useParams<"question" | "round" | "category">();
@@ -25,14 +33,17 @@ export function useUpdateScoreCallback() {
     op: "add" | "subtract",
     absDiff?: number
   ) => {
-    return () => {
+    return async () => {
       const diff = absDiff
         ? op === "add"
           ? absDiff
           : -absDiff
         : getScoreDiff(op);
       if (diff === 0) return;
-      contestants[key].score += diff;
+      // Dismiss buzz for wrong answer as soon as buzzer is reset. Don't show score change until then.
+      if (op === "subtract") {
+        await buzzerServices.dismissBuzz(uid);
+      }
       gamesServices.updateScore(
         uid,
         key,
@@ -41,10 +52,13 @@ export function useUpdateScoreCallback() {
         Number(params.category),
         Number(params.question)
       );
-      setTimeout(
-        () => buzzerServices.dismissBuzz(uid),
-        op === "add" ? 1000 : 0
-      );
+      // For right answer, show score change immediately. Then dismiss buzz after 1s.
+      if (op === "add") {
+        rightAnswerEventSource.dispatchEvent(new Event(rightAnswerEventName));
+        setTimeout(() => {
+          buzzerServices.dismissBuzz(uid);
+        }, 1000);
+      }
     };
   };
 
@@ -56,21 +70,8 @@ export function useUpdateScoreCallback() {
       buzzerServices.dismissBuzz(uid);
       return;
     }
-    if (e.key === "w") {
-      await buzzerServices.dismissBuzz(uid);
-    }
     const diff = multiplier * value * (e.key === "r" ? 1 : -1);
-    gamesServices.updateScore(
-      uid,
-      buzzedInContestant,
-      diff,
-      Number(params.round),
-      Number(params.category),
-      Number(params.question)
-    );
-    if (e.key === "r") {
-      setTimeout(() => buzzerServices.dismissBuzz(uid), 1000);
-    }
+    updateScore(buzzedInContestant, e.key === "r" ? "add" : "subtract", diff)();
   });
 
   React.useEffect(() => {
@@ -112,4 +113,5 @@ export default {
   useUpdateScoreCallback,
   onTeam,
   computeTeamScore,
+  onRightAnswer,
 };

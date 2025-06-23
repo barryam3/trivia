@@ -23,7 +23,9 @@ export function addGame(
   if (uid.length === 0) {
     throw new Error("Unique identifier for game cannot be empty");
   }
-  const teams: string[] | undefined = CSVToArray(teamsCSV, ",")[0];
+  const teams: string[] | undefined = teamsCSV
+    ? CSVToArray(teamsCSV, ",")[0]
+    : undefined;
   // For now only 2-team games are supported.
   const isTeams = teams?.length !== 2;
   const obj: Game = {
