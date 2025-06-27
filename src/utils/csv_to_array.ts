@@ -7,6 +7,11 @@ export const CSVToArray = (
   strData: string,
   inputDelimiter: string
 ): string[][] => {
+  // Empty string will cause an error below so we special case it.
+  if (!strData) {
+    return [[]];
+  }
+
   // Check to see if the delimiter is defined. If not,
   // then default to comma.
   const strDelimiter = inputDelimiter || ",";
@@ -14,11 +19,7 @@ export const CSVToArray = (
   // Create a regular expression to parse the CSV values.
   const objPattern = new RegExp(
     // Delimiters.
-    `(\\${strDelimiter}|\\r?\\n|\\r|^)` +
-      // Quoted fields.
-      '(?:"([^"]*(?:""[^"]*)*)"|' +
-      // Standard fields.
-      `([^"\\${strDelimiter}\\r\\n]*))`,
+    `(\\${strDelimiter}|\\r?\\n|\\r|^)(?:"([^"]*(?:""[^"]*)*)"|([^"\\${strDelimiter}\\r\\n]*))`,
     "gi"
   );
 
