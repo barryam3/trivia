@@ -27,7 +27,7 @@ export function addGame(
     ? CSVToArray(teamsCSV, ",")[0]
     : undefined;
   // For now only 2-team games are supported.
-  const isTeams = teams?.length !== 2;
+  const isTeams = teams?.length === 2;
   const obj: Game = {
     uid,
     contestants: parseGameFiles.parseContestantsCSV(contestants),
