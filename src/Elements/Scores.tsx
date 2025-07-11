@@ -9,8 +9,12 @@ interface ScoresProps {
 }
 
 const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
-  const { contestants, buzzedInContestant, extraneousBuzzedInContestants } =
-    Services.games.useGame();
+  const {
+    contestants,
+    buzzedInContestant,
+    extraneousBuzzedInContestants,
+    unit,
+  } = Services.games.useGame();
   const multiplier = Services.games.useMultiplier();
   const leader = Services.games.useLeader();
   const params = useParams<"question" | "round" | "category">();
@@ -57,7 +61,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
             )}
             <div>
               <div className={`scorescore ${c.score < 0 ? "negative" : ""}`}>
-                {`${c.score < 0 ? "-" : ""}$${Math.abs(c.score)}`}
+                {`${c.score < 0 ? "-" : ""}${unit}${Math.abs(c.score)}`}
               </div>
               <div className="scorename">{c.name}</div>
             </div>

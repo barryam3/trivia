@@ -12,11 +12,12 @@ import { DynamicScores } from "./Elements/DynamicScores";
 const Game: React.FC = () => {
   const location = useLocation();
   const leader = services.games.useLeader();
-  const { teams, buzzedInContestant } = services.games.useGame();
+  const { teams, buzzedInContestant, enableDynamicScores } =
+    services.games.useGame();
   const { pathname } = useLocation();
   const isGameOver = pathname.includes("gameover");
   const buzzerConnected = services.buzzer.useConnected();
-  const showTeamScores = teams && (leader || isGameOver);
+  const showTeamScores = teams && (leader || isGameOver) && enableDynamicScores;
 
   // Whenever a navigation happens in the leader view, make all follower views navigate.
   const navigate = useNavigate();
@@ -42,8 +43,8 @@ const Game: React.FC = () => {
         </div>
         {showTeamScores && <TeamScores teamIndex={1} />}
       </div>
-      {!teams && <Scores />}
-      {teams && <DynamicScores />}
+      {!enableDynamicScores && <Scores />}
+      {enableDynamicScores && <DynamicScores />}
       {buzzerConnected && <TimerBars buzzed={buzzedInContestant != null} />}
     </div>
   );

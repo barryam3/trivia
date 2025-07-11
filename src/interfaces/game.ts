@@ -51,4 +51,6 @@ export interface Game {
   buzzedInContestant?: number;
   extraneousBuzzedInContestants?: number[];
   disableBoard: boolean;
+  enableDynamicScores: boolean;
+  unit: "$" | "";
 }

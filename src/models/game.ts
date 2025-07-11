@@ -18,7 +18,10 @@ export function addGame(
   singlecsv: string,
   doublecsv: string,
   finaltxt: string,
-  teamsCSV: string
+  teamsCSV: string,
+  disableBoard: boolean,
+  enableDynamicScores: boolean,
+  unit: "$" | ""
 ) {
   if (uid.length === 0) {
     throw new Error("Unique identifier for game cannot be empty");
@@ -42,7 +45,9 @@ export function addGame(
     logs: [],
     teams: isTeams ? teams : undefined,
     // For now team games must disable the board.
-    disableBoard: isTeams,
+    disableBoard,
+    enableDynamicScores,
+    unit,
   };
   validateGame(obj);
   localStorage.setItem(uid, JSON.stringify(obj));

@@ -210,7 +210,9 @@ const Question: React.FC = () => {
     if (stage < question.question.length + 1 + (isDDorFJ ? 1 : 0)) {
       // Show answer.
       navigate({
-        pathname: `../${params.question}/${ question.question.length + 1 + (isDDorFJ ? 1 : 0)}`,
+        pathname: `../${params.question}/${
+          question.question.length + 1 + (isDDorFJ ? 1 : 0)
+        }`,
         search,
       });
     }
@@ -251,7 +253,8 @@ const Question: React.FC = () => {
                 {" "}
                 —{" "}
                 <span className="qvalue">
-                  ${(question.value ?? 0) * multiplier}
+                  {game.unit}
+                  {(question.value ?? 0) * multiplier}
                 </span>
               </span>
             ) : (

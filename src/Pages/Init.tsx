@@ -13,6 +13,9 @@ const Init: React.FC = () => {
     singlecsv: "",
     doublecsv: "",
     finaltxt: "",
+    disableBoard: false,
+    enableDynamicScores: false,
+    unit: "$",
   });
 
   const handleChange = (
@@ -24,6 +27,20 @@ const Init: React.FC = () => {
     }));
   };
 
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setState((prevState) => ({
+      ...prevState,
+      [event.target.name]: event.target.checked,
+    }));
+  };
+
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setState((prevState) => ({
+      ...prevState,
+      [event.target.name]: event.target.value as "" | "$",
+    }));
+  };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     Services.games.addGame(
@@ -32,7 +49,10 @@ const Init: React.FC = () => {
       state.singlecsv,
       state.doublecsv,
       state.finaltxt,
-      state.teams || undefined,
+      state.teams || "",
+      state.enableDynamicScores,
+      state.disableBoard,
+      state.unit as "" | "$",
     );
     window.open(`/game/${state.uid}/1/-1`);
     navigate(`/game/${state.uid}/1/-1?leader=true`);
@@ -119,6 +139,50 @@ const Init: React.FC = () => {
                 value={state.finaltxt}
                 onChange={handleChange}
               />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label htmlFor="disableBoard">Auto-advance (do not show board between questions)</label>
+            </td>
+            <td>
+              <input
+                id="disableBoard"
+                type="checkbox"
+                name="disableBoard"
+                checked={state.disableBoard}
+                onChange={handleCheckboxChange}
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label htmlFor="enableDynamicScores">Enable Dynamic Scores (show only buzzed-in scores)</label>
+            </td>
+            <td>
+              <input
+                id="enableDynamicScores"
+                type="checkbox"
+                name="enableDynamicScores"
+                checked={state.enableDynamicScores}
+                onChange={handleCheckboxChange}
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label htmlFor="unit">Score Unit</label>
+            </td>
+            <td>
+              <select
+                id="unit"
+                name="unit"
+                value={state.unit}
+                onChange={handleSelectChange}
+              >
+                <option value="$">Dollars</option>
+                <option value="">Points</option>
+              </select>
             </td>
           </tr>
           <tr>
