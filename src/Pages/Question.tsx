@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 
 import { useLocation, useNavigate, useParams } from "react-router";
 
@@ -29,10 +29,12 @@ const IMAGE_FILE_EXT_REGEX = /\.(tiff?|bmp|jpe?g|gif|png|eps|webp)$/;
 function QuestionPart({
   text,
   leader,
+  avRef,
   ...rest
 }: {
   text: string;
   leader: boolean;
+  avRef: React.RefObject<HTMLAudioElement | HTMLVideoElement>;
   [key: string]: unknown;
 }) {
   let content = <>{text}</>;
@@ -40,7 +42,9 @@ function QuestionPart({
     const pathname = new URL(text).pathname;
     const shouldAutoplay = leader ? {} : { autoPlay: true };
     if (pathname.match(AUDIO_FILE_EXT_REGEX)) {
-      content = <audio {...shouldAutoplay} src={text} controls={true} />;
+      content = (
+        <audio {...shouldAutoplay} src={text} controls={true} ref={avRef} />
+      );
     } else if (pathname.match(VIDEO_FILE_EXT_REGEX)) {
       content = (
         <video
@@ -48,6 +52,7 @@ function QuestionPart({
           style={{ height: "50vh" }}
           src={text}
           controls={true}
+          ref={avRef as React.RefObject<HTMLVideoElement>}
         />
       );
     } else if (pathname.match(IMAGE_FILE_EXT_REGEX)) {
@@ -238,6 +243,17 @@ const Question: React.FC = () => {
     };
   }, [onKeyDown]);
 
+  // Ref to bind to audio or video tag. We assume at most one audio or video tag per question.
+  const avRef = useRef<HTMLAudioElement | HTMLVideoElement>(null);
+  const stopPlaying = React.useCallback(() => avRef.current?.pause(), []);
+  // Stop playing audio or video when a contestant buzzes in.
+  React.useEffect(() => {
+    console.log("stopPlaying", game.buzzedInContestant, avRef.current);
+    if (game.buzzedInContestant != null) {
+      stopPlaying();
+    }
+  }, [game.buzzedInContestant, stopPlaying]);
+
   return (
     <div id="question">
       {isDDorFJ && stage === 0 ? (
@@ -273,6 +289,7 @@ const Question: React.FC = () => {
                     style={{ paddingBottom: "15px" }}
                     text={q}
                     leader={leader}
+                    avRef={avRef}
                   />
                 ))}
               {stage + (leader ? 1 : 0) + (isDDorFJ ? -1 : 0) >
