@@ -9,7 +9,10 @@ describe("addGame", () => {
       "Category1,Category2\nQuestion11,Question21\nAnswer11,Answer21\nQuestion12,Question22\nAnswer12,Answer22",
       "Category3,Category4\nQuestion31,Question41\nAnswer31,Answer41\nQuestion32,Question42\nAnswer32,Answer42",
       "CategoryF\nQuestionF\nAnswerF",
-      ""
+      "",
+      false,
+      false,
+      "$"
     );
     const expected: Game = {
       uid: "test",
@@ -103,6 +106,8 @@ describe("addGame", () => {
       logs: [],
       disableBoard: false,
       teams: undefined,
+      enableDynamicScores: false,
+      unit: "$",
     };
     expect(actual).toEqual(expected);
   });
@@ -113,7 +118,10 @@ describe("addGame", () => {
       "Category1,Category2\nQuestion11,Question21\nAnswer11,Answer21\nQuestion12,Question22\nAnswer12,Answer22",
       "Category3,Category4\nQuestion31,Question41\nAnswer31,Answer41\nQuestion32,Question42\nAnswer32,Answer42",
       "CategoryF\nQuestionF\nAnswerF",
-      "Team A,Team B"
+      "Team A,Team B",
+      true,
+      false,
+      "$"
     );
     expect(actual).toMatchObject({
       disableBoard: true,
