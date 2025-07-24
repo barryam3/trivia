@@ -24,7 +24,7 @@ function splitOnURLs(str: string) {
 }
 
 const AUDIO_FILE_EXT_REGEX = /\.(mp3|ogg|wav|oga)$/;
-const VIDEO_FILE_EXT_REGEX = /\.(mp4|mov)$/;
+const VIDEO_FILE_EXT_REGEX = /\.(mp4|mov|webm)$/;
 const IMAGE_FILE_EXT_REGEX = /\.(tiff?|bmp|jpe?g|gif|png|eps|webp)$/;
 function QuestionPart({
   text,
@@ -122,6 +122,17 @@ function useQuestion(): ProcessedQuestion | null {
     };
   }
   return null;
+}
+
+function hasAudioOrVideo(question: ProcessedQuestion) {
+  return question.question.some((text) => {
+    if (!text.match(URL_REGEX)) return false;
+    const url = new URL(text);
+    return (
+      url.pathname.match(AUDIO_FILE_EXT_REGEX) ||
+      url.pathname.match(VIDEO_FILE_EXT_REGEX)
+    );
+  });
 }
 
 function useAllAsked() {
@@ -248,7 +259,6 @@ const Question: React.FC = () => {
   const stopPlaying = React.useCallback(() => avRef.current?.pause(), []);
   // Stop playing audio or video when a contestant buzzes in.
   React.useEffect(() => {
-    console.log("stopPlaying", game.buzzedInContestant, avRef.current);
     if (game.buzzedInContestant != null) {
       stopPlaying();
     }
@@ -300,7 +310,7 @@ const Question: React.FC = () => {
       )}
       {leader && (
         <>
-          {question.isFJ && (
+          {question.isFJ && !hasAudioOrVideo && (
             <audio
               src="https://www.televisiontunes.com/uploads/audio/Jeopardy%20-%201997%20-%20Think%20Music.mp3"
               controls={true}
