@@ -46,12 +46,12 @@ const Board: React.FC = () => {
                 <React.Fragment>
                   {leader ? (
                     <Link to={{ pathname: `${ckey}/${vkey}`, search: search }}>
-                      {unit}
+                      {unit || ""}
                       {multiplier * (vkey + 1)}
                     </Link>
                   ) : (
                     <span>
-                      {unit}
+                      {unit || ""}
                       {multiplier * (vkey + 1)}
                     </span>
                   )}

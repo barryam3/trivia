@@ -61,7 +61,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
             )}
             <div>
               <div className={`scorescore ${c.score < 0 ? "negative" : ""}`}>
-                {`${c.score < 0 ? "-" : ""}${unit}${Math.abs(c.score)}`}
+                {`${c.score < 0 ? "-" : ""}${unit || ""}${Math.abs(c.score)}`}
               </div>
               <div className="scorename">{c.name}</div>
             </div>
