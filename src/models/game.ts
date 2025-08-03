@@ -46,12 +46,12 @@ export function addGame(
     uid,
     contestants: parseGameFiles.parseContestantsCSV(contestants),
     single: {
-      categories: parseGameFiles.parseGameCSV(singlecsv, 1),
+      categories: singlecsv ? parseGameFiles.parseGameCSV(singlecsv, 1) : [],
     },
     double: {
-      categories: parseGameFiles.parseGameCSV(doublecsv, 2),
+      categories: doublecsv ? parseGameFiles.parseGameCSV(doublecsv, 2) : [],
     },
-    final: parseGameFiles.parseFinalTXT(finaltxt),
+    final: finaltxt ? parseGameFiles.parseFinalTXT(finaltxt) : undefined,
     multiplier,
     logs: [],
     teams: isTeams ? teams : undefined,

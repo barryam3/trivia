@@ -114,6 +114,9 @@ function useQuestion(): ProcessedQuestion | null {
   }
   if (params.round === 3) {
     const final = game.final;
+    if (!final) {
+      throw new Error("Final Jeopardy not available");
+    }
     return {
       category: final.category,
       question: splitOnURLs(final.question),
@@ -167,13 +170,26 @@ const Question: React.FC = () => {
       );
     }
     if (stage >= question.question.length + 1 + (isDDorFJ ? 1 : 0)) {
-      if (question.isFJ) {
+      const isLastQuestionOfGame =
+        question.isFJ ||
+        (allAsked && params.round === 2) ||
+        (allAsked && params.round === 1 && game.double.categories.length === 0);
+      if (isLastQuestionOfGame) {
         // To Game Over page.
         navigate({ pathname: "../../../gameover", search });
-      } else if (allAsked && params.round === 1) {
+      } else if (
+        allAsked &&
+        params.round === 1 &&
+        game.double.categories.length > 0
+      ) {
         // To Double Jeopardy.
         navigate({ pathname: "../../../2/-1", search });
-      } else if (allAsked && params.round === 2) {
+      } else if (
+        allAsked &&
+        game.final &&
+        (params.round === 2 ||
+          (params.round === 1 && game.double.categories.length === 0))
+      ) {
         // To Final Jeopardy.
         navigate({ pathname: "../../../3/1/1", search });
       } else if (game.disableBoard) {

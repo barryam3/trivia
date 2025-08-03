@@ -36,7 +36,7 @@ export interface Game {
   teams?: string[];
   single: Round;
   double: Round;
-  final: FinalRound;
+  final?: FinalRound;
   multiplier: number;
   logs: Array<
     [

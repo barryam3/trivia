@@ -135,4 +135,23 @@ describe("addGame", () => {
       teams: ["Team A", "Team B"],
     });
   });
+  test("oneRoundOnly", () => {
+    const actual = addGame("test", {
+      contestants: "Alvin,Abigail,Brendan,Brittany",
+      singlecsv:
+        "Category1,Category2\nQuestion11,Question21\nAnswer11,Answer21\nQuestion12,Question22\nAnswer12,Answer22",
+      doublecsv: "",
+      finaltxt: "",
+      teamsCSV: "Team A,Team B",
+      disableBoard: true,
+      enableDynamicScores: false,
+      unit: "$",
+      scorekeepingWebhook: "",
+      multiplier: 2,
+    });
+    expect(actual).toMatchObject({
+      disableBoard: true,
+      teams: ["Team A", "Team B"],
+    });
+  });
 });
