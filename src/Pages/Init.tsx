@@ -16,6 +16,7 @@ const Init: React.FC = () => {
     disableBoard: false,
     enableDynamicScores: false,
     unit: "$",
+    scorekeepingWebhook: "",
   });
 
   const handleChange = (
@@ -28,10 +29,13 @@ const Init: React.FC = () => {
   };
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setState((prevState) => ({
-      ...prevState,
-      [event.target.name]: event.target.checked,
-    }));
+    setState((prevState) => {
+      console.log(prevState);
+      return {
+        ...prevState,
+        [event.target.name]: event.target.checked,
+      };
+    });
   };
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -43,17 +47,17 @@ const Init: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    Services.games.addGame(
-      state.uid,
-      state.contestants,
-      state.singlecsv,
-      state.doublecsv,
-      state.finaltxt,
-      state.teams || "",
-      state.enableDynamicScores,
-      state.disableBoard,
-      state.unit as "" | "$",
-    );
+    Services.games.addGame(state.uid, {
+      contestants: state.contestants,
+      singlecsv: state.singlecsv,
+      doublecsv: state.doublecsv,
+      finaltxt: state.finaltxt,
+      teamsCSV: state.teams || "",
+      enableDynamicScores: state.enableDynamicScores,
+      disableBoard: state.disableBoard,
+      unit: state.unit as "" | "$",
+      scorekeepingWebhook: state.scorekeepingWebhook,
+    });
     window.open(`/game/${state.uid}/1/-1`);
     navigate(`/game/${state.uid}/1/-1?leader=true`);
   };
@@ -143,7 +147,9 @@ const Init: React.FC = () => {
           </tr>
           <tr>
             <td>
-              <label htmlFor="disableBoard">Auto-advance (do not show board between questions)</label>
+              <label htmlFor="disableBoard">
+                Auto-advance (do not show board between questions)
+              </label>
             </td>
             <td>
               <input
@@ -157,7 +163,9 @@ const Init: React.FC = () => {
           </tr>
           <tr>
             <td>
-              <label htmlFor="enableDynamicScores">Enable Dynamic Scores (show only buzzed-in scores)</label>
+              <label htmlFor="enableDynamicScores">
+                Enable Dynamic Scores (show only buzzed-in scores)
+              </label>
             </td>
             <td>
               <input
@@ -183,6 +191,20 @@ const Init: React.FC = () => {
                 <option value="$">Dollars</option>
                 <option value="">Points</option>
               </select>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label htmlFor="scorekeepingWebhook">Scorekeeping Webhook:</label>
+            </td>
+            <td>
+              <input
+                id="scorekeepingWebhook"
+                type="text"
+                name="scorekeepingWebhook"
+                value={state.scorekeepingWebhook}
+                onChange={handleChange}
+              />
             </td>
           </tr>
           <tr>

@@ -53,4 +53,5 @@ export interface Game {
   disableBoard: boolean;
   enableDynamicScores: boolean;
   unit: "$" | "";
+  scorekeepingWebhook: string;
 }

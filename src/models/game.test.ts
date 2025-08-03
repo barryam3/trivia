@@ -3,17 +3,19 @@ import type { Game } from "../interfaces/game";
 
 describe("addGame", () => {
   test("basic", () => {
-    const actual = addGame(
-      "test",
-      "Ken,Brad,Watson",
-      "Category1,Category2\nQuestion11,Question21\nAnswer11,Answer21\nQuestion12,Question22\nAnswer12,Answer22",
-      "Category3,Category4\nQuestion31,Question41\nAnswer31,Answer41\nQuestion32,Question42\nAnswer32,Answer42",
-      "CategoryF\nQuestionF\nAnswerF",
-      "",
-      false,
-      false,
-      "$"
-    );
+    const actual = addGame("test", {
+      contestants: "Ken,Brad,Watson",
+      teamsCSV: "",
+      singlecsv:
+        "Category1,Category2\nQuestion11,Question21\nAnswer11,Answer21\nQuestion12,Question22\nAnswer12,Answer22",
+      doublecsv:
+        "Category3,Category4\nQuestion31,Question41\nAnswer31,Answer41\nQuestion32,Question42\nAnswer32,Answer42",
+      finaltxt: "CategoryF\nQuestionF\nAnswerF",
+      scorekeepingWebhook: "",
+      disableBoard: false,
+      enableDynamicScores: false,
+      unit: "$",
+    });
     const expected: Game = {
       uid: "test",
       contestants: [
@@ -108,21 +110,24 @@ describe("addGame", () => {
       teams: undefined,
       enableDynamicScores: false,
       unit: "$",
+      scorekeepingWebhook: "",
     };
     expect(actual).toEqual(expected);
   });
   test("teams", () => {
-    const actual = addGame(
-      "teams",
-      "Alvin,Abigail,Brendan,Brittany",
-      "Category1,Category2\nQuestion11,Question21\nAnswer11,Answer21\nQuestion12,Question22\nAnswer12,Answer22",
-      "Category3,Category4\nQuestion31,Question41\nAnswer31,Answer41\nQuestion32,Question42\nAnswer32,Answer42",
-      "CategoryF\nQuestionF\nAnswerF",
-      "Team A,Team B",
-      true,
-      false,
-      "$"
-    );
+    const actual = addGame("test", {
+      contestants: "Alvin,Abigail,Brendan,Brittany",
+      singlecsv:
+        "Category1,Category2\nQuestion11,Question21\nAnswer11,Answer21\nQuestion12,Question22\nAnswer12,Answer22",
+      doublecsv:
+        "Category3,Category4\nQuestion31,Question41\nAnswer31,Answer41\nQuestion32,Question42\nAnswer32,Answer42",
+      finaltxt: "CategoryF\nQuestionF\nAnswerF",
+      teamsCSV: "Team A,Team B",
+      disableBoard: true,
+      enableDynamicScores: false,
+      unit: "$",
+      scorekeepingWebhook: "",
+    });
     expect(actual).toMatchObject({
       disableBoard: true,
       teams: ["Team A", "Team B"],

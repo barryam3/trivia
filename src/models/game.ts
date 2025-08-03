@@ -14,14 +14,27 @@ function validateGame(game: Game) {
 
 export function addGame(
   uid: string,
-  contestants: string,
-  singlecsv: string,
-  doublecsv: string,
-  finaltxt: string,
-  teamsCSV: string,
-  disableBoard: boolean,
-  enableDynamicScores: boolean,
-  unit: "$" | ""
+  {
+    contestants,
+    singlecsv,
+    doublecsv,
+    finaltxt,
+    teamsCSV,
+    disableBoard,
+    enableDynamicScores,
+    unit,
+    scorekeepingWebhook,
+  }: {
+    contestants: string;
+    singlecsv: string;
+    doublecsv: string;
+    finaltxt: string;
+    teamsCSV: string;
+    disableBoard: boolean;
+    enableDynamicScores: boolean;
+    unit: "$" | "";
+    scorekeepingWebhook: string;
+  }
 ) {
   if (uid.length === 0) {
     throw new Error("Unique identifier for game cannot be empty");
@@ -44,12 +57,13 @@ export function addGame(
     multiplier: kDollarMultiplier,
     logs: [],
     teams: isTeams ? teams : undefined,
-    // For now team games must disable the board.
     disableBoard,
     enableDynamicScores,
     unit,
+    scorekeepingWebhook,
   };
   validateGame(obj);
+  console.log(obj);
   localStorage.setItem(uid, JSON.stringify(obj));
   return obj;
 }
@@ -83,6 +97,9 @@ export function updateScore(
   category: number,
   question: number
 ): Game {
+  if (diff === 0) {
+    throw new Error("Score cannot be changed by 0.");
+  }
   const game = getGame(uid);
   if (key < 0 || key >= game.contestants.length) {
     throw new Error(`Invalid contestant number ${key}.`);
@@ -90,6 +107,30 @@ export function updateScore(
   const contestant = game.contestants[key];
   contestant.score += diff;
   game.logs.push([contestant.name, round, category, question, diff]);
+  if (game.scorekeepingWebhook) {
+    // Remote scorekeeping ignores single/double Jeopardy. Instead, "round" is
+    // the game ID, and category numbers continue after the previous round.
+    let categoryOffset = 0;
+    if (round > 1) {
+      categoryOffset += game.single.categories.length;
+    }
+    if (round > 2) {
+      categoryOffset += game.double.categories.length;
+    }
+    fetch(game.scorekeepingWebhook, {
+      method: "POST",
+      body: JSON.stringify({
+        contestant: contestant.name,
+        round: uid,
+        category: category + categoryOffset,
+        // questions are 0-indexed in the UI, but 1-indexed in the remote
+        // scorekeeping
+        question: question + 1,
+        correct: diff > 0,
+        score: diff,
+      }),
+    });
+  }
   localStorage.setItem(uid, JSON.stringify(game));
   return game;
 }
