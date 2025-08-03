@@ -38,7 +38,6 @@ const Init: React.FC = () => {
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setState((prevState) => {
-      console.log(prevState);
       return {
         ...prevState,
         [event.target.name]: event.target.checked,
