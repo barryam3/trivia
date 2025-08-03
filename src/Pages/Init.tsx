@@ -17,6 +17,7 @@ const Init: React.FC = () => {
     enableDynamicScores: false,
     unit: "$",
     scorekeepingWebhook: "",
+    multiplier: 200,
   });
 
   const handleChange = (
@@ -25,6 +26,13 @@ const Init: React.FC = () => {
     setState((prevState) => ({
       ...prevState,
       [event.target.name]: event.target.value,
+    }));
+  };
+
+  const handleNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setState((prevState) => ({
+      ...prevState,
+      [event.target.name]: Number(event.target.value),
     }));
   };
 
@@ -57,6 +65,7 @@ const Init: React.FC = () => {
       disableBoard: state.disableBoard,
       unit: state.unit as "" | "$",
       scorekeepingWebhook: state.scorekeepingWebhook,
+      multiplier: state.multiplier,
     });
     window.open(`/game/${state.uid}/1/-1`);
     navigate(`/game/${state.uid}/1/-1?leader=true`);
@@ -204,6 +213,20 @@ const Init: React.FC = () => {
                 name="scorekeepingWebhook"
                 value={state.scorekeepingWebhook}
                 onChange={handleChange}
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label htmlFor="multiplier">Lowest question value:</label>
+            </td>
+            <td>
+              <input
+                id="multiplier"
+                type="number"
+                name="multiplier"
+                value={state.multiplier}
+                onChange={handleNumberChange}
               />
             </td>
           </tr>

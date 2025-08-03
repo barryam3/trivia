@@ -2,10 +2,6 @@ import type { Game } from "../interfaces/game";
 import * as parseGameFiles from "../utils/parseGameFiles";
 import { CSVToArray } from "../utils/csv_to_array";
 
-// Dollar value of the lowest-value question
-// 200 for classic Jeopardy
-const kDollarMultiplier = 2;
-
 function validateGame(game: Game) {
   if (game.contestants.length < 2) {
     throw new Error("Game needs to have at least two contestants");
@@ -24,6 +20,7 @@ export function addGame(
     enableDynamicScores,
     unit,
     scorekeepingWebhook,
+    multiplier,
   }: {
     contestants: string;
     singlecsv: string;
@@ -34,6 +31,7 @@ export function addGame(
     enableDynamicScores: boolean;
     unit: "$" | "";
     scorekeepingWebhook: string;
+    multiplier: number;
   }
 ) {
   if (uid.length === 0) {
@@ -54,7 +52,7 @@ export function addGame(
       categories: parseGameFiles.parseGameCSV(doublecsv, 2),
     },
     final: parseGameFiles.parseFinalTXT(finaltxt),
-    multiplier: kDollarMultiplier,
+    multiplier,
     logs: [],
     teams: isTeams ? teams : undefined,
     disableBoard,

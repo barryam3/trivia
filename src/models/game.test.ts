@@ -15,6 +15,7 @@ describe("addGame", () => {
       disableBoard: false,
       enableDynamicScores: false,
       unit: "$",
+      multiplier: 2,
     });
     const expected: Game = {
       uid: "test",
@@ -127,6 +128,7 @@ describe("addGame", () => {
       enableDynamicScores: false,
       unit: "$",
       scorekeepingWebhook: "",
+      multiplier: 2,
     });
     expect(actual).toMatchObject({
       disableBoard: true,
