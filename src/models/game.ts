@@ -61,7 +61,6 @@ export function addGame(
     scorekeepingWebhook,
   };
   validateGame(obj);
-  console.log(obj);
   localStorage.setItem(uid, JSON.stringify(obj));
   return obj;
 }

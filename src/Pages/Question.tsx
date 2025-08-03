@@ -166,7 +166,6 @@ const Question: React.FC = () => {
         params.question
       );
     }
-    console.log(game);
     if (stage >= question.question.length + 1 + (isDDorFJ ? 1 : 0)) {
       if (question.isFJ) {
         // To Game Over page.
