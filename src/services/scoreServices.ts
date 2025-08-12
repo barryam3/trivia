@@ -42,7 +42,7 @@ export function useUpdateScoreCallback() {
         : getScoreDiff(op);
       if (diff === 0) return;
       // Dismiss buzz for wrong answer as soon as buzzer is reset. Don't show score change until then.
-      if (op === "subtract") {
+      if (op === "subtract" && key === buzzedInContestant) {
         await buzzerServices.dismissBuzz(uid);
       }
       gamesServices.updateScore(
@@ -54,7 +54,7 @@ export function useUpdateScoreCallback() {
         Number(params.question)
       );
       // For right answer, show score change immediately. Then dismiss buzz after 1s.
-      if (op === "add") {
+      if (op === "add" && key === buzzedInContestant) {
         rightAnswerEventSource.dispatchEvent(new Event(rightAnswerEventName));
         setTimeout(() => {
           buzzerServices.dismissBuzz(uid);
