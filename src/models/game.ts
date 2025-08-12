@@ -118,6 +118,7 @@ export function updateScore(
       categoryOffset += game.double.categories.length;
     }
     fetch(game.scorekeepingWebhook, {
+      redirect: "follow",
       method: "POST",
       body: JSON.stringify({
         contestant: contestant.name,
@@ -129,6 +130,10 @@ export function updateScore(
         correct: diff > 0,
         score: diff,
       }),
+      // Don't trigger CORS preflight.
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8",
+      },
     });
   }
   localStorage.setItem(uid, JSON.stringify(game));
