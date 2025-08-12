@@ -17,7 +17,8 @@ export function onRightAnswer(callback: () => void): () => void {
 }
 
 export function useUpdateScoreCallback() {
-  const { uid, buzzedInContestant, buzzerConnected } = gamesServices.useGame();
+  const { uid, buzzedInContestant, buzzerConnected, flatPenalties } =
+    gamesServices.useGame();
   const multiplier = gamesServices.useMultiplier();
   const leader = gamesServices.useLeader();
   const params = useParams<"question" | "round" | "category">();
@@ -62,16 +63,22 @@ export function useUpdateScoreCallback() {
     };
   };
 
+  const right = (key: number) => updateScore(key, "add", multiplier * value);
+  const wrong = (key: number) =>
+    updateScore(key, "subtract", multiplier * (flatPenalties ? 1 : value));
+
   // r for right, w for wrong, d for dismiss
   const onKeyDown = useEventCallback(async (e: KeyboardEvent) => {
     if (buzzedInContestant == null) return;
     if (!"rwd".includes(e.key)) return;
-    if (e.key === "d") {
-      buzzerServices.dismissBuzz(uid);
-      return;
+    switch (e.key) {
+      case "r":
+        return right(buzzedInContestant)();
+      case "w":
+        return wrong(buzzedInContestant)();
+      case "d":
+        return buzzerServices.dismissBuzz(uid);
     }
-    const diff = multiplier * value * (e.key === "r" ? 1 : -1);
-    updateScore(buzzedInContestant, e.key === "r" ? "add" : "subtract", diff)();
   });
 
   React.useEffect(() => {
@@ -84,7 +91,7 @@ export function useUpdateScoreCallback() {
     };
   }, [buzzerConnected, onKeyDown, leader]);
 
-  return updateScore;
+  return { updateScore, right, wrong };
 }
 
 export function onTeam(

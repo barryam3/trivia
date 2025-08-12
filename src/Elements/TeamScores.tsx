@@ -34,7 +34,7 @@ const TeamScores: React.FC<TeamScoresProps> = ({ teamIndex }) => {
   const leader = Services.games.useLeader();
   const params = useParams<"question" | "round" | "category">();
   const value = params.question ? Number(params.question) + 1 : 0;
-  const updateScore = scoreServices.useUpdateScoreCallback();
+  const { updateScore, right, wrong } = scoreServices.useUpdateScoreCallback();
 
   const reverse = teamIndex < teams.length - 1;
 
@@ -75,7 +75,7 @@ const TeamScores: React.FC<TeamScoresProps> = ({ teamIndex }) => {
                       type="button"
                       className="scorebutton"
                       style={{ backgroundColor: "red" }}
-                      onClick={updateScore(key, "subtract", multiplier * value)}
+                      onClick={wrong(key)}
                     >
                       W
                     </button>
@@ -95,7 +95,7 @@ const TeamScores: React.FC<TeamScoresProps> = ({ teamIndex }) => {
                       type="button"
                       className="scorebutton"
                       style={{ backgroundColor: "green" }}
-                      onClick={updateScore(key, "add", multiplier * value)}
+                      onClick={right(key)}
                     >
                       R
                     </button>

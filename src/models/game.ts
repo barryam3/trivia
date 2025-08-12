@@ -18,6 +18,7 @@ export function addGame(
     teamsCSV,
     disableBoard,
     enableDynamicScores,
+    flatPenalties,
     unit,
     scorekeepingWebhook,
     multiplier,
@@ -29,6 +30,7 @@ export function addGame(
     teamsCSV: string;
     disableBoard: boolean;
     enableDynamicScores: boolean;
+    flatPenalties: boolean;
     unit: "$" | "";
     scorekeepingWebhook: string;
     multiplier: number;
@@ -57,6 +59,7 @@ export function addGame(
     teams: isTeams ? teams : undefined,
     disableBoard,
     enableDynamicScores,
+    flatPenalties,
     unit,
     scorekeepingWebhook,
   };

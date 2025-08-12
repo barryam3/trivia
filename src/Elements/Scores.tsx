@@ -19,7 +19,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
   const leader = Services.games.useLeader();
   const params = useParams<"question" | "round" | "category">();
   const value = params.question ? Number(params.question) + 1 : 0;
-  const updateScore = scoreServices.useUpdateScoreCallback();
+  const { updateScore, right, wrong } = scoreServices.useUpdateScoreCallback();
   const buzzedIn = (key: number) =>
     buzzedInContestant === key ||
     (extraneousBuzzedInContestants ?? []).includes(key);
@@ -52,7 +52,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
                     type="button"
                     className="scorebutton"
                     style={{ backgroundColor: "red" }}
-                    onClick={updateScore(key, "subtract", multiplier * value)}
+                    onClick={wrong(key)}
                   >
                     W
                   </button>
@@ -80,7 +80,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
                     type="button"
                     className="scorebutton"
                     style={{ backgroundColor: "green" }}
-                    onClick={updateScore(key, "add", multiplier * value)}
+                    onClick={right(key)}
                   >
                     R
                   </button>

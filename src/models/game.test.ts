@@ -14,6 +14,7 @@ describe("addGame", () => {
       scorekeepingWebhook: "",
       disableBoard: false,
       enableDynamicScores: false,
+      flatPenalties: false,
       unit: "$",
       multiplier: 2,
     });
@@ -110,6 +111,7 @@ describe("addGame", () => {
       disableBoard: false,
       teams: undefined,
       enableDynamicScores: false,
+      flatPenalties: false,
       unit: "$",
       scorekeepingWebhook: "",
     };
@@ -126,6 +128,7 @@ describe("addGame", () => {
       teamsCSV: "Team A,Team B",
       disableBoard: true,
       enableDynamicScores: false,
+      flatPenalties: false,
       unit: "$",
       scorekeepingWebhook: "",
       multiplier: 2,
@@ -145,6 +148,7 @@ describe("addGame", () => {
       teamsCSV: "Team A,Team B",
       disableBoard: true,
       enableDynamicScores: false,
+      flatPenalties: false,
       unit: "$",
       scorekeepingWebhook: "",
       multiplier: 2,

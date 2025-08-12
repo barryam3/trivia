@@ -52,6 +52,7 @@ export interface Game {
   extraneousBuzzedInContestants?: number[];
   disableBoard: boolean;
   enableDynamicScores: boolean;
+  flatPenalties: boolean;
   unit: "$" | "";
   scorekeepingWebhook: string;
 }

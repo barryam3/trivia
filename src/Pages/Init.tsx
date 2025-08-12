@@ -15,6 +15,7 @@ const Init: React.FC = () => {
     finaltxt: "",
     disableBoard: false,
     enableDynamicScores: false,
+    penalties: "scaling",
     unit: "$",
     scorekeepingWebhook: "",
     multiplier: 200,
@@ -62,6 +63,7 @@ const Init: React.FC = () => {
       teamsCSV: state.teams || "",
       enableDynamicScores: state.enableDynamicScores,
       disableBoard: state.disableBoard,
+      flatPenalties: state.penalties === "flat",
       unit: state.unit as "" | "$",
       scorekeepingWebhook: state.scorekeepingWebhook,
       multiplier: state.multiplier,
@@ -183,6 +185,22 @@ const Init: React.FC = () => {
                 checked={state.enableDynamicScores}
                 onChange={handleCheckboxChange}
               />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label htmlFor="penalties">Penalties</label>
+            </td>
+            <td>
+              <select
+                id="penalties"
+                name="penalties"
+                value={state.penalties.toString()}
+                onChange={handleSelectChange}
+              > 
+                <option value="flat">Flat</option>
+                <option value="scaling">Scaling</option>
+              </select>
             </td>
           </tr>
           <tr>
