@@ -1,6 +1,7 @@
-import type React from "react";
+import React from "react";
 import Services from "../services";
 import { useLocation, useNavigate, useParams } from "react-router";
+import { useEventCallback } from "usehooks-ts";
 
 function useCategoryParams() {
   const params = useParams<"category" | "round">();
@@ -25,7 +26,9 @@ const Category: React.FC = () => {
     params.category === (round?.categories.length ?? 0) - 1;
   // If board is enabled, display all questions, then go to board.
   // If board is disabled, go to the first question in the category.
-  const goToNext = () => {
+  const goToNext = (e: { stopPropagation: () => void }) => {
+    // Prevent double navigation if the Next button is focused.
+    e.stopPropagation();
     if (game.disableBoard && params.category >= 0) {
       // To next question.
       navigate({ pathname: `../${params.category}/0`, search });
@@ -37,6 +40,18 @@ const Category: React.FC = () => {
       navigate({ pathname: `../${params.category + 1}`, search });
     }
   };
+  const onKeyDown = useEventCallback((e: KeyboardEvent) => {
+    if (e.key === " ") {
+      goToNext(e);
+    }
+  });
+  React.useEffect(() => {
+    if (!leader) return;
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onKeyDown, leader]);
   return (
     <div id="question">
       {params.category >= 0 ? (

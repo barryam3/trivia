@@ -67,10 +67,10 @@ export function useUpdateScoreCallback() {
   const wrong = (key: number) =>
     updateScore(key, "subtract", multiplier * (flatPenalties ? 1 : value));
 
-  // r for right, w for wrong, d for dismiss
+  // r for right, w for wrong, d for dismiss, x for force dismiss
   const onKeyDown = useEventCallback(async (e: KeyboardEvent) => {
     if (buzzedInContestant == null) return;
-    if (!"rwd".includes(e.key)) return;
+    if (!"rwdx".includes(e.key)) return;
     switch (e.key) {
       case "r":
         return right(buzzedInContestant)();
@@ -78,6 +78,8 @@ export function useUpdateScoreCallback() {
         return wrong(buzzedInContestant)();
       case "d":
         return buzzerServices.dismissBuzz(uid);
+      case "x":
+        return buzzerServices.dismissBuzz(uid, /*force = */ true);
     }
   });
 

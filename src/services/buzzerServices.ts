@@ -39,16 +39,16 @@ async function serialListen(onValue: (value: string) => void): Promise<void> {
   // Listen to data coming from the serial device.
   let cumulativeValue = "";
   try {
-  while (true) {
-    const { value, done } = await reader.read();
-    cumulativeValue += value;
-    const match = JSON_REGEX.exec(cumulativeValue);
-    if (match) {
-      onValue(match[1]);
-      cumulativeValue = match[2];
-    }
-    if (done) {
-      break;
+    while (true) {
+      const { value, done } = await reader.read();
+      cumulativeValue += value;
+      const match = JSON_REGEX.exec(cumulativeValue);
+      if (match) {
+        onValue(match[1]);
+        cumulativeValue = match[2];
+      }
+      if (done) {
+        break;
       }
     }
   } finally {
@@ -88,7 +88,11 @@ function listenForBuzz(gameUID: string) {
 }
 
 /** Dismiss the buzz in the UI when the buzzer system is reset. */
-function dismissBuzz(gameUID: string): Promise<void> {
+function dismissBuzz(gameUID: string, force = false): Promise<void> {
+  // Force: don't wait for the buzzer system to reset.
+  if (force) {
+    buzzedInContestants.next(new Set());
+  }
   if (buzzedInContestants.value.size === 0) {
     gamesServices.setBuzz(gameUID, undefined);
     return Promise.resolve();
@@ -129,9 +133,13 @@ export function connect(gameUID: string) {
         new Set(buzzedInContestants.value).add(contestant)
       );
     } else if (state === 1) {
-      const set = new Set(buzzedInContestants.value);
-      set.delete(contestant);
-      buzzedInContestants.next(set);
+      // Delay buzz out to handle buzzer system edge case where one unit
+      // resets before the other.
+      setTimeout(() => {
+        const set = new Set(buzzedInContestants.value);
+        set.delete(contestant);
+        buzzedInContestants.next(set);
+      }, 250);
     }
   }).finally(() => {
     buzzedInContestants.next(new Set());

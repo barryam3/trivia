@@ -256,6 +256,14 @@ const Question: React.FC = () => {
 
   const onKeyDown = useEventCallback((e: KeyboardEvent) => {
     if (e.key === " ") {
+      // If the spacebar is pressed while the Next button is focused, let the button's
+      // default click behavior handle it to avoid calling goToNext twice.
+      if (
+        e.target instanceof HTMLElement &&
+        e.target.closest?.("#nextbutton")
+      ) {
+        return;
+      }
       goToNext();
     }
     if (e.key === "Backspace") {
@@ -264,11 +272,12 @@ const Question: React.FC = () => {
   });
 
   React.useEffect(() => {
+    if (!leader) return;
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [onKeyDown]);
+  }, [onKeyDown, leader]);
 
   // Ref to bind to audio or video tag. We assume at most one audio or video tag per question.
   const avRef = useRef<HTMLAudioElement | HTMLVideoElement>(null);
@@ -305,21 +314,40 @@ const Question: React.FC = () => {
           </div>
           <div className="qtext">
             <React.Fragment>
-              {question.question
-                .filter(
-                  (q, i) => stage + (leader ? 1 : 0) + (isDDorFJ ? -1 : 0) > i
-                )
-                .map((q, i) => (
-                  <QuestionPart
-                    key={q}
-                    style={{ paddingBottom: "15px" }}
-                    text={q}
-                    leader={leader}
-                    avRef={avRef}
-                  />
-                ))}
-              {stage + (leader ? 1 : 0) + (isDDorFJ ? -1 : 0) >
-                question.question.length && <div>{question.answer}</div>}
+              {question.question.map((q, i) => (
+                <QuestionPart
+                  key={q}
+                  style={{
+                    paddingBottom: "15px",
+                    visibility:
+                      stage + (leader ? 1 : 0) + (isDDorFJ ? -1 : 0) > i
+                        ? "visible"
+                        : "hidden",
+                  }}
+                  className={
+                    stage + (isDDorFJ ? -1 : 0) > i ? "" : "not-shown-yet"
+                  }
+                  text={q}
+                  leader={leader}
+                  avRef={avRef}
+                />
+              ))}
+              <div
+                style={{
+                  visibility:
+                    stage + (leader ? 1 : 0) + (isDDorFJ ? -1 : 0) >
+                    question.question.length
+                      ? "visible"
+                      : "hidden",
+                }}
+                className={
+                  stage + (isDDorFJ ? -1 : 0) > question.question.length
+                    ? ""
+                    : "not-shown-yet"
+                }
+              >
+                {question.answer}
+              </div>
             </React.Fragment>
           </div>
         </div>
