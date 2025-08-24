@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 
 import { useLocation, useNavigate, useParams } from "react-router";
 
@@ -6,6 +6,10 @@ import Services from "../services";
 import NotFound from "./NotFound";
 import scoreServices from "../services/scoreServices";
 import { useEventCallback } from "usehooks-ts";
+import {
+  SynchronizedAudio,
+  SynchronizedVideo,
+} from "../Elements/SynchronizedAudioVideo";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
@@ -40,15 +44,15 @@ function QuestionPart({
   let content = <>{text}</>;
   if (text.match(URL_REGEX)) {
     const pathname = new URL(text).pathname;
-    const shouldAutoplay = leader ? {} : { autoPlay: true };
+    const props = leader ? {muted: true} : { autoPlay: true };
     if (pathname.match(AUDIO_FILE_EXT_REGEX)) {
       content = (
-        <audio {...shouldAutoplay} src={text} controls={true} ref={avRef} />
+        <SynchronizedAudio {...props} src={text} controls={true} ref={avRef} />
       );
     } else if (pathname.match(VIDEO_FILE_EXT_REGEX)) {
       content = (
-        <video
-          {...shouldAutoplay}
+        <SynchronizedVideo
+          {...props}
           style={{ height: "50vh" }}
           src={text}
           controls={true}
@@ -280,7 +284,7 @@ const Question: React.FC = () => {
   }, [onKeyDown, leader]);
 
   // Ref to bind to audio or video tag. We assume at most one audio or video tag per question.
-  const avRef = useRef<HTMLAudioElement | HTMLVideoElement>(null);
+  const avRef = React.useRef<HTMLAudioElement | HTMLVideoElement>(null);
   const stopPlaying = React.useCallback(() => avRef.current?.pause(), []);
   // Stop playing audio or video when a contestant buzzes in.
   React.useEffect(() => {
