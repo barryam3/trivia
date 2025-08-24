@@ -120,23 +120,29 @@ export function updateScore(
     if (round > 2) {
       categoryOffset += game.double.categories.length;
     }
+    const scoreUpdate = {
+      contestant: contestant.name,
+      round: uid,
+      category: category + categoryOffset,
+      // questions are 0-indexed in the UI, but 1-indexed in the remote
+      // scorekeeping
+      question: question + 1,
+      correct: diff > 0,
+      score: diff,
+    };
+    const scoreUpdates = [scoreUpdate, ...(game.failedScoreUpdates ?? [])];
+    game.failedScoreUpdates = [];
     fetch(game.scorekeepingWebhook, {
       redirect: "follow",
       method: "POST",
-      body: JSON.stringify({
-        contestant: contestant.name,
-        round: uid,
-        category: category + categoryOffset,
-        // questions are 0-indexed in the UI, but 1-indexed in the remote
-        // scorekeeping
-        question: question + 1,
-        correct: diff > 0,
-        score: diff,
-      }),
+      body: JSON.stringify(scoreUpdates),
       // Don't trigger CORS preflight.
       headers: {
         "Content-Type": "text/plain;charset=utf-8",
       },
+    }).catch((error) => {
+      console.error(`Failed to update score: ${error}`);
+      game.failedScoreUpdates = [...game.failedScoreUpdates, ...scoreUpdates];
     });
   }
   localStorage.setItem(uid, JSON.stringify(game));

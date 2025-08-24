@@ -56,4 +56,5 @@ export interface Game {
   flatPenalties: boolean;
   unit: "$" | "";
   scorekeepingWebhook: string;
+  failedScoreUpdates: object[];
 }
