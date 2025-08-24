@@ -11,6 +11,7 @@ function validateGame(game: Game) {
 export function addGame(
   uid: string,
   {
+    title,
     contestants,
     singlecsv,
     doublecsv,
@@ -23,6 +24,7 @@ export function addGame(
     scorekeepingWebhook,
     multiplier,
   }: {
+    title: string;
     contestants: string;
     singlecsv: string;
     doublecsv: string;
@@ -46,6 +48,7 @@ export function addGame(
   const isTeams = teams?.length === 2;
   const obj: Game = {
     uid,
+    title,
     contestants: parseGameFiles.parseContestantsCSV(contestants),
     single: {
       categories: singlecsv ? parseGameFiles.parseGameCSV(singlecsv, 1) : [],

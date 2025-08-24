@@ -26,9 +26,7 @@ const Category: React.FC = () => {
     params.category === (round?.categories.length ?? 0) - 1;
   // If board is enabled, display all questions, then go to board.
   // If board is disabled, go to the first question in the category.
-  const goToNext = (e: { stopPropagation: () => void }) => {
-    // Prevent double navigation if the Next button is focused.
-    e.stopPropagation();
+  const goToNext = () => {
     if (game.disableBoard && params.category >= 0) {
       // To next question.
       navigate({ pathname: `../${params.category}/0`, search });
@@ -42,7 +40,15 @@ const Category: React.FC = () => {
   };
   const onKeyDown = useEventCallback((e: KeyboardEvent) => {
     if (e.key === " ") {
-      goToNext(e);
+      // If the spacebar is pressed while the Next button is focused, let the button's
+      // default click behavior handle it to avoid calling goToNext twice.
+      if (
+        e.target instanceof HTMLElement &&
+        e.target.closest?.("#nextbutton")
+      ) {
+        return;
+      }
+      goToNext();
     }
   });
   React.useEffect(() => {
@@ -52,13 +58,14 @@ const Category: React.FC = () => {
       document.removeEventListener("keydown", onKeyDown);
     };
   }, [onKeyDown, leader]);
+  const gameTitle = game.title || "Jeopardy!";
   return (
     <div id="question">
       {params.category >= 0 ? (
         <div className="finalheader">{category?.title}</div>
       ) : (
         <div className="finalheader">
-          {params.round === 1 ? "Jeopardy" : "Double Jeopardy"}
+          {params.round === 1 ? gameTitle : `Double ${gameTitle}`}
         </div>
       )}
       {leader && (

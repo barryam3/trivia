@@ -78,6 +78,9 @@
     "moduleDirectories": [
       "node_modules",
       "<rootDir>"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(react-merge-refs)/)"
     ]
   }
 }

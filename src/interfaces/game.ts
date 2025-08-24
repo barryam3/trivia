@@ -27,6 +27,7 @@ export interface FinalRound {
 
 export interface Game {
   uid: string;
+  title: string;
   contestants: Contestant[];
   /**
    * Length 2 if present. Contestants are split into two teams, with the first

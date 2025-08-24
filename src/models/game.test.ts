@@ -4,6 +4,7 @@ import type { Game } from "../interfaces/game";
 describe("addGame", () => {
   test("basic", () => {
     const actual = addGame("test", {
+      title: "Test Game",
       contestants: "Ken,Brad,Watson",
       teamsCSV: "",
       singlecsv:
@@ -20,6 +21,7 @@ describe("addGame", () => {
     });
     const expected: Game = {
       uid: "test",
+      title: "Test Game",
       contestants: [
         { name: "Ken", score: 0 },
         { name: "Brad", score: 0 },
@@ -119,6 +121,7 @@ describe("addGame", () => {
   });
   test("teams", () => {
     const actual = addGame("test", {
+      title: "Test Game",
       contestants: "Alvin,Abigail,Brendan,Brittany",
       singlecsv:
         "Category1,Category2\nQuestion11,Question21\nAnswer11,Answer21\nQuestion12,Question22\nAnswer12,Answer22",
@@ -140,6 +143,7 @@ describe("addGame", () => {
   });
   test("oneRoundOnly", () => {
     const actual = addGame("test", {
+      title: "Test Game",
       contestants: "Alvin,Abigail,Brendan,Brittany",
       singlecsv:
         "Category1,Category2\nQuestion11,Question21\nAnswer11,Answer21\nQuestion12,Question22\nAnswer12,Answer22",

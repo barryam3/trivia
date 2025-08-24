@@ -8,6 +8,7 @@ const Init: React.FC = () => {
   const navigate = useNavigate();
   const [state, setState] = useState({
     uid: "",
+    gameTitle: "Jeopardy!",
     contestants: "",
     teams: "",
     singlecsv: "",
@@ -56,6 +57,7 @@ const Init: React.FC = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     Services.games.addGame(state.uid, {
+      title: state.gameTitle,
       contestants: state.contestants,
       singlecsv: state.singlecsv,
       doublecsv: state.doublecsv,
@@ -86,6 +88,20 @@ const Init: React.FC = () => {
                 type="text"
                 name="uid"
                 value={state.uid}
+                onChange={handleChange}
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label htmlFor="gameTitle">Game Title:</label>
+            </td>
+            <td>
+              <input
+                id="gameTitle"
+                type="text"
+                name="gameTitle"
+                value={state.gameTitle}
                 onChange={handleChange}
               />
             </td>
