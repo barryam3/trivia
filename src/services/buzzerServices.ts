@@ -1,3 +1,4 @@
+// @ts-ignore
 import type * as _ from "w3c-web-serial";
 import gamesServices from "./gamesServices";
 import configServices from "./configServices";
