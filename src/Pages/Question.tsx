@@ -10,6 +10,7 @@ import {
   SynchronizedAudio,
   SynchronizedVideo,
 } from "../Elements/SynchronizedAudioVideo";
+import { FallbackAudio } from "../Elements/FallbackMedia";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
@@ -44,7 +45,7 @@ function QuestionPart({
   let content = <>{text}</>;
   if (text.match(URL_REGEX)) {
     const pathname = new URL(text).pathname;
-    const props = leader ? {muted: true} : { autoPlay: true };
+    const props = leader ? { muted: true } : { autoPlay: true };
     if (pathname.match(AUDIO_FILE_EXT_REGEX)) {
       content = (
         <SynchronizedAudio {...props} src={text} controls={true} ref={avRef} />
@@ -359,14 +360,20 @@ const Question: React.FC = () => {
       {leader && (
         <>
           {question.isFJ && !hasAudioOrVideo && (
-            <audio
-              src="https://www.televisiontunes.com/uploads/audio/Jeopardy%20-%201997%20-%20Think%20Music.mp3"
+            <FallbackAudio
+              srcs={[
+                "https://www.televisiontunes.com/uploads/audio/Jeopardy%20-%201997%20-%20Think%20Music.mp3",
+                "https://www.myinstants.com/media/sounds/jeopardy-final-jeopardy-thinking-music.mp3",
+              ]}
               controls={true}
             />
           )}
-          {question.isDD && (
-            <audio
-              src="https://www.televisiontunes.com/uploads/audio/Jeopardy%20-%20Daily%20Double%20Sound%20Effect.mp3"
+          {question.isDD && stage === 0 && (
+            <FallbackAudio
+              srcs={[
+                "https://www.televisiontunes.com/uploads/audio/Jeopardy%20-%20Daily%20Double%20Sound%20Effect%202.mp3",
+                "https://www.myinstants.com/media/sounds/jeopardy-daily-double-sound-effect-from-youtube.mp3",
+              ]}
               controls={true}
               autoPlay={true}
             />

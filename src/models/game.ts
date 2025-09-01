@@ -142,7 +142,10 @@ export function updateScore(
       },
     }).catch((error) => {
       console.error(`Failed to update score: ${error}`);
-      game.failedScoreUpdates = [...(game.failedScoreUpdates ?? []), ...scoreUpdates];
+      game.failedScoreUpdates = [
+        ...(game.failedScoreUpdates ?? []),
+        ...scoreUpdates,
+      ];
     });
   }
   localStorage.setItem(uid, JSON.stringify(game));
