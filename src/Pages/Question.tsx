@@ -319,40 +319,34 @@ const Question: React.FC = () => {
           </div>
           <div className="qtext">
             <React.Fragment>
-              {question.question.map((q, i) => (
-                <QuestionPart
-                  key={q}
-                  style={{
-                    paddingBottom: "15px",
-                    visibility:
-                      stage + (leader ? 1 : 0) + (isDDorFJ ? -1 : 0) > i
-                        ? "visible"
-                        : "hidden",
-                  }}
+              {question.question
+                .filter((q, i) => leader || stage + (isDDorFJ ? -1 : 0) > i)
+                .map((q, i) => (
+                  <QuestionPart
+                    key={q}
+                    style={{
+                      paddingBottom: "15px",
+                    }}
+                    className={
+                      stage + (isDDorFJ ? -1 : 0) > i ? "" : "not-shown-yet"
+                    }
+                    text={q}
+                    leader={leader}
+                    avRef={avRef}
+                  />
+                ))}
+              {(leader ||
+                stage + (isDDorFJ ? -1 : 0) > question.question.length) && (
+                <div
                   className={
-                    stage + (isDDorFJ ? -1 : 0) > i ? "" : "not-shown-yet"
+                    stage + (isDDorFJ ? -1 : 0) > question.question.length
+                      ? ""
+                      : "not-shown-yet"
                   }
-                  text={q}
-                  leader={leader}
-                  avRef={avRef}
-                />
-              ))}
-              <div
-                style={{
-                  visibility:
-                    stage + (leader ? 1 : 0) + (isDDorFJ ? -1 : 0) >
-                    question.question.length
-                      ? "visible"
-                      : "hidden",
-                }}
-                className={
-                  stage + (isDDorFJ ? -1 : 0) > question.question.length
-                    ? ""
-                    : "not-shown-yet"
-                }
-              >
-                {question.answer}
-              </div>
+                >
+                  {question.answer}
+                </div>
+              )}
             </React.Fragment>
           </div>
         </div>
