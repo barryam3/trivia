@@ -153,10 +153,6 @@ contestants (rounded up) are on the first team, and the second half (rounded
 down) are on the second team. Contestant scores are tracked individually but
 rolled up into a team score.
 
-**At this time, team games do not support the Jeopardy! board.** Instead,
-questions are presented in order, asking all questions in a category in order,
-then moving on to the next category.
-
 ### Running a game
 
 The app has two views: a "leader" view can always see the question answer, and has
