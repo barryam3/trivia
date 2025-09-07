@@ -21,6 +21,10 @@ function setConfig(config: Config) {
   localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
 }
 
+function resetConfig() {
+  localStorage.removeItem(CONFIG_KEY);
+}
+
 function getConfig(): Config {
   return {
     ...DEFAULT_CONFIG,
@@ -31,6 +35,8 @@ function getConfig(): Config {
 const configServices = {
   setConfig,
   getConfig,
+  resetConfig,
+  DEFAULT_CONFIG,
 };
 
 export default configServices;

@@ -3,11 +3,19 @@ import type * as _ from "w3c-web-serial";
 import gamesServices from "./gamesServices";
 import configServices from "./configServices";
 import { BehaviorSubject } from "../utils/behavior_subject";
+import { useEffect, useState } from "react";
 
 // We track the connected state in two places: the game, for reactivity, and here, for freshness.
 let connected = false;
 
+const buzzedInPins = new BehaviorSubject<Set<number>>(new Set());
 const buzzedInContestants = new BehaviorSubject<Set<number>>(new Set());
+// buzzedInContestants is derived from buzzedInPins.
+buzzedInPins.subscribe((pins) => {
+  const { pinMappings } = configServices.getConfig();
+  const set = new Set(Array.from(pins).map((pin) => pinMappings.indexOf(pin)));
+  buzzedInContestants.next(set);
+});
 
 // Matches the first single-level JSON object in a string, and the rest of the string after it.
 const JSON_REGEX = /({[^{}}]*})(.*)/g;
@@ -152,24 +160,23 @@ export function connect(gameUID: string) {
 // For development without an active buzzer connection.
 function fakeConnect(gameUID: string) {
   connected = true;
-  gamesServices.setBuzzerConnected(gameUID, true);
-  listenForBuzz(gameUID);
+  if (gameUID) {
+    gamesServices.setBuzzerConnected(gameUID, true);
+    listenForBuzz(gameUID);
+  }
   document.addEventListener("keydown", (e) => {
-    if ("12345678".includes(e.key)) {
-      let contestant = Number(e.key) - 1;
-      if (e.shiftKey) {
-        contestant += 8;
-      }
-      buzzedInContestants.next(
-        new Set(buzzedInContestants.value).add(contestant)
-      );
+    const keys = "12345678!@#$%^&*";
+    if (keys.includes(e.key)) {
+      const contestant = keys.indexOf(e.key);
+      const pin = configServices.DEFAULT_CONFIG.pinMappings[contestant];
+      buzzedInPins.next(new Set(buzzedInPins.value).add(pin));
       setTimeout(() => {
-        const set = new Set(buzzedInContestants.value);
-        set.delete(contestant);
-        buzzedInContestants.next(set);
+        const set = new Set(buzzedInPins.value);
+        set.delete(pin);
+        buzzedInPins.next(set);
       }, 3000);
     } else if (e.key === "0") {
-      buzzedInContestants.next(new Set());
+      buzzedInPins.next(new Set());
     }
   });
 }
@@ -187,8 +194,19 @@ function useConnected(): boolean {
   return !!game.buzzerConnected;
 }
 
+export function useBuzzzedInPins(): Set<number> {
+  const [state, setState] = useState<Set<number>>(new Set());
+  useEffect(() => {
+    return buzzedInPins.subscribe((pins) => {
+      setState(pins);
+    });
+  }, []);
+  return state;
+}
+
 export default {
   connect,
   useConnected,
   dismissBuzz,
+  useBuzzzedInPins,
 };

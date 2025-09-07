@@ -11,37 +11,47 @@ const Config: React.FC = () => {
     configServices.setConfig(state);
   };
 
+  const handleReset = () => {
+    configServices.resetConfig();
+    setState(configServices.getConfig());
+  };
+
   return (
-    <form id="config" onSubmit={handleSubmit}>
-      <table>
-        <tbody>
-          <tr>
-            <td>
-              <label htmlFor="pinMappings">Pin Mappings</label>
-            </td>
-            <td>
-              <input
-                id="pinMappings"
-                type="text"
-                name="pinMappings"
-                value={JSON.stringify(state.pinMappings)}
-                onChange={(event) => {
-                  setState((prevState) => ({
-                    ...prevState,
-                    pinMappings: JSON.parse(event.target.value),
-                  }));
-                }}
-              />
-            </td>
-          </tr>
-          <tr>
-            <td colSpan={2}>
-              <input type="submit" value="Submit" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </form>
+    <div>
+      <form id="config" onSubmit={handleSubmit}>
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <label htmlFor="pinMappings">Pin Mappings</label>
+              </td>
+              <td>
+                <input
+                  id="pinMappings"
+                  type="text"
+                  name="pinMappings"
+                  value={JSON.stringify(state.pinMappings)}
+                  onChange={(event) => {
+                    setState((prevState) => ({
+                      ...prevState,
+                      pinMappings: JSON.parse(event.target.value),
+                    }));
+                  }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td colSpan={2}>
+                <input type="submit" value="Submit" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+      <button onClick={handleReset} type="button">
+        Reset
+      </button>
+    </div>
   );
 };
 

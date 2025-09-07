@@ -9,6 +9,7 @@ import Game from "./Game";
 import NotFound from "./Pages/NotFound";
 import Category from "./Pages/Category";
 import Config from "./Pages/Config";
+import AutoConfig from "./Pages/AutoConfig";
 
 const router = createBrowserRouter(
   [
@@ -23,6 +24,10 @@ const router = createBrowserRouter(
     {
       path: "/config",
       element: <Config />,
+    },
+    {
+      path: "/autoconfig/:gameUID",
+      element: <AutoConfig />,
     },
     {
       path: "/game/:gameUID",
@@ -68,8 +73,7 @@ const router = createBrowserRouter(
   ],
   // Enable all future flags to minimize churn in the future.
   {
-    future: {
-    },
+    future: {},
     // https://github.com/rafgraph/spa-github-pages
     basename: window.location.href.includes("github.io") ? "/trivia" : "/",
   }
