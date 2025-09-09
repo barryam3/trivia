@@ -28,7 +28,7 @@ function splitOnURLs(str: string) {
   return ret;
 }
 
-const AUDIO_FILE_EXT_REGEX = /\.(mp3|ogg|wav|oga)$/;
+const AUDIO_FILE_EXT_REGEX = /\.(mp3|ogg|wav|oga|m4a)$/;
 const VIDEO_FILE_EXT_REGEX = /\.(mp4|mov|webm)$/;
 const IMAGE_FILE_EXT_REGEX = /\.(tiff?|bmp|jpe?g|gif|png|eps|webp)$/;
 function QuestionPart({

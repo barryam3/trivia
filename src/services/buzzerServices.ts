@@ -100,7 +100,7 @@ function listenForBuzz(gameUID: string) {
 function dismissBuzz(gameUID: string, force = false): Promise<void> {
   // Force: don't wait for the buzzer system to reset.
   if (force) {
-    buzzedInContestants.next(new Set());
+    buzzedInPins.next(new Set());
   }
   if (buzzedInContestants.value.size === 0) {
     gamesServices.setBuzz(gameUID, undefined);
@@ -138,20 +138,18 @@ export function connect(gameUID: string) {
     const { pinMappings } = configServices.getConfig();
     const contestant = pinMappings.indexOf(Number(pin));
     if (state === 0) {
-      buzzedInContestants.next(
-        new Set(buzzedInContestants.value).add(contestant)
-      );
+      buzzedInPins.next(new Set(buzzedInPins.value).add(Number(pin)));
     } else if (state === 1) {
       // Delay buzz out to handle buzzer system edge case where one unit
       // resets before the other.
       setTimeout(() => {
-        const set = new Set(buzzedInContestants.value);
-        set.delete(contestant);
-        buzzedInContestants.next(set);
+        const set = new Set(buzzedInPins.value);
+        set.delete(Number(pin));
+        buzzedInPins.next(set);
       }, 250);
     }
   }).finally(() => {
-    buzzedInContestants.next(new Set());
+    buzzedInPins.next(new Set());
     connected = false;
     gamesServices.setBuzzerConnected(gameUID, false);
   });
