@@ -5,6 +5,7 @@ import buzzerServices from "../services/buzzerServices";
 import gamesServices from "../services/gamesServices";
 import { useNavigate } from "react-router";
 import configServices from "../services/configServices";
+import { SerialButton } from "../Elements/SerialButton";
 
 const AutoConfig: React.FC = () => {
   // In theory this could be done without a game, but we use it to get the contestant names.
@@ -49,6 +50,7 @@ const AutoConfig: React.FC = () => {
 
   return (
     <div>
+      <SerialButton />
       <h1 id="finalheader">{game.contestants[turn].name}</h1>
       {buzzedInPins.size === 1 && <h2>{Array.from(buzzedInPins)[0]}</h2>}
     </div>

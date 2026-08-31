@@ -247,6 +247,9 @@ body {
   width: 50%;
   margin-left: 25%;
   margin-right: 25%;
+  input, textarea {
+    font-family: 'Korinna', 'Libre Baskerville', 'Georgia', serif;
+  }
 }
 
 .serial-button {
@@ -263,6 +266,16 @@ body {
     object-fit: contain;
     transform: translate(-25%, -25%);
   }
+}
+
+.serial-status {
+  position: absolute;
+  top: 4px;
+  right: 28px;
+  z-index: 2;
+  max-width: 45vw;
+  color: #900;
+  font-size: 12px;
 }
 
 .hstack {
