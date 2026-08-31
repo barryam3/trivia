@@ -65,6 +65,7 @@ function useSynchronize(
       avElement.removeEventListener("pause", onPause);
       avElement.removeEventListener("seeked", onSeeked);
       avSync.removeEventListener("message", onBroadcast);
+      avSync.close();
     };
   }, [avElementRef]);
 }
