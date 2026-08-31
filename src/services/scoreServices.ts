@@ -17,8 +17,13 @@ export function onRightAnswer(callback: () => void): () => void {
 }
 
 export function useUpdateScoreCallback() {
-  const { uid, buzzedInContestant, buzzerConnected, flatPenalties } =
-    gamesServices.useGame();
+  const {
+    uid,
+    buzzedInContestant,
+    buzzerConnected,
+    flatPenalties,
+    extraneousBuzzedInContestants,
+  } = gamesServices.useGame();
   const multiplier = gamesServices.useMultiplier();
   const leader = gamesServices.useLeader();
   const params = useParams<"question" | "round" | "category">();
@@ -32,7 +37,7 @@ export function useUpdateScoreCallback() {
   const updateScore = (
     key: number,
     op: "add" | "subtract",
-    absDiff?: number
+    absDiff?: number,
   ) => {
     return async () => {
       const diff = absDiff
@@ -51,7 +56,7 @@ export function useUpdateScoreCallback() {
         diff,
         Number(params.round),
         Number(params.category),
-        Number(params.question)
+        Number(params.question),
       );
       // For right answer, show score change immediately. Then dismiss buzz after 1s.
       if (op === "add" && key === buzzedInContestant) {
@@ -72,9 +77,13 @@ export function useUpdateScoreCallback() {
     if (buzzedInContestant == null) return;
     if (!"rwdx".includes(e.key)) return;
     switch (e.key) {
+      // Block "r" and "w" hotkeys if there is an extraneous buzz as it becomes
+      // non-obvious who they would map to.
       case "r":
+        if (extraneousBuzzedInContestants?.length) return;
         return right(buzzedInContestant)();
       case "w":
+        if (extraneousBuzzedInContestants?.length) return;
         return wrong(buzzedInContestant)();
       case "d":
         return buzzerServices.dismissBuzz(uid);
@@ -100,7 +109,7 @@ export function onTeam(
   teams: string[],
   contestants: Contestant[],
   teamIndex: number,
-  key: number
+  key: number,
 ) {
   return (
     key >= (teamIndex * contestants.length) / teams.length &&
@@ -111,7 +120,7 @@ export function onTeam(
 export function computeTeamScore(
   teams: string[],
   contestants: Contestant[],
-  teamIndex: number
+  teamIndex: number,
 ) {
   return contestants
     .filter((_, key) => onTeam(teams, contestants, teamIndex, key))
