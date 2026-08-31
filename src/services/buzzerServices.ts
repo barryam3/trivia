@@ -253,9 +253,8 @@ function useConnected(): boolean {
 export function useBuzzzedInPins(): Set<number> {
   const [state, setState] = useState<Set<number>>(new Set());
   useEffect(() => {
-    return buzzedInPins.subscribe((pins) => {
-      setState(pins);
-    });
+    buzzedInPins.subscribe(setState);
+    return () => buzzedInPins.unsubscribe(setState);
   }, []);
   return state;
 }

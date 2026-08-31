@@ -39,7 +39,7 @@ function QuestionPart({
 }: {
   text: string;
   leader: boolean;
-  avRef: React.RefObject<HTMLAudioElement | HTMLVideoElement>;
+  avRef: React.RefObject<HTMLAudioElement | HTMLVideoElement | null>;
   [key: string]: unknown;
 }) {
   let content = <>{text}</>;
@@ -171,7 +171,7 @@ const Question: React.FC = () => {
         game.uid,
         params.round,
         params.category,
-        params.question
+        params.question,
       );
     }
     if (stage >= question.question.length + 1 + (isDDorFJ ? 1 : 0)) {

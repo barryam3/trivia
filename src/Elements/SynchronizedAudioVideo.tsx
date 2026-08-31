@@ -22,7 +22,7 @@ interface SeekedMessage {
 type SynchronizeMessage = PlayMessage | PauseMessage | SeekedMessage;
 
 function useSynchronize(
-  avElementRef: React.RefObject<HTMLAudioElement | HTMLVideoElement>
+  avElementRef: React.RefObject<HTMLAudioElement | HTMLVideoElement | null>,
 ) {
   React.useEffect(() => {
     const avElement = avElementRef.current;
@@ -65,24 +65,25 @@ function useSynchronize(
       avElement.removeEventListener("pause", onPause);
       avElement.removeEventListener("seeked", onSeeked);
       avSync.removeEventListener("message", onBroadcast);
+      avSync.close();
     };
   }, [avElementRef]);
 }
 
-export const SynchronizedAudio = React.forwardRef<
-  HTMLAudioElement,
-  React.ComponentPropsWithoutRef<"audio">
->((props, ref) => {
+export function SynchronizedAudio({
+  ref,
+  ...props
+}: React.ComponentPropsWithRef<"audio">) {
   const localRef = React.useRef<HTMLAudioElement>(null);
   useSynchronize(localRef);
   return <audio {...props} ref={mergeRefs([ref, localRef])} />;
-});
+}
 
-export const SynchronizedVideo = React.forwardRef<
-  HTMLVideoElement,
-  React.ComponentPropsWithoutRef<"video">
->((props, ref) => {
+export function SynchronizedVideo({
+  ref,
+  ...props
+}: React.ComponentPropsWithRef<"video">) {
   const localRef = React.useRef<HTMLVideoElement>(null);
   useSynchronize(localRef);
   return <video {...props} ref={mergeRefs([ref, localRef])} />;
-});
+}

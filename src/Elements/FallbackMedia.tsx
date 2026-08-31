@@ -1,11 +1,18 @@
 import React from "react";
 
-export const FallbackAudio = React.forwardRef<
-  HTMLAudioElement,
-  Omit<React.ComponentPropsWithoutRef<"audio">, "src"> & {
-    srcs: string[];
-  }
->(({ srcs, onError, ...props }, ref) => {
+type FallbackAudioProps = Omit<
+  React.ComponentPropsWithRef<"audio">,
+  "src"
+> & {
+  srcs: string[];
+};
+
+export function FallbackAudio({
+  srcs,
+  onError,
+  ref,
+  ...props
+}: FallbackAudioProps) {
   const [srcIdx, setSrcIdx] = React.useState(0);
   return (
     <audio
@@ -21,4 +28,4 @@ export const FallbackAudio = React.forwardRef<
       }}
     />
   );
-});
+}
