@@ -171,7 +171,7 @@ const Question: React.FC = () => {
         game.uid,
         params.round,
         params.category,
-        params.question
+        params.question,
       );
     }
     if (stage >= question.question.length + 1 + (isDDorFJ ? 1 : 0)) {

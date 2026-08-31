@@ -69,20 +69,20 @@ function useSynchronize(
   }, [avElementRef]);
 }
 
-export const SynchronizedAudio = React.forwardRef<
-  HTMLAudioElement,
-  React.ComponentPropsWithoutRef<"audio">
->((props, ref) => {
+export function SynchronizedAudio({
+  ref,
+  ...props
+}: React.ComponentPropsWithRef<"audio">) {
   const localRef = React.useRef<HTMLAudioElement>(null);
   useSynchronize(localRef);
   return <audio {...props} ref={mergeRefs([ref, localRef])} />;
-});
+}
 
-export const SynchronizedVideo = React.forwardRef<
-  HTMLVideoElement,
-  React.ComponentPropsWithoutRef<"video">
->((props, ref) => {
+export function SynchronizedVideo({
+  ref,
+  ...props
+}: React.ComponentPropsWithRef<"video">) {
   const localRef = React.useRef<HTMLVideoElement>(null);
   useSynchronize(localRef);
   return <video {...props} ref={mergeRefs([ref, localRef])} />;
-});
+}
