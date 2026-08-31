@@ -36,47 +36,62 @@ Head to [trivia.barryam3.com/init](https://trivia.barryam3.com/init) to create a
 When creating a new game, you'll need to fill out the following fields:
 
 ##### **uid** (Required)
+
 A unique identifier for your game that will be used in the URL. This should be a short, memorable string (e.g., "mygame2024", "trivia-night"). The game will be accessible at `/game/{uid}`.
 
 ##### **Game Title** (Default: "Jeopardy!")
+
 The display name for your trivia game. This appears at the top of the game interface and helps identify the game.
 
 ##### **Contestant Names .csv**
+
 A comma-separated list of contestant names (e.g., "Alice,Bob,Charlie,Diana"). These names will appear on the scoreboard and be used for buzzer identification if you have a physical buzzer system connected.
 
 ##### **Teams .csv** (Optional)
+
 A comma-separated list of team names (e.g., "Team A, Team B"). If provided, contestants will be automatically divided into teams:
+
 - The first half of contestants (rounded up) are assigned to the first team
 - The second half (rounded down) are assigned to the second team
 - Individual scores are tracked but rolled up into team scores
 - **Note:** Only two teams are supported.
 
 ##### **Single Jeopardy .csv**
+
 The questions and answers for the first round. Copy the content from `q_and_a/single.csv` or create your own in the same format. See the [Input Format](#input-format) section for details on the expected CSV structure.
 
 ##### **Double Jeopardy .csv**
+
 The questions and answers for the second round. Copy the content from `q_and_a/double.csv` or create your own in the same format. Questions in this round are typically worth double the points of Single Jeopardy questions.
 
 ##### **Final Jeopardy .txt**
+
 The final question for the game. Copy the content from `q_and_a/final.txt` or create your own. This is typically a single, challenging question that all contestants answer simultaneously.
 
 ##### **Auto-advance (do not show board between questions)**
+
 When checked, the game will automatically advance to the next question without showing the game board between questions. This creates a more streamlined experience but removes the traditional Jeopardy board navigation.
 
 ##### **Enable Dynamic Scores (show only buzzed-in scores)**
+
 When enabled, only the scores of contestants who have buzzed in will be displayed during question answering. This creates a more focused view and can reduce visual clutter during gameplay.
 
 ##### **Penalties**
+
 Controls how incorrect answers are penalized:
+
 - **Scaling**: Penalty amount scales with question value (traditional Jeopardy style)
 - **Flat**: Fixed penalty amount regardless of question value, equal to the lowest question value.
 
 ##### **Score Unit**
+
 Determines the currency/unit displayed with scores:
+
 - **Dollars ($)**: Traditional Jeopardy format with dollar signs
 - **Points**: Simple point-based scoring without currency symbols
 
 ##### **Scorekeeping Webhook** (Optional)
+
 A webhook URL for external score tracking. If provided, score updates will be sent to this endpoint, allowing integration with external systems or databases.
 
 **Webhook Request Format:**
@@ -96,6 +111,7 @@ The webhook receives POST requests with `Content-Type: text/plain;charset=utf-8`
 ```
 
 **Field Descriptions:**
+
 - `contestant`: Name of the contestant who answered
 - `round`: The game UID (not the round number)
 - `category`: Category number (continues across rounds - Single Jeopardy categories are 0-5, Double Jeopardy categories are 6-11)
@@ -104,15 +120,18 @@ The webhook receives POST requests with `Content-Type: text/plain;charset=utf-8`
 - `score`: Point change (positive for correct, negative for incorrect)
 
 **Important Notes:**
+
 - Failed webhook requests are queued and retried on the next score update
 - The webhook ignores the traditional Single/Double Jeopardy round distinction
   - Instead, category numbers are continuous across all rounds
 - Questions are 1-indexed in webhook data (but 0-indexed internally)
 
 ##### **Lowest question value**
+
 Sets the base point value for the easiest questions (typically the top row). All other question values are calculated as multiples of this value. For example, with a multiplier of 200:
+
 - Row 1: 200 points
-- Row 2: 400 points  
+- Row 2: 400 points
 - Row 3: 600 points
 - Row 4: 800 points
 - Row 5: 1000 points
@@ -171,16 +190,31 @@ it. Backup fonts are defined in case you do not have the font installed.
 ## Buzzers
 
 This application supports a serial connection to an external lockout buzzer
-system. 
+system.
 
 I use a pair of Rolls GS76RL Game Show Buzzer System units connected to an
-Arduino Mega via DB9 to DuPont cables. The Arduino runs a very simple program
-that just reports when GPIO pin states change. See
-[my Arduino Real All GPIO Pins gist](https://gist.github.com/barryam3/8d584e33b63830d70d650c0be64dbf01)
-for the code I'm using on the Arduino. I'm using pins 38-52 (even) for
-contestants 1-8 and pins 39-53 (odd) for contestants 9-16, but this is
-configurable on the `/config` page. In theory you could connect any serial
-device that sends the same JSON messages.
+Arduino Mega via DB9 to DuPont cables. The Arduino runs the
+[canonical buzzer firmware](arduino/arduino.ino), which
+reports complete pin states over USB serial at 115200 baud. See the
+[Arduino build and deployment instructions](arduino/ARDUINO.md) before
+flashing a board. Each newline-
+delimited frame contains one `0` or `1` character per Arduino digital pin;
+character `i` is the state of pin `i`, with `0` meaning active/low and `1`
+meaning inactive/high. The firmware sends a frame at startup, whenever a pin
+changes, and once per second as a heartbeat.
+
+I'm using pins 38-52 (even) for contestants 1-8 and pins 39-53 (odd) for
+contestants 9-16, but this is configurable on the `/config` page. In theory
+you could connect any serial device that sends the same fixed-width frames.
+
+After uploading the firmware, open `/autoconfig/{uid}` to map the connected
+buzzers to the contestants in a game. Press one contestant's buzzer, wait for
+the system to reset, and repeat for each contestant. The app saves the mapping
+after the final contestant and reuses the open connection for the game.
+
+The host automatically retries an authorized buzzer port if its heartbeat
+stops. If the connection reports incompatible data, reflash the canonical
+firmware before reconnecting.
 
 Once you have everything wired up, click the button in the top right of the
 screen on the host view to connect. If everything is set up properly, the app
@@ -193,6 +227,7 @@ the app still has someone buzzed in, the new contestant name will appear in red,
 indicating they were out of turn.
 
 When [Buzzers](#buzzers) are enabled, you can use the following additional hotkeys:
+
 - R = buzzed-in contestant is right (reveal answer and add points, then dismiss buzzes)
 - W = buzzed-in contestant is wrong (dismiss their buzz and subtract points)
 - D = dismiss buzzes once buzzer system resets
