@@ -22,7 +22,7 @@ interface SeekedMessage {
 type SynchronizeMessage = PlayMessage | PauseMessage | SeekedMessage;
 
 function useSynchronize(
-  avElementRef: React.RefObject<HTMLAudioElement | HTMLVideoElement>
+  avElementRef: React.RefObject<HTMLAudioElement | HTMLVideoElement | null>,
 ) {
   React.useEffect(() => {
     const avElement = avElementRef.current;

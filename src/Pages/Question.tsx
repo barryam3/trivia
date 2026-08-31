@@ -39,7 +39,7 @@ function QuestionPart({
 }: {
   text: string;
   leader: boolean;
-  avRef: React.RefObject<HTMLAudioElement | HTMLVideoElement>;
+  avRef: React.RefObject<HTMLAudioElement | HTMLVideoElement | null>;
   [key: string]: unknown;
 }) {
   let content = <>{text}</>;
