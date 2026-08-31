@@ -1,4 +1,4 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 
 import Services from "../services";
 import { useParams } from "react-router";
@@ -8,6 +8,17 @@ interface ScoresProps {
   contestantsToShow?: number[];
 }
 
+/**
+ * Takes a callback and returns a click hanlder, calling the callback after
+ * blurring the button. Prevents score buttons from being focused on click,
+ * which can lead to accidental scoring when pressing spacebar intending to
+ * advance to the next question.
+ */
+const blurAnd = (f: () => void) => (e: MouseEvent<HTMLButtonElement>) => {
+  e.currentTarget.blur();
+  f();
+};
+
 const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
   const {
     contestants,
@@ -15,7 +26,6 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
     extraneousBuzzedInContestants,
     unit,
   } = Services.games.useGame();
-  const multiplier = Services.games.useMultiplier();
   const leader = Services.games.useLeader();
   const params = useParams<"question" | "round" | "category">();
   const value = params.question ? Number(params.question) + 1 : 0;
@@ -43,7 +53,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
                   type="button"
                   className="scorebutton"
                   style={{ backgroundColor: "red" }}
-                  onClick={updateScore(key, "subtract")}
+                  onClick={blurAnd(updateScore(key, "subtract"))}
                 >
                   -
                 </button>
@@ -52,7 +62,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
                     type="button"
                     className="scorebutton"
                     style={{ backgroundColor: "red" }}
-                    onClick={wrong(key)}
+                    onClick={blurAnd(wrong(key))}
                   >
                     W
                   </button>
@@ -71,7 +81,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
                   type="button"
                   className="scorebutton"
                   style={{ backgroundColor: "green" }}
-                  onClick={updateScore(key, "add")}
+                  onClick={blurAnd(updateScore(key, "add"))}
                 >
                   +
                 </button>
@@ -80,7 +90,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
                     type="button"
                     className="scorebutton"
                     style={{ backgroundColor: "green" }}
-                    onClick={right(key)}
+                    onClick={blurAnd(right(key))}
                   >
                     R
                   </button>
@@ -93,7 +103,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
           </div>
         ))
         .filter(
-          (c, key) => !contestantsToShow || contestantsToShow.includes(key)
+          (c, key) => !contestantsToShow || contestantsToShow.includes(key),
         )}
     </div>
   );
