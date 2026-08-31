@@ -192,6 +192,20 @@ body {
   font-family: 'Patrick Hand', cursive;
 }
 
+.contestant-score {
+  position: relative;
+  .initiative-indicator {
+    position: absolute;
+    top: 50%;
+    right: 0.35em;
+    display: block;
+    width: 0.35em;
+    height: 0.35em;
+    border-radius: 50%;
+    background-color: $money-color;
+  }
+}
+
 /* text in grids besides category names */
 #board .qvalue,
 #scores {

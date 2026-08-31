@@ -11,6 +11,7 @@ import {
   SynchronizedVideo,
 } from "../Elements/SynchronizedAudioVideo";
 import { FallbackAudio } from "../Elements/FallbackMedia";
+import { Contestant } from "../interfaces/game";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
@@ -148,6 +149,18 @@ function useAllAsked() {
   return round?.categories.every((c) => c.questions.every((q) => q.asked));
 }
 
+function getRandomLastPlaceContestant(
+  contestants: { score: number }[],
+): number {
+  const lowestScore = Math.min(...contestants.map((c) => c.score));
+  const lastPlaceContestants = contestants
+    .map((c, i) => [c, i] as [Contestant, key: number])
+    .filter(([c]) => c.score === lowestScore);
+  return lastPlaceContestants[
+    Math.floor(Math.random() * lastPlaceContestants.length)
+  ][1];
+}
+
 const Question: React.FC = () => {
   const question = useQuestion();
   const params = useQuestionParams();
@@ -188,6 +201,10 @@ const Question: React.FC = () => {
         game.double.categories.length > 0
       ) {
         // To Double Jeopardy.
+        Services.games.setInitiativeContestant(
+          game.uid,
+          getRandomLastPlaceContestant(game.contestants),
+        );
         navigate({ pathname: "../../../2/-1", search });
       } else if (
         allAsked &&
@@ -196,6 +213,7 @@ const Question: React.FC = () => {
           (params.round === 1 && game.double.categories.length === 0))
       ) {
         // To Final Jeopardy.
+        Services.games.setInitiativeContestant(game.uid, undefined);
         navigate({ pathname: "../../../3/1/1", search });
       } else if (game.disableBoard) {
         // To next question.

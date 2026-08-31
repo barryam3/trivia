@@ -17,6 +17,7 @@ const gamesServices = {
   addGame: withBroadcast(gameModel.addGame),
   askQuestion: withBroadcast(gameModel.askQuestion),
   updateScore: withBroadcast(gameModel.updateScore),
+  setInitiativeContestant: withBroadcast(gameModel.setInitiativeContestant),
   setBuzz: withBroadcast(gameModel.setBuzz),
   addExtraneousBuzz: withBroadcast(gameModel.addExtraneousBuzz),
   setBuzzerConnected: withBroadcast(gameModel.setBuzzerConnected),

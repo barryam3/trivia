@@ -29,6 +29,8 @@ export interface Game {
   uid: string;
   title: string;
   contestants: Contestant[];
+  /** Index of the contestant who has the initiative, when there is one. */
+  initiativeContestant?: number;
   /**
    * Length 2 if present. Contestants are split into two teams, with the first
    * half (rounding up) on the first team and the second half (rounding down) on

@@ -3,6 +3,7 @@ import type React from "react";
 import Services from "../services";
 import { useParams } from "react-router";
 import scoreServices from "../services/scoreServices";
+import InitiativeIndicator from "./InitiativeIndicator";
 
 interface ScoreProps {
   reverse: boolean;
@@ -26,7 +27,8 @@ interface TeamScoresProps {
 
 // Component to display the scores for a single team in a column.
 const TeamScores: React.FC<TeamScoresProps> = ({ teamIndex }) => {
-  const { contestants, teams, buzzedInContestant } = Services.games.useGame();
+  const { contestants, teams, initiativeContestant, buzzedInContestant } =
+    Services.games.useGame();
   if (!teams) {
     throw new Error("TeamScores requires teams.");
   }
@@ -59,6 +61,7 @@ const TeamScores: React.FC<TeamScoresProps> = ({ teamIndex }) => {
             }`}
           >
             <Score reverse={reverse} score={c.score} name={c.name} />
+            {initiativeContestant === key && <InitiativeIndicator />}
             {leader && (
               <div className="hstack">
                 <div className="buttons vstack">

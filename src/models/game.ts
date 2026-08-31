@@ -50,6 +50,7 @@ export function addGame(
     uid,
     title,
     contestants: parseGameFiles.parseContestantsCSV(contestants),
+    initiativeContestant: undefined,
     single: {
       categories: singlecsv ? parseGameFiles.parseGameCSV(singlecsv, 1) : [],
     },
@@ -98,7 +99,9 @@ export function updateScore(
   diff: number,
   round: number,
   category: number,
-  question: number
+  question: number,
+  /** Whether this score change represents a correct answer. */
+  correct = diff > 0,
 ): Game {
   if (diff === 0) {
     throw new Error("Score cannot be changed by 0.");
@@ -109,6 +112,9 @@ export function updateScore(
   }
   const contestant = game.contestants[key];
   contestant.score += diff;
+  if (correct && diff > 0) {
+    game.initiativeContestant = key;
+  }
   game.logs.push([contestant.name, round, category, question, diff]);
   if (game.scorekeepingWebhook) {
     // Remote scorekeeping ignores single/double Jeopardy. Instead, "round" is
@@ -148,6 +154,16 @@ export function updateScore(
       ];
     });
   }
+  localStorage.setItem(uid, JSON.stringify(game));
+  return game;
+}
+
+export function setInitiativeContestant(
+  uid: string,
+  contestant: number | undefined,
+): Game {
+  const game = getGame(uid);
+  game.initiativeContestant = contestant;
   localStorage.setItem(uid, JSON.stringify(game));
   return game;
 }

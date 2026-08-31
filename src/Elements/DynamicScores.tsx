@@ -10,14 +10,14 @@ export const DynamicScores: React.FC = () => {
     ...(extraneousBuzzedInContestants ?? []),
   ]);
   const [contestantsToShow, setContestantsToShow] = React.useState(
-    nextContestantsToShow
+    nextContestantsToShow,
   );
   React.useEffect(() => {
     const removedContestants = Array.from(contestantsToShow).filter(
-      (contestant) => !nextContestantsToShow.has(contestant)
+      (contestant) => !nextContestantsToShow.has(contestant),
     );
     const addedContestants = Array.from(nextContestantsToShow).filter(
-      (contestant) => !contestantsToShow.has(contestant)
+      (contestant) => !contestantsToShow.has(contestant),
     );
     if (removedContestants.length > 0 || addedContestants.length > 0) {
       setContestantsToShow((prevContestantsToShow) => {

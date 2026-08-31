@@ -57,6 +57,11 @@ export function useUpdateScoreCallback() {
         Number(params.round),
         Number(params.category),
         Number(params.question),
+        // The standalone +/- controls are score corrections; only the R
+        // control represents a correctly answered question for the purpose of
+        // updating the initiative (you might use + for a Daily Double, but
+        // there would be no initiative update).
+        op === "add" && absDiff !== undefined,
       );
       // For right answer, show score change immediately. Then dismiss buzz after 1s.
       if (op === "add" && key === buzzedInContestant) {

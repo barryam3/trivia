@@ -3,6 +3,7 @@ import React, { MouseEvent } from "react";
 import Services from "../services";
 import { useParams } from "react-router";
 import scoreServices from "../services/scoreServices";
+import InitiativeIndicator from "./InitiativeIndicator";
 
 interface ScoresProps {
   contestantsToShow?: number[];
@@ -22,6 +23,7 @@ const blurAnd = (f: () => void) => (e: MouseEvent<HTMLButtonElement>) => {
 const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
   const {
     contestants,
+    initiativeContestant,
     buzzedInContestant,
     extraneousBuzzedInContestants,
     unit,
@@ -40,7 +42,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
         .map((c, key) => (
           <div
             key={c.name}
-            className={`${buzzedIn(key) ? "buzzed" : ""} ${
+            className={`contestant-score ${buzzedIn(key) ? "buzzed" : ""} ${
               extraneousBuzzedInContestants?.includes(key) ? "extraneous" : ""
             }`}
           >
@@ -75,6 +77,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
               </div>
               <div className="scorename">{c.name}</div>
             </div>
+            {leader && initiativeContestant === key && <InitiativeIndicator />}
             {leader && (
               <div className="buttons">
                 <button
