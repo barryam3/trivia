@@ -36,6 +36,10 @@ const AutoConfig: React.FC = () => {
         configServices.setConfig({
           pinMappings: config.current as number[],
         });
+        // The buzzes may have been mapped to contestants using the existing or
+        // default mapping. Contestant buzzes must be dismissed manually.
+        // Dismiss them before navigating to a view that shows them.
+        buzzerServices.dismissBuzz(game.uid);
         navigate(`/game/${game.uid}`);
       } else {
         setTurn(turn + 1);
