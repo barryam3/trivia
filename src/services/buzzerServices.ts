@@ -70,13 +70,17 @@ async function serialListen(onValue: (value: string) => void): Promise<void> {
         prevValue = before;
       }
       if (done) {
+        console.warn("The serial device stream ended.");
         break;
       }
     }
+  } catch (e) {
+    console.error(e);
   } finally {
+    await reader.cancel();
     reader.releaseLock();
-    await port.close();
     await readableStreamClosed;
+    await port.close();
   }
 }
 
@@ -135,6 +139,10 @@ const ACTIVE = "0" as const;
 const INACTIVE = "1" as const;
 type BuzzerState = typeof ACTIVE | typeof INACTIVE;
 
+// D13 is connected to the Mega's onboard LED/driver and cannot be used as a
+// reliable INPUT_PULLUP buzzer input.
+const IGNORED_PINS = new Set([13]);
+
 /** Wraps @see serialListen and outputs newly active & inactive pin numbers. */
 function listenForChanges(
   onChangedPinStates: (changes: {
@@ -150,10 +158,10 @@ function listenForChanges(
       const inactive: number[] = [];
       for (let i = 0; i < pinStates.length; i++) {
         if (prevPinStates[i] !== pinStates[i]) {
-          if (pinStates[i] === ACTIVE) {
+          if (pinStates[i] === ACTIVE && !IGNORED_PINS.has(i)) {
             active.push(i);
           }
-          if (pinStates[i] === INACTIVE) {
+          if (pinStates[i] === INACTIVE && !IGNORED_PINS.has(i)) {
             inactive.push(i);
           }
         }
@@ -161,6 +169,15 @@ function listenForChanges(
       if (active.length > 0 || inactive.length > 0) {
         onChangedPinStates({ active, inactive });
       }
+    } else {
+      // initialize pin states on connect
+      buzzedInPins.next(
+        new Set(
+          pinStates.flatMap((state, pin) =>
+            state === ACTIVE && !IGNORED_PINS.has(pin) ? [pin] : [],
+          ),
+        ),
+      );
     }
     prevPinStates = pinStates;
   });

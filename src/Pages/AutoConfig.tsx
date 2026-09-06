@@ -18,11 +18,6 @@ const AutoConfig: React.FC = () => {
   const [turn, setTurn] = useState(0);
   const navigate = useNavigate();
 
-  // Connect to the buzzer system.
-  useEffect(() => {
-    buzzerServices.connect(game.uid);
-  }, [game.uid]);
-
   useEffect(() => {
     // When someone buzzes in, set the pin mapping for the current contestant, if that pin
     // mapping is not already in use.
