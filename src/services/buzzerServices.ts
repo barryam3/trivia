@@ -53,30 +53,42 @@ async function serialListen(onValue: (value: string) => void): Promise<void> {
   // Listen to data coming from the serial device.
   let cumulativeValue = "";
   let prevValue: string | undefined;
+  let valueSent = false;
   try {
     while (true) {
       const { value, done } = await reader.read();
       cumulativeValue += value;
-      const match = cumulativeValue.includes("\n");
-      if (match) {
-        const [before, after] = cumulativeValue.split("\n", 2);
-        cumulativeValue = after;
+      const firstNewlineIdx = cumulativeValue.indexOf("\n");
+      if (firstNewlineIdx !== -1) {
+        const before = cumulativeValue.slice(0, firstNewlineIdx);
+        cumulativeValue = cumulativeValue.slice(firstNewlineIdx + 1);
         // The device sends newline-delimited values. The value before the first
         // newline might be partial, so we discard it. The device re-sends the
-        // value once per second so we discard duplicates.
-        if (before !== prevValue && prevValue !== undefined) {
+        // value once per second so we discard duplicates. For some reason I
+        // sometimes observe multiple partial values on connect, so we
+        // additionally wait for lengths to stabilize.
+        if (
+          prevValue !== undefined &&
+          before.length === prevValue.length &&
+          (!valueSent || before !== prevValue)
+        ) {
           onValue(before);
+          valueSent = true;
         }
         prevValue = before;
       }
       if (done) {
+        console.warn("The serial device stream ended.");
         break;
       }
     }
+  } catch (e) {
+    console.error(e);
   } finally {
+    await reader.cancel();
     reader.releaseLock();
-    await port.close();
     await readableStreamClosed;
+    await port.close();
   }
 }
 
@@ -161,6 +173,13 @@ function listenForChanges(
       if (active.length > 0 || inactive.length > 0) {
         onChangedPinStates({ active, inactive });
       }
+    } else {
+      // initialize pin states on connect
+      buzzedInPins.next(
+        new Set(
+          pinStates.flatMap((state, pin) => (state === ACTIVE ? [pin] : [])),
+        ),
+      );
     }
     prevPinStates = pinStates;
   });

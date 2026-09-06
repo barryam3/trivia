@@ -18,11 +18,6 @@ const AutoConfig: React.FC = () => {
   const [turn, setTurn] = useState(0);
   const navigate = useNavigate();
 
-  // Connect to the buzzer system.
-  useEffect(() => {
-    buzzerServices.connect(game.uid);
-  }, [game.uid]);
-
   useEffect(() => {
     // When someone buzzes in, set the pin mapping for the current contestant, if that pin
     // mapping is not already in use.
@@ -41,6 +36,10 @@ const AutoConfig: React.FC = () => {
         configServices.setConfig({
           pinMappings: config.current as number[],
         });
+        // The buzzes may have been mapped to contestants using the existing or
+        // default mapping. Contestant buzzes must be dismissed manually.
+        // Dismiss them before navigating to a view that shows them.
+        buzzerServices.dismissBuzz(game.uid);
         navigate(`/game/${game.uid}`);
       } else {
         setTurn(turn + 1);
