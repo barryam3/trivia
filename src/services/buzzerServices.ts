@@ -168,11 +168,7 @@ function listenForChanges(
     } else {
       // initialize pin states on connect
       buzzedInPins.next(
-        new Set(
-          pinStates.flatMap((state, pin) =>
-            state === ACTIVE && !IGNORED_PINS.has(pin) ? [pin] : [],
-          ),
-        ),
+        new Set(pinStates.filter((s) => s === ACTIVE).map((_, i) => i)),
       );
     }
     prevPinStates = pinStates;
