@@ -11,27 +11,30 @@ import { DynamicScores } from "./Elements/DynamicScores";
 
 const Game: React.FC = () => {
   const location = useLocation();
-  const leader = services.games.useLeader();
+  const view = services.games.useView();
+  const isHost = view === "host";
   const { teams, buzzedInContestant, enableDynamicScores } =
     services.games.useGame();
   const { pathname } = useLocation();
   const isGameOver = pathname.includes("gameover");
   const buzzerConnected = services.buzzer.useConnected();
-  const showTeamScores = teams && (leader || isGameOver) && enableDynamicScores;
+  const showTeamScores =
+    teams && (view !== "contestant" || isGameOver) && enableDynamicScores;
 
-  // Whenever a navigation happens in the leader view, make all follower views navigate.
+  // Whenever the host navigates, make the contestant and stream views navigate
+  // while preserving their own view query parameters.
   const navigate = useNavigate();
   useEffect(() => {
     const bc = new BroadcastChannel("pathname");
-    if (leader) {
+    if (isHost) {
       bc.postMessage(location.pathname);
     } else {
       bc.onmessage = (event: MessageEvent<string>) => {
-        navigate({ pathname: event.data });
+        navigate({ pathname: event.data, search: location.search });
       };
     }
     return () => bc.close();
-  }, [leader, location, navigate]);
+  }, [isHost, location.pathname, location.search, navigate]);
 
   return (
     <div id="game">

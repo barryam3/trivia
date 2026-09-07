@@ -47,7 +47,7 @@ async function serialListen(onValue: (value: string) => void): Promise<void> {
   const readableStreamClosed = port.readable.pipeTo(
     // Web Serial emits Uint8Array, and TextDecoderStream accepts BufferSource,
     // which includes Uint8Array.
-    textDecoder.writable as WritableStream<Uint8Array<ArrayBufferLike>>,
+    textDecoder.writable as WritableStream<Uint8Array<ArrayBufferLike>>
   );
   const reader = textDecoder.readable.getReader();
   // Listen to data coming from the serial device.
@@ -152,7 +152,7 @@ function listenForChanges(
   onChangedPinStates: (changes: {
     active: number[];
     inactive: number[];
-  }) => void,
+  }) => void
 ): Promise<void> {
   let prevPinStates: BuzzerState[] | undefined;
   return serialListen((value: string) => {
@@ -177,8 +177,8 @@ function listenForChanges(
       // initialize pin states on connect
       buzzedInPins.next(
         new Set(
-          pinStates.flatMap((state, pin) => (state === ACTIVE ? [pin] : [])),
-        ),
+          pinStates.flatMap((state, pin) => (state === ACTIVE ? [pin] : []))
+        )
       );
     }
     prevPinStates = pinStates;
@@ -254,10 +254,10 @@ function fakeConnect(gameUID: string) {
 
 function useConnected(): boolean {
   const game = gamesServices.useGame();
-  const leader = gamesServices.useLeader();
-  // If the leader view hasn't connected, then the value in the game is stale.
+  const isHost = gamesServices.useView() === "host";
+  // If the host view hasn't connected, then the value in the game is stale.
   useEffect(() => {
-    if (leader && !connected) {
+    if (isHost && !connected) {
       if (game.buzzerConnected) {
         gamesServices.setBuzzerConnected(game.uid, false);
       }
@@ -265,7 +265,7 @@ function useConnected(): boolean {
         gamesServices.setBuzz(game.uid, undefined);
       }
     }
-  }, [leader, connected, game.buzzerConnected, game.buzzedInContestant]);
+  }, [isHost, connected, game.buzzerConnected, game.buzzedInContestant]);
   return !!game.buzzerConnected;
 }
 

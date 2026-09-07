@@ -4,9 +4,9 @@ import gamesServices from "../services/gamesServices";
 
 export const SerialButton: React.FC = () => {
   const { uid } = gamesServices.useGame();
-  const leader = gamesServices.useLeader();
+  const isHost = gamesServices.useView() === "host";
   const connected = buzzerServices.useConnected();
-  if (connected || !leader) return null;
+  if (connected || !isHost) return null;
   return (
     <button
       type="button"

@@ -25,7 +25,7 @@ export function useUpdateScoreCallback() {
     extraneousBuzzedInContestants,
   } = gamesServices.useGame();
   const multiplier = gamesServices.useMultiplier();
-  const leader = gamesServices.useLeader();
+  const isHost = gamesServices.useView() === "host";
   const params = useParams<"question" | "round" | "category">();
   const value = params.question ? Number(params.question) + 1 : 0;
 
@@ -37,7 +37,7 @@ export function useUpdateScoreCallback() {
   const updateScore = (
     key: number,
     op: "add" | "subtract",
-    absDiff?: number,
+    absDiff?: number
   ) => {
     return async () => {
       const diff = absDiff
@@ -61,7 +61,7 @@ export function useUpdateScoreCallback() {
         // control represents a correctly answered question for the purpose of
         // updating the initiative (you might use + for a Daily Double, but
         // there would be no initiative update).
-        op === "add" && absDiff !== undefined,
+        op === "add" && absDiff !== undefined
       );
       // For right answer, show score change immediately. Then dismiss buzz after 1s.
       if (op === "add" && key === buzzedInContestant) {
@@ -98,14 +98,14 @@ export function useUpdateScoreCallback() {
   });
 
   React.useEffect(() => {
-    if (!buzzerConnected || !leader || keydownListenerInstalled) return;
+    if (!buzzerConnected || !isHost || keydownListenerInstalled) return;
     keydownListenerInstalled = true;
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       keydownListenerInstalled = false;
     };
-  }, [buzzerConnected, onKeyDown, leader]);
+  }, [buzzerConnected, onKeyDown, isHost]);
 
   return { updateScore, right, wrong };
 }
@@ -114,7 +114,7 @@ export function onTeam(
   teams: string[],
   contestants: Contestant[],
   teamIndex: number,
-  key: number,
+  key: number
 ) {
   return (
     key >= (teamIndex * contestants.length) / teams.length &&
@@ -125,7 +125,7 @@ export function onTeam(
 export function computeTeamScore(
   teams: string[],
   contestants: Contestant[],
-  teamIndex: number,
+  teamIndex: number
 ) {
   return contestants
     .filter((_, key) => onTeam(teams, contestants, teamIndex, key))

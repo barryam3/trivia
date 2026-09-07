@@ -12,6 +12,7 @@ import {
 } from "../Elements/SynchronizedAudioVideo";
 import { FallbackAudio } from "../Elements/FallbackMedia";
 import { Contestant } from "../interfaces/game";
+import type { GameView } from "../services/gamesServices";
 
 const URL_REGEX =
   /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
@@ -32,21 +33,42 @@ function splitOnURLs(str: string) {
 const AUDIO_FILE_EXT_REGEX = /\.(mp3|ogg|wav|oga|m4a)$/;
 const VIDEO_FILE_EXT_REGEX = /\.(mp4|mov|webm)$/;
 const IMAGE_FILE_EXT_REGEX = /\.(tiff?|bmp|jpe?g|gif|png|eps|webp)$/;
+
+export function shouldRenderQuestionPart(
+  view: GameView,
+  isRevealed: boolean
+): boolean {
+  return view !== "contestant" || isRevealed;
+}
+
+export function shouldRenderAnswer(
+  view: GameView,
+  isRevealed: boolean
+): boolean {
+  return view === "host" || isRevealed;
+}
+
+export function shouldMuteQuestionMedia(view: GameView): boolean {
+  return view !== "contestant";
+}
+
 function QuestionPart({
   text,
-  leader,
+  view,
   avRef,
   ...rest
 }: {
   text: string;
-  leader: boolean;
+  view: GameView;
   avRef: React.RefObject<HTMLAudioElement | HTMLVideoElement | null>;
   [key: string]: unknown;
 }) {
   let content = <>{text}</>;
   if (text.match(URL_REGEX)) {
     const pathname = new URL(text).pathname;
-    const props = leader ? { muted: true } : { autoPlay: true };
+    const props = shouldMuteQuestionMedia(view)
+      ? { muted: true }
+      : { autoPlay: true };
     if (pathname.match(AUDIO_FILE_EXT_REGEX)) {
       content = (
         <SynchronizedAudio {...props} src={text} controls={true} ref={avRef} />
@@ -150,7 +172,7 @@ function useAllAsked() {
 }
 
 function getRandomLastPlaceContestant(
-  contestants: { score: number }[],
+  contestants: { score: number }[]
 ): number {
   const lowestScore = Math.min(...contestants.map((c) => c.score));
   const lastPlaceContestants = contestants
@@ -166,7 +188,8 @@ const Question: React.FC = () => {
   const params = useQuestionParams();
   const game = Services.games.useGame();
   const allAsked = useAllAsked();
-  const leader = Services.games.useLeader();
+  const view = Services.games.useView();
+  const isHost = view === "host";
   const navigate = useNavigate();
   const { search } = useLocation();
   const multiplier = Services.games.useMultiplier();
@@ -184,7 +207,7 @@ const Question: React.FC = () => {
         game.uid,
         params.round,
         params.category,
-        params.question,
+        params.question
       );
     }
     if (stage >= question.question.length + 1 + (isDDorFJ ? 1 : 0)) {
@@ -203,7 +226,7 @@ const Question: React.FC = () => {
         // To Double Jeopardy.
         Services.games.setInitiativeContestant(
           game.uid,
-          getRandomLastPlaceContestant(game.contestants),
+          getRandomLastPlaceContestant(game.contestants)
         );
         navigate({ pathname: "../../../2/-1", search });
       } else if (
@@ -295,12 +318,12 @@ const Question: React.FC = () => {
   });
 
   React.useEffect(() => {
-    if (!leader) return;
+    if (!isHost) return;
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [onKeyDown, leader]);
+  }, [onKeyDown, isHost]);
 
   // Ref to bind to audio or video tag. We assume at most one audio or video tag per question.
   const avRef = React.useRef<HTMLAudioElement | HTMLVideoElement>(null);
@@ -338,7 +361,12 @@ const Question: React.FC = () => {
           <div className="qtext">
             <React.Fragment>
               {question.question
-                .filter((q, i) => leader || stage + (isDDorFJ ? -1 : 0) > i)
+                .filter((_, i) =>
+                  shouldRenderQuestionPart(
+                    view,
+                    stage + (isDDorFJ ? -1 : 0) > i
+                  )
+                )
                 .map((q, i) => (
                   <QuestionPart
                     key={q}
@@ -349,12 +377,14 @@ const Question: React.FC = () => {
                       stage + (isDDorFJ ? -1 : 0) > i ? "" : "not-shown-yet"
                     }
                     text={q}
-                    leader={leader}
+                    view={view}
                     avRef={avRef}
                   />
                 ))}
-              {(leader ||
-                stage + (isDDorFJ ? -1 : 0) > question.question.length) && (
+              {shouldRenderAnswer(
+                view,
+                stage + (isDDorFJ ? -1 : 0) > question.question.length
+              ) && (
                 <div
                   className={
                     stage + (isDDorFJ ? -1 : 0) > question.question.length
@@ -369,7 +399,7 @@ const Question: React.FC = () => {
           </div>
         </div>
       )}
-      {leader && (
+      {isHost && (
         <>
           {question.isFJ && !hasAudioOrVideo && (
             <FallbackAudio

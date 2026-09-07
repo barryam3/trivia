@@ -28,7 +28,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
     extraneousBuzzedInContestants,
     unit,
   } = Services.games.useGame();
-  const leader = Services.games.useLeader();
+  const isHost = Services.games.useView() === "host";
   const params = useParams<"question" | "round" | "category">();
   const value = params.question ? Number(params.question) + 1 : 0;
   const { updateScore, right, wrong } = scoreServices.useUpdateScoreCallback();
@@ -49,7 +49,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
             {buzzedIn(key) && (
               <div className="buzzed-in-bar buzzed-in-bar-top" />
             )}
-            {leader && (
+            {isHost && (
               <div className="buttons">
                 <button
                   type="button"
@@ -77,8 +77,8 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
               </div>
               <div className="scorename">{c.name}</div>
             </div>
-            {leader && initiativeContestant === key && <InitiativeIndicator />}
-            {leader && (
+            {isHost && initiativeContestant === key && <InitiativeIndicator />}
+            {isHost && (
               <div className="buttons">
                 <button
                   type="button"
@@ -106,7 +106,7 @@ const Scores: React.FC<ScoresProps> = ({ contestantsToShow }) => {
           </div>
         ))
         .filter(
-          (c, key) => !contestantsToShow || contestantsToShow.includes(key),
+          (c, key) => !contestantsToShow || contestantsToShow.includes(key)
         )}
     </div>
   );

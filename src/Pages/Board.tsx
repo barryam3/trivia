@@ -6,7 +6,7 @@ import NotFound from "./NotFound";
 import { Link, useLocation } from "react-router";
 
 const Board: React.FC = () => {
-  const leader = services.games.useLeader();
+  const isHost = services.games.useView() === "host";
   const round = services.games.useRound();
   const { search } = useLocation();
   const multiplier = services.games.useMultiplier();
@@ -44,7 +44,7 @@ const Board: React.FC = () => {
             >
               {!board[ckey].questions[vkey].asked && (
                 <React.Fragment>
-                  {leader ? (
+                  {isHost ? (
                     <Link to={{ pathname: `${ckey}/${vkey}`, search: search }}>
                       {unit || ""}
                       {multiplier * (vkey + 1)}

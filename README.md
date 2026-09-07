@@ -136,11 +136,13 @@ Sets the base point value for the easiest questions (typically the top row). All
 - Row 4: 800 points
 - Row 5: 1000 points
 
-After creating a game, the pages `localhost:3000/game/{uid}/1?leader=true` and
-`localhost:3000/game/{uid}/1` will automatically open replacing the `{uid}`
-with the uid you chose. The leader page allows you to click between
-questions and change the display. The follower page automatically updates
-based on the actions taken in the leader.
+After creating a game, the pages
+`localhost:3000/game/{uid}/1?view=host` and
+`localhost:3000/game/{uid}/1?view=contestant` will automatically open,
+replacing `{uid}` with the uid you chose. The host page allows you to click
+between questions and change the display. Contestant and stream pages
+automatically follow the host's navigation. A stream page can be opened
+manually with `localhost:3000/game/{uid}/1?view=stream`.
 
 #### Input Format
 
@@ -174,12 +176,19 @@ rolled up into a team score.
 
 ### Running a game
 
-The app has two views: a "leader" view can always see the question answer, and has
-controls for advancing through questions and scorekeeping. The other follower view
-progressively reveals the question, then the answer.
+The app has three views:
 
-Controls on the leader view are done via buttons. You can also press spacebar to
-advance the question.
+- `host` immediately shows the question and answer and has controls for
+  navigation, buzzers, and scorekeeping. Content that contestants have not seen
+  yet is faded.
+- `contestant` progressively reveals the question and then the answer as the host
+  advances.
+- `stream` immediately shows the full question, fading each part until it is
+  revealed to contestants. It does not show the answer early, mirrors the host's
+  score display, and has no game controls.
+
+Host controls are available as buttons. You can also press spacebar to advance
+the question.
 
 ## Fonts
 

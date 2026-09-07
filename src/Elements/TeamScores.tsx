@@ -33,7 +33,7 @@ const TeamScores: React.FC<TeamScoresProps> = ({ teamIndex }) => {
     throw new Error("TeamScores requires teams.");
   }
   const multiplier = Services.games.useMultiplier();
-  const leader = Services.games.useLeader();
+  const isHost = Services.games.useView() === "host";
   const params = useParams<"question" | "round" | "category">();
   const value = params.question ? Number(params.question) + 1 : 0;
   const { updateScore, right, wrong } = scoreServices.useUpdateScoreCallback();
@@ -62,7 +62,7 @@ const TeamScores: React.FC<TeamScoresProps> = ({ teamIndex }) => {
           >
             <Score reverse={reverse} score={c.score} name={c.name} />
             {initiativeContestant === key && <InitiativeIndicator />}
-            {leader && (
+            {isHost && (
               <div className="hstack">
                 <div className="buttons vstack">
                   <button

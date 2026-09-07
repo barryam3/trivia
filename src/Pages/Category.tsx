@@ -20,7 +20,7 @@ const Category: React.FC = () => {
   const category = useCategory();
   const params = useCategoryParams();
   const navigate = useNavigate();
-  const leader = Services.games.useLeader();
+  const isHost = Services.games.useView() === "host";
   const { search } = useLocation();
   const isLastCateogry =
     params.category === (round?.categories.length ?? 0) - 1;
@@ -52,12 +52,12 @@ const Category: React.FC = () => {
     }
   });
   React.useEffect(() => {
-    if (!leader) return;
+    if (!isHost) return;
     document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [onKeyDown, leader]);
+  }, [onKeyDown, isHost]);
   const gameTitle = game.title || "Jeopardy!";
   return (
     <div id="question">
@@ -68,7 +68,7 @@ const Category: React.FC = () => {
           {params.round === 1 ? gameTitle : `Double ${gameTitle}`}
         </div>
       )}
-      {leader && (
+      {isHost && (
         <button id="nextbutton" onClick={goToNext} type="button">
           {isLastCateogry ? "Show Board" : "Show Next Category"}
         </button>

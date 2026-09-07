@@ -3,6 +3,16 @@ import type { Round, Game, Category } from "../interfaces/game";
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router";
 
+export type GameView = "host" | "contestant" | "stream";
+
+export function getGameView(search: string): GameView {
+  const view = new URLSearchParams(search).get("view");
+  if (view === "host" || view === "contestant" || view === "stream") {
+    return view;
+  }
+  return "contestant";
+}
+
 const withBroadcast =
   <A extends unknown[]>(f: (uid: string, ...args: A) => Game) =>
   (uid: string, ...args: A) => {
@@ -36,11 +46,10 @@ const gamesServices = {
     }, [gameUID]);
     return state;
   },
-  /** Hook for getting whether this window is for the leader view. */
-  useLeader(): boolean {
+  /** Hook for getting the role of this game window. */
+  useView(): GameView {
     const location = useLocation();
-    const query = new URLSearchParams(location.search);
-    return Boolean(query.get("leader"));
+    return getGameView(location.search);
   },
   useRound(): Round | null {
     const game = this.useGame();

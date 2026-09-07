@@ -70,8 +70,8 @@ const Init: React.FC = () => {
       scorekeepingWebhook: state.scorekeepingWebhook,
       multiplier: state.multiplier,
     });
-    window.open(`/game/${state.uid}/1/-1`);
-    navigate(`/game/${state.uid}/1/-1?leader=true`);
+    window.open(`/game/${state.uid}/1/-1?view=contestant`);
+    navigate(`/game/${state.uid}/1/-1?view=host`);
   };
 
   return (
@@ -213,7 +213,7 @@ const Init: React.FC = () => {
                 name="penalties"
                 value={state.penalties.toString()}
                 onChange={handleSelectChange}
-              > 
+              >
                 <option value="flat">Flat</option>
                 <option value="scaling">Scaling</option>
               </select>
